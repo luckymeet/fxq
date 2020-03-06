@@ -1,0 +1,22 @@
+spring:
+  datasource:
+    # 数据库连接
+    url: jdbc:mysql://39.105.58.23:3306/dbdata?characterEncoding=utf-8&useSSL=true&allowMultiQueries=true&zeroDateTimeBehavior=convertToNull&serverTimezone=GMT%2b8
+    # 数据库用户名
+    username: root
+    # 数据库访问密码
+    password: root.ycw
+  mvc:
+    view:
+      prefix: /static/jsp/
+      suffix: .jsp
+    
+mybatis:
+  #typeAliasesPackage: com.ycw.fxq.bean
+  mapperLocations: mybatis/mapper/**/*.xml
+  
+# 日志配置
+logging:
+  level: 
+    root: info
+

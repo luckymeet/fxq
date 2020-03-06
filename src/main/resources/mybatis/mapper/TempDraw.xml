@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ycw.fxq.dao.TempDrawDao">
+
+    <select id="creatstrid" resultType="String">
+		select SYS_GUID() from dual
+	</select>
+
+	<select id="findall" resultType="com.ycw.fxq.bean.TempDraw" parameterType="Map">
+		SELECT
+			t.Name1, t.Name2, t.Money FROM Temp_Draw t
+		<if test="index != null">
+			LIMIT #{index}
+		</if>
+		<if test="offset != null">
+			, #{offset}
+		</if>
+	</select>
+
+	<select id="findname" resultType="com.ycw.fxq.bean.Node">
+		select DISTINCT Name1 as name FROM Temp_Draw union select DISTINCT Name2 as name FROM Temp_Draw
+	</select>
+
+	<select id="findallreal" resultType="com.ycw.fxq.bean.TempDraw">
+		select * from Temp_RealDraw order by Money DESC
+	</select>
+
+	<select id="findnamereal" resultType="String">
+		select DISTINCT Name1 as n FROM Temp_RealDraw union select DISTINCT Name2 as n FROM Temp_RealDraw
+	</select>
+
+	<!-- 根据频率和转账金额过滤出可疑数据 -->
+	<select id="filterData" resultType="com.ycw.fxq.bean.TempDraw" parameterType="Map">
+		SELECT
+			t.Name1,
+			t.Name2,
+			t.Money,
+			t.Card2
+		FROM
+			temp_draw t
+		WHERE
+		<if test="amount != null and amount != ''">
+			t.Money &gt;= #{amount}
+		</if>
+		GROUP BY
+			t.Name1,
+			t.Name2,
+			t.Money,
+			t.Card2
+		<if test="frequency != null and frequency != ''">
+		HAVING
+			COUNT( t.Card2 ) &gt;= #{frequency}
+		</if>
+	</select>
+
+	<!-- 根据频率和转账金额过滤出可疑数据 -->
+	<select id="getTotalCount" resultType="java.lang.Integer">
+		SELECT COUNT(t.money) FROM temp_draw t
+	</select>
+
+</mapper>
