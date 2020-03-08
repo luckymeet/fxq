@@ -1,6 +1,5 @@
 package com.ycw.fxq.service;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -21,19 +20,19 @@ public class TempDrawService {
     	return dao.creatstrid();
     }
 
-	public ArrayList<TempDraw> findall(Map<String, Integer> params){
+	public List<TempDraw> findall(Map<String, Integer> params){
 		return dao.findall(params);
 	}
 
-	public ArrayList<Node> findname(){
+	public List<Node> findname(){
 		return dao.findname();
 	}
 
-	public ArrayList<TempDraw> findallreal(){
+	public List<TempDraw> findallreal(){
 		return dao.findallreal();
 	}
 
-	public ArrayList<String> findnamereal(){
+	public List<String> findnamereal(){
 		return dao.findnamereal();
 	}
 

@@ -17,6 +17,7 @@ import java.util.Set;
 import java.util.concurrent.ForkJoinPool;
 import java.util.stream.Collectors;
 
+import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletRequest;
 
 import org.slf4j.Logger;
@@ -31,10 +32,9 @@ import com.ycw.fxq.bean.Node;
 import com.ycw.fxq.bean.TempDraw;
 import com.ycw.fxq.louvain.LouvainHelper;
 import com.ycw.fxq.service.TempDrawService;
-import com.ycw.fxq.task.ForkJoinTask;
+import com.ycw.fxq.task.FindDataTask;
 
 @Controller
-//@RequestMapping("draw")
 public class DrawController {
 
 	Logger logger = LoggerFactory.getLogger(DrawController.class);
@@ -42,16 +42,19 @@ public class DrawController {
 	@Autowired
 	private TempDrawService service;
 
+	private List<TempDraw> data;
+
+	@PostConstruct
+	private void init() {
+		data = findAll();
+	}
+
 	@GetMapping("/index")
 	public void goindex(Model model, Model model2, Model maxmoeny, Model minmoeny, HttpServletRequest request) {
-		long start = System.currentTimeMillis();
-		List<TempDraw> link = this.findAll();
-		logger.info(String.format("================总数据量：%s================", link.size()));
-		model.addAttribute("linklist", link);
-		maxmoeny.addAttribute("maxmoeny", link.size() > 0 ? link.get(0).getMoney().toString() : "");
-		minmoeny.addAttribute("minmoeny", link.size() > 0 ? link.get(link.size() - 1).getMoney().toString() : "");
+		model.addAttribute("linklist", data);
+		maxmoeny.addAttribute("maxmoeny", data.isEmpty() ? "" : data.get(0).getMoney());
+		minmoeny.addAttribute("minmoeny", data.isEmpty() ? "" : data.get(data.size() - 1).getMoney());
 		model2.addAttribute("nodelist", service.findname());
-		logger.info(String.format("================总共用时：%sms================", System.currentTimeMillis() - start));
 	}
 
 	/**
@@ -61,8 +64,9 @@ public class DrawController {
 	private List<TempDraw> findAll() {
 		ForkJoinPool forkJoinPool = new ForkJoinPool();
 		Integer count = service.getTotalCount();// 查询总数
-		List<TempDraw> list = forkJoinPool.invoke(new ForkJoinTask(0, count));
-		return list;
+		FindDataTask task = new FindDataTask(0, count);
+		task.setService(this.service);
+		return forkJoinPool.invoke(task);
 	}
 
 	/**
@@ -90,13 +94,9 @@ public class DrawController {
 		ModelAndView mv = new ModelAndView();
 		mv.addObject("linklist", linkList);
 		mv.addObject("nodelist", nodeList);
-		mv.addObject("maxmoeny", linkList.size() > 0 ? linkList.get(0).getMoney().toString() : "");
-		mv.addObject("minmoeny", linkList.size() > 0 ? linkList.get(linkList.size() - 1).getMoney().toString() : "");
+		mv.addObject("maxmoeny", linkList.isEmpty() ? "" : linkList.get(0).getMoney());
+		mv.addObject("minmoeny", linkList.isEmpty() ? "" : linkList.get(linkList.size() - 1).getMoney());
 		mv.setViewName("index");
-//		maxmoeny.addAttribute("maxmoeny", linkList.size() > 0 ? linkList.get(0).getMoney().toString() : "");
-//		minmoeny.addAttribute("minmoeny", linkList.size() > 0 ? linkList.get(linkList.size() - 1).getMoney().toString() : "");
-//		model.addAttribute("linklist", linkList);
-//		model2.addAttribute("nodelist", nodeList);
 		return mv;
 	}
 
@@ -110,7 +110,7 @@ public class DrawController {
 	 */
 	private List<Node> getClusterNodeList(List<TempDraw> linkList, List<String> nameList, String rootPath) {
 		String clusterPath = rootPath + "cluster/";// 社区划分文件路径
-		String imgPath = rootPath + "static/images";// 图片路径
+		String imgPath = rootPath + "/static/images";// 图片路径
 
 		Map<String, Integer> nameIndexMap = new HashMap<>();
 		Map<Integer, String> indexNameMap = new HashMap<>();

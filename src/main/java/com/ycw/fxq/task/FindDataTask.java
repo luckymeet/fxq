@@ -9,24 +9,29 @@ import org.springframework.stereotype.Component;
 
 import com.ycw.fxq.bean.TempDraw;
 import com.ycw.fxq.service.TempDrawService;
-import com.ycw.fxq.util.SpringUtils;
 
 @Component
-public class ForkJoinTask extends RecursiveTask<List<TempDraw>> {
+public class FindDataTask extends RecursiveTask<List<TempDraw>> {
 
 	private static final long serialVersionUID = 1L;
 
 	private static final Integer THRESHOLD = 10000;
 	private Integer start;
 	private Integer end;
+	private TempDrawService tempDrawService;
 
-	public ForkJoinTask() {
+	public FindDataTask() {
 		super();
 	}
 
-	public ForkJoinTask(Integer start, Integer end) {
+	public FindDataTask(Integer start, Integer end) {
 		this.start = start;
 		this.end = end;
+	}
+
+
+	public void setService(TempDrawService service) {
+		this.tempDrawService = service;
 	}
 
 	@Override
@@ -35,13 +40,14 @@ public class ForkJoinTask extends RecursiveTask<List<TempDraw>> {
 			Map<String, Integer> params = new HashMap<>();
 			params.put("index", start);
 			params.put("offset", end - start);
-			TempDrawService service = (TempDrawService) SpringUtils.getBean(TempDrawService.class);
-			return service.findall(params);
+			return tempDrawService.findall(params);
 		} else {
 			Integer mid = (start + end) / 2;
-			ForkJoinTask task1 = new ForkJoinTask(start, mid);
+			FindDataTask task1 = new FindDataTask(start, mid);
+			task1.setService(this.tempDrawService);
 			task1.fork();
-			ForkJoinTask task2 = new ForkJoinTask(mid, end);
+			FindDataTask task2 = new FindDataTask(mid, end);
+			task2.setService(this.tempDrawService);
 			task2.fork();
 			List<TempDraw> list = task1.join();
 			list.addAll(task2.join());

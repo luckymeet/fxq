@@ -11,7 +11,6 @@ import org.apache.spark.api.java.JavaRDD;
 import org.apache.spark.api.java.JavaSparkContext;
 import org.apache.spark.api.java.function.Function;
 import org.apache.spark.api.java.function.PairFunction;
-import org.apache.spark.api.java.function.VoidFunction;
 
 import scala.Tuple2;
 
@@ -31,6 +30,7 @@ public class Test {
 	private static JavaPairRDD<Integer, Integer> splitRDD;
 	static {
 		JavaRDD<String> textRDD = sc.textFile("./dataFile.txt");
+		sc.setLogLevel("WARN");
         splitRDD = textRDD.mapToPair(new PairFunction<String, Integer, Integer>() {
 			@Override
 			public Tuple2<Integer, Integer> call(String t) throws Exception {
