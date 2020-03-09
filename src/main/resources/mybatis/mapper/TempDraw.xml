@@ -23,14 +23,6 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 		select DISTINCT Name1 as name FROM Temp_Draw union select DISTINCT Name2 as name FROM Temp_Draw
 	</select>
 
-	<select id="findallreal" resultType="com.ycw.fxq.bean.TempDraw">
-		select * from Temp_RealDraw order by Money DESC
-	</select>
-
-	<select id="findnamereal" resultType="String">
-		select DISTINCT Name1 as n FROM Temp_RealDraw union select DISTINCT Name2 as n FROM Temp_RealDraw
-	</select>
-
 	<!-- 根据频率和转账金额过滤出可疑数据 -->
 	<select id="filterData" resultType="com.ycw.fxq.bean.TempDraw" parameterType="Map">
 		SELECT
