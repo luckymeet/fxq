@@ -40,7 +40,7 @@ public class FindDataTask extends RecursiveTask<List<TempDraw>> {
 			Map<String, Integer> params = new HashMap<>();
 			params.put("index", start);
 			params.put("offset", end - start);
-			return tempDrawService.findall(params);
+			return tempDrawService.findDataByParams(params);
 		} else {
 			Integer mid = (start + end) / 2;
 			FindDataTask task1 = new FindDataTask(start, mid);

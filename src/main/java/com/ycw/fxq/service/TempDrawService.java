@@ -22,7 +22,7 @@ public class TempDrawService {
     	return dao.creatstrid();
     }
 
-	public List<TempDraw> findall(Map<String, Integer> params){
+	public List<TempDraw> findDataByParams(Map<String, Integer> params){
 		return dao.findall(params);
 	}
 
@@ -42,7 +42,7 @@ public class TempDrawService {
 	 * 并行查询数据库记录
 	 * @return
 	 */
-	public List<TempDraw> findAll() {
+	public List<TempDraw> findAllData() {
 		ForkJoinPool forkJoinPool = new ForkJoinPool();
 		Integer count = this.getTotalCount();// 查询总数
 		FindDataTask task = new FindDataTask(0, count);

@@ -7,6 +7,7 @@ import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -38,12 +39,15 @@ import com.ycw.fxq.louvain.LouvainHelper;
 import scala.Tuple2;
 
 @Service
-public class CommonService {
+public class CommonService implements Serializable{
+
+	private static final long serialVersionUID = 1L;
 
 	Logger logger = LoggerFactory.getLogger(CommonService.class);
 	private static final String ROOT_PATH = CommonService.class.getResource("/").getPath();
 	private static final String CLUSTER_PATH = ROOT_PATH + "cluster/";
 	private static final String IMG_PATH = ROOT_PATH + "static/images/";
+	private static final JavaSparkContext sc = new JavaSparkContext(new SparkConf().setMaster("local").setAppName("data"));
 
 	/**
 	 * 获取聚类后的节点列表
@@ -69,14 +73,14 @@ public class CommonService {
 
 		/* 社区划分 */
 		try {
-			cluster(res, nameList, nameIndexMap, CLUSTER_PATH);
+			cluster(res, nameList, nameIndexMap);
 		} catch (Exception e) {
 			logger.error("进行社区划分失败", e);
 		}
 
 		/* 获取节点列表 */
 		List<Node> nodeList = null;
-		nodeList = getNodeList(indexNameMap, CLUSTER_PATH, IMG_PATH);
+		nodeList = getNodeList(indexNameMap);
 		return nodeList;
 	}
 
@@ -130,15 +134,15 @@ public class CommonService {
 	 * 获取节点列表
 	 *
 	 * @param indexNameMap
-	 * @param clusterPath
-	 * @param imgPath
+	 * @param CLUSTER_PATH
+	 * @param IMG_PATH
 	 * @return
 	 * @throws IOException
 	 */
-	private List<Node> getNodeList(Map<Integer, String> indexNameMap, String clusterPath, String imgPath) {
-		File imgFile = new File(imgPath);// 图片文件夹路径
+	private List<Node> getNodeList(Map<Integer, String> indexNameMap) {
+		File imgFile = new File(IMG_PATH);// 图片文件夹路径
 		String[] imgNamelist = imgFile.list();// 图片名称列表
-		List<List<String>> clusterList = getClusterListByClusterFile(clusterPath);
+		List<List<String>> clusterList = getClusterListByClusterFile();
 		List<Node> nodeList = makeNodeList(indexNameMap, imgNamelist, clusterList);
 		return nodeList;
 	}
@@ -146,15 +150,15 @@ public class CommonService {
 	/**
 	 * 从社区划分后的结果文件读取数据
 	 *
-	 * @param clusterPath
+	 * @param CLUSTER_PATH
 	 * @return
 	 * @throws IOException
 	 */
-	private List<List<String>> getClusterListByClusterFile(String clusterPath) {
+	private List<List<String>> getClusterListByClusterFile() {
 		List<List<String>> clusterList = new ArrayList<>();
-		try (BufferedReader bf = new BufferedReader(new FileReader(clusterPath + "circle.txt"))) {
-			String str = bf.readLine();
-			while (str != null) {
+		try (BufferedReader bf = new BufferedReader(new FileReader(CLUSTER_PATH + "circle.txt"))) {
+			String str;
+			while ((str = bf.readLine()) != null) {
 				if (!"".equals(str.trim())) {
 					clusterList.add(Arrays.asList(str.trim().split(" ")));
 				}
@@ -194,17 +198,16 @@ public class CommonService {
 	 * @param linkList
 	 * @param nameList
 	 * @param indexMap
-	 * @param clusterPath
+	 * @param CLUSTER_PATH
 	 * @throws IOException
 	 */
-	private void cluster(List<TempDraw> linkList, List<String> nameList, Map<String, Integer> indexMap,
-			String clusterPath) throws IOException {
-		File dir = new File(clusterPath);
+	private void cluster(List<TempDraw> linkList, List<String> nameList, Map<String, Integer> indexMap) throws IOException {
+		File dir = new File(CLUSTER_PATH);
 		if (!dir.exists()) {
 			dir.mkdir();
 		}
 		String fileName = "dataFile.txt";
-		File file = new File(clusterPath + fileName);
+		File file = new File(CLUSTER_PATH + fileName);
 		if (file.exists()) {
 			file.delete();
 		}
@@ -224,16 +227,16 @@ public class CommonService {
 			logger.error("写入数据文件失败", e);
 		}
 		try {
-			LouvainHelper.excute(clusterPath, fileName);
+			LouvainHelper.excute(CLUSTER_PATH, fileName);
 		} catch (IOException e) {
 			logger.error("执行Louvain算法失败", e);
 		}
 	}
 
 	public List<Map<String, Object>> findAllDubiousPath(int num) {
-		List<Map<String, Object>> resList = new ArrayList<>();
 		JavaPairRDD<Integer, Integer> mapToPairRdd = getDataRdd();
 		Map<Integer, Iterable<Integer>> dataRelationMap = mapToPairRdd.groupByKey().collectAsMap();
+		List<Map<String, Object>> resList = new ArrayList<>();
 		List<String[]> circleList = getCircleList();
 		for (int i = 0; i < circleList.size(); i++) {
 			for (String s1 : circleList.get(i)) {
@@ -270,9 +273,9 @@ public class CommonService {
 	}
 
 	private List<String[]> getCircleList() {
-		JavaSparkContext sc = new JavaSparkContext(new SparkConf().setMaster("local").setAppName("circle"));
-		JavaRDD<String> javaRDD = sc.textFile("./circle.txt");
+		JavaRDD<String> javaRDD = sc.textFile(CLUSTER_PATH + "circle.txt");
 		JavaRDD<String[]> mapRdd = javaRDD.map(new Function<String, String[]>() {
+			private static final long serialVersionUID = 1L;
 			@Override
 			public String[] call(String v1) throws Exception {
 				return v1.split(" ");
@@ -283,10 +286,10 @@ public class CommonService {
 	}
 
 	private JavaPairRDD<Integer, Integer> getDataRdd() {
-		JavaSparkContext sc = new JavaSparkContext(new SparkConf().setMaster("local").setAppName("data"));
-		JavaRDD<String> javaRdd = sc.textFile("./dataFile.txt");
+		JavaRDD<String> javaRdd = sc.textFile(CLUSTER_PATH + "dataFile.txt");
 		javaRdd.zipWithIndex().filter(item -> item._2 == 0);
 		JavaPairRDD<Integer, Integer> mapToPairRdd = javaRdd.mapToPair(new PairFunction<String, Integer, Integer>() {
+			private static final long serialVersionUID = 1L;
 			@Override
 			public Tuple2<Integer, Integer> call(String t) throws Exception {
 				String[] split = t.split(" ");
@@ -311,6 +314,9 @@ public class CommonService {
 			return;
 		}
 		Iterable<Integer> linkNodes = data.get(cur);
+		if (linkNodes == null) {
+			return;
+		}
 		Iterator<Integer> iter = linkNodes.iterator();
 		while (iter.hasNext()) {
 			int node = iter.next();

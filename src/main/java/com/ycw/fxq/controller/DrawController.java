@@ -10,6 +10,7 @@ import java.util.stream.Collectors;
 import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,7 +38,7 @@ public class DrawController {
 
 	@PostConstruct
 	private void init() {
-		data = tempDrawService.findAll();
+		data = tempDrawService.findAllData();
 	}
 
 	@GetMapping("/index")
@@ -93,8 +94,9 @@ public class DrawController {
 
 	@GetMapping("/list")
 	public ModelAndView findAllDubiousPath (HttpServletRequest request) {
-		String num = request.getParameter("num");// 路径数量
-		List<Map<String, Object>> dubiousPath = commonService.findAllDubiousPath(Integer.parseInt(num));
+		String numStr = request.getParameter("num");// 路径数量
+		int num = StringUtils.isNumeric(numStr) ? Integer.parseInt(numStr) : 1;
+		List<Map<String, Object>> dubiousPath = commonService.findAllDubiousPath(num);
 		ModelAndView mv = new ModelAndView();
 		mv.addObject("pageList", dubiousPath);
 		mv.setViewName("index");

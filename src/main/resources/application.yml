@@ -18,5 +18,7 @@ mybatis:
 # 日志配置
 logging:
   level: 
-    root: info
+    root: INFO
+    org.mybatis: DEBUG
+    com.ycw.fxq: DEBUG
 
