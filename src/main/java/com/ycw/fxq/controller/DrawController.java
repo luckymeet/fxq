@@ -15,6 +15,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.servlet.ModelAndView;
 
@@ -42,12 +43,11 @@ public class DrawController {
 	}
 
 	@GetMapping("/index")
-	public ModelAndView goindex(HttpServletRequest request) {
-		ModelAndView mv = new ModelAndView();
-		mv.addObject("linklist", data);
-		mv.addObject("nodelist", tempDrawService.findname());
-		mv.setViewName("index");
-		return mv;
+	public void goindex(Model model, Model model2, Model maxmoeny, Model minmoeny, HttpServletRequest request) {
+		model.addAttribute("linklist", data);
+		maxmoeny.addAttribute("maxmoeny", data.isEmpty() ? "" : data.get(0).getMoney());
+		minmoeny.addAttribute("minmoeny", data.isEmpty() ? "" : data.get(data.size() - 1).getMoney());
+		model2.addAttribute("nodelist", tempDrawService.findname());
 	}
 
 	/**
@@ -72,6 +72,8 @@ public class DrawController {
 		ModelAndView mv = new ModelAndView();
 		mv.addObject("linklist", linkList);
 		mv.addObject("nodelist", nodeList);
+		mv.addObject("maxmoeny", linkList.isEmpty() ? "" : linkList.get(0).getMoney());
+		mv.addObject("minmoeny", linkList.isEmpty() ? "" : linkList.get(linkList.size() - 1).getMoney());
 		mv.setViewName("index");
 		return mv;
 	}
