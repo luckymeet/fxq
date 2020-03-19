@@ -258,24 +258,24 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
     	window.location.href = "filter?frequency=" + frequency + "&amount=" + amount + "&starttime=" + starttime + "&endtime=" + endtime;
     }
 
-//     function LinkColorSet(Money) {
-//         if (Maxmoney - Minmoney == 0) {
-//             return 'link';
-//         } else {
-//             var Gap = (Money - Minmoney) / (Maxmoney - Minmoney);
-//             if (Gap >= 4 / 5) {
-//                 return 'link link_5';
-//             } else if (Gap >= 3 / 5) {
-//                 return 'link link_4';
-//             } else if (Gap >= 2 / 5) {
-//                 return 'link link_3';
-//             } else if (Gap >= 1 / 5) {
-//                 return 'link link_2';
-//             } else {
-//                 return 'link link_1';
-//             }
-//         }
-//     }
+    function LinkColorSet(Money) {
+        if (Maxmoney - Minmoney == 0) {
+            return 'link';
+        } else {
+            var Gap = (Money - Minmoney) / (Maxmoney - Minmoney);
+            if (Gap >= 4 / 5) {
+                return 'link link_5';
+            } else if (Gap >= 3 / 5) {
+                return 'link link_4';
+            } else if (Gap >= 2 / 5) {
+                return 'link link_3';
+            } else if (Gap >= 1 / 5) {
+                return 'link link_2';
+            } else {
+                return 'link link_1';
+            }
+        }
+    }
 
     //定义功能标记，已判别不同功能代码
     var funsign = 0;
