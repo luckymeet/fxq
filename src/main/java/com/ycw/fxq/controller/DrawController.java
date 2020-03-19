@@ -1,6 +1,10 @@
 package com.ycw.fxq.controller;
 
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -9,8 +13,8 @@ import java.util.stream.Collectors;
 
 import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletRequest;
+import javax.swing.text.DateFormatter;
 
-import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -81,26 +85,50 @@ public class DrawController {
 	 *
 	 * @param request
 	 * @return
+	 * @throws ParseException
 	 */
 	private List<TempDraw> getLinkList(HttpServletRequest request) {
 		String frequency = request.getParameter("frequency");// 频率
 		String amount = request.getParameter("amount");// 金额
+		DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+		String start = request.getParameter("starttime");
+		String end = request.getParameter("endtime");
+//		Date startTime = null;
+//		Date endTime = null;
+//		try {
+//			startTime = dateFormat.parse(start);
+//			endTime = dateFormat.parse(end);
+//		} catch (ParseException e) {
+//			logger.error(e.toString());
+//		}
+
 		Map<String, String> params = new HashMap<>();
 		params.put("frequency", frequency);
 		params.put("amount", amount);
+		params.put("startTime", start);
+		params.put("endTime", end);
 		List<TempDraw> linkList = tempDrawService.filterData(params);
 		return linkList;
 	}
 
-	@GetMapping("/list")
-	public ModelAndView findAllDubiousPath (HttpServletRequest request) {
-		String numStr = request.getParameter("num");// 路径数量
-		int num = StringUtils.isNumeric(numStr) ? Integer.parseInt(numStr) : 1;
-		List<Map<String, Object>> dubiousPath = commonService.findAllDubiousPath(num);
+	@GetMapping("/test")
+	public ModelAndView findAllPaths(HttpServletRequest request){
+		this.commonService.findAllDeal(data);
 		ModelAndView mv = new ModelAndView();
-		mv.addObject("pageList", dubiousPath);
 		mv.setViewName("index");
 		return mv;
 	}
+
+//	@GetMapping("/list")
+//	public ModelAndView findAllDubiousPath (HttpServletRequest request) {
+//		String numStr = request.getParameter("num");// 路径数量
+//		int num = StringUtils.isNumeric(numStr) ? Integer.parseInt(numStr) : 1;
+//		List<Map<String, Object>> dubiousPath = commonService.findAllDubiousPath(num);
+//		ModelAndView mv = new ModelAndView();
+//		mv.addObject("pageList", dubiousPath);
+//		mv.setViewName("index");
+//		System.out.println(dubiousPath);
+//		return mv;
+//	}
 
 }

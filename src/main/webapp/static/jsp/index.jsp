@@ -229,6 +229,8 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 <!--         <span>汇款方姓名：</span><input type="text" id="sxn" class="form-control" /><br/> -->
 		<span>交易金额：</span><input type="text" id="amount" class="form-control" /><br/>
 		<span>交易频率：</span><input type="text" id="frequency" class="form-control" /><br/>
+		<span>开始时间：</span><input type="text" id="starttime" class="form-control" /><br/>
+		<span>结束时间：</span><input type="text" id="endtime" class="form-control" /><br/>
         <button class="md-close btn-sm btn-primary">取消</button>
         <button class="md-close btn-sm btn-danger" onclick="filter()">开始筛选</button>
       </div>
@@ -251,27 +253,29 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
     function filter(){
     	var frequency = $("#frequency").val();
     	var amount = $("#amount").val();
-    	window.location.href = "filter?frequency=" + frequency + "&amount=" + amount;
+    	var starttime = $("#starttime").val();
+    	var endtime = $("#endtime").val();
+    	window.location.href = "filter?frequency=" + frequency + "&amount=" + amount + "&starttime=" + starttime + "&endtime=" + endtime;
     }
 
-    function LinkColorSet(Money) {
-        if (Maxmoney - Minmoney == 0) {
-            return 'link';
-        } else {
-            var Gap = (Money - Minmoney) / (Maxmoney - Minmoney);
-            if (Gap >= 4 / 5) {
-                return 'link link_5';
-            } else if (Gap >= 3 / 5) {
-                return 'link link_4';
-            } else if (Gap >= 2 / 5) {
-                return 'link link_3';
-            } else if (Gap >= 1 / 5) {
-                return 'link link_2';
-            } else {
-                return 'link link_1';
-            }
-        }
-    }
+//     function LinkColorSet(Money) {
+//         if (Maxmoney - Minmoney == 0) {
+//             return 'link';
+//         } else {
+//             var Gap = (Money - Minmoney) / (Maxmoney - Minmoney);
+//             if (Gap >= 4 / 5) {
+//                 return 'link link_5';
+//             } else if (Gap >= 3 / 5) {
+//                 return 'link link_4';
+//             } else if (Gap >= 2 / 5) {
+//                 return 'link link_3';
+//             } else if (Gap >= 1 / 5) {
+//                 return 'link link_2';
+//             } else {
+//                 return 'link link_1';
+//             }
+//         }
+//     }
 
     //定义功能标记，已判别不同功能代码
     var funsign = 0;
@@ -601,8 +605,8 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
     var nodes = [];
     var childNodes = [];
     var links = [];
-    var Maxmoney = document.getElementById("maxmon").getAttribute("maxmon");
-    var Minmoney = document.getElementById("minmon").getAttribute("minmon");
+//     var Maxmoney = document.getElementById("maxmon").getAttribute("maxmon");
+//     var Minmoney = document.getElementById("minmon").getAttribute("minmon");
     var childLinks = [];
 
 
