@@ -10,7 +10,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 
 	<select id="findall" resultType="com.ycw.fxq.bean.TempDraw" parameterType="Map">
 		SELECT
-			t.Name1, t.Name2, t.Money FROM Temp_Draw t
+			t.name1, t.name2, t.money FROM Temp_Draw t
 		<if test="index != null">
 			LIMIT #{index}
 		</if>
@@ -20,21 +20,21 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 	</select>
 
 	<select id="findname" resultType="com.ycw.fxq.bean.Node">
-		select DISTINCT Name1 as name FROM Temp_Draw union select DISTINCT Name2 as name FROM Temp_Draw
+		select DISTINCT name1 as name FROM Temp_Draw union select DISTINCT name2 as name FROM Temp_Draw
 	</select>
 
 	<!-- 根据频率和转账金额过滤出可疑数据 -->
 	<select id="filterData" resultType="com.ycw.fxq.bean.TempDraw" parameterType="Map">
 		SELECT
-			t.Name1,
-			t.Name2,
-			t.Money,
-			t.Card2
+			t.name1,
+			t.name2,
+			t.money,
+			t.card2
 		FROM
 			temp_draw t
 		WHERE
 		<if test="amount != null and amount != ''">
-			t.Money &gt;= #{amount}
+			t.money &gt;= #{amount}
 		</if>
 		<if test="startTime != null and startTime != ''">
 			t.time &gt;= #{startTime}
@@ -42,14 +42,14 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 		<if test="endTime != null and endTime != ''">
 			t.time &lt;= #{endTime}
 		</if>
-		GROUP BY
-			t.Name1,
-			t.Name2,
-			t.Money,
-			t.Card2
 		<if test="frequency != null and frequency != ''">
+		GROUP BY
+			t.name1,
+			t.name2,
+			t.money,
+			t.card2
 		HAVING
-			COUNT( t.Card2 ) &gt;= #{frequency}
+			COUNT( t.card2 ) &gt;= #{frequency}
 		</if>
 	</select>
 
