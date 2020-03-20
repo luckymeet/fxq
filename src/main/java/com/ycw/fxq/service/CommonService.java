@@ -16,6 +16,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Stack;
+import java.util.stream.Collectors;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
@@ -34,9 +35,11 @@ import org.springframework.web.context.request.ServletRequestAttributes;
 
 import com.ycw.fxq.bean.Node;
 import com.ycw.fxq.bean.TempDraw;
+import com.ycw.fxq.controller.DrawController;
 import com.ycw.fxq.louvain.LouvainHelper;
 
 import scala.Tuple2;
+import scala.reflect.internal.Variance.SbtCompat;
 
 @Service
 public class CommonService implements Serializable{
@@ -233,44 +236,44 @@ public class CommonService implements Serializable{
 		}
 	}
 
-	public List<Map<String, Object>> findAllDubiousPath(int num) {
-		JavaPairRDD<Integer, Integer> mapToPairRdd = getDataRdd();
-		Map<Integer, Iterable<Integer>> dataRelationMap = mapToPairRdd.groupByKey().collectAsMap();
-		List<Map<String, Object>> resList = new ArrayList<>();
-		List<String[]> circleList = getCircleList();
-		for (int i = 0; i < circleList.size(); i++) {
-			for (String s1 : circleList.get(i)) {
-				for (int j = 0; j < circleList.size(); j++) {
-					if (j == i)
-						continue;
-					for (String s2 : circleList.get(j)) {
-						int cur = Integer.parseInt(s1);// 开始节点
-						int des = Integer.parseInt(s2);// 目标节点
-						List<List<Integer>> res = new ArrayList<>();// 结果集
-						Stack<Integer> previous = new Stack<>();// 当前路径
-						previous.push(cur);
-						findAllPaths(dataRelationMap, res, previous, cur, des, 1);
-						if (res.size() >= num) {
-							Map<String, Object> map = new HashMap<>();
-							map.put("startName", cur);
-							map.put("endName", des);
-							map.put("pathCount", res.size());
-							map.put("pathList", res);
-//							JavaPairRDD<Tuple2<Integer, Integer>, Long> filterRdd = zipWithIndex.filter(new Function<Tuple2<Tuple2<Integer,Integer>,Long>, Boolean>() {
-//								@Override
-//								public Boolean call(Tuple2<Tuple2<Integer, Integer>, Long> v1) throws Exception {
-//									Tuple2<Integer, Integer> tuple2 = v1._1;
-//									return (tuple2._1 == cur && tuple2._2 == des);
-//								}
-//							});
-							resList.add(map);
-						}
-					}
-				}
-			}
-		}
-		return resList;
-	}
+//	public List<Map<String, Object>> findAllDubiousPath(int num) {
+//		JavaPairRDD<Integer, Integer> mapToPairRdd = getDataRdd();
+//		Map<Integer, Iterable<Integer>> dataRelationMap = mapToPairRdd.groupByKey().collectAsMap();
+//		List<Map<String, Object>> resList = new ArrayList<>();
+//		List<String[]> circleList = getCircleList();
+//		for (int i = 0; i < circleList.size(); i++) {
+//			for (String s1 : circleList.get(i)) {
+//				for (int j = 0; j < circleList.size(); j++) {
+//					if (j == i)
+//						continue;
+//					for (String s2 : circleList.get(j)) {
+//						int cur = Integer.parseInt(s1);// 开始节点
+//						int des = Integer.parseInt(s2);// 目标节点
+//						List<List<Integer>> res = new ArrayList<>();// 结果集
+//						Stack<Integer> previous = new Stack<>();// 当前路径
+//						previous.push(cur);
+//						findAllPaths(dataRelationMap, res, previous, cur, des, 1);
+//						if (res.size() >= num) {
+//							Map<String, Object> map = new HashMap<>();
+//							map.put("startName", cur);
+//							map.put("endName", des);
+//							map.put("pathCount", res.size());
+//							map.put("pathList", res);
+////							JavaPairRDD<Tuple2<Integer, Integer>, Long> filterRdd = zipWithIndex.filter(new Function<Tuple2<Tuple2<Integer,Integer>,Long>, Boolean>() {
+////								@Override
+////								public Boolean call(Tuple2<Tuple2<Integer, Integer>, Long> v1) throws Exception {
+////									Tuple2<Integer, Integer> tuple2 = v1._1;
+////									return (tuple2._1 == cur && tuple2._2 == des);
+////								}
+////							});
+//							resList.add(map);
+//						}
+//					}
+//				}
+//			}
+//		}
+//		return resList;
+//	}
 
 	private List<String[]> getCircleList() {
 		JavaRDD<String> javaRDD = sc.textFile(CLUSTER_PATH + "circle.txt");
@@ -299,6 +302,29 @@ public class CommonService implements Serializable{
 		return mapToPairRdd;
 	}
 
+	public void findAllDeal(List<TempDraw> list) {
+//		JavaRDD<TempDraw> javaRdd = sc.parallelize(list);
+//		JavaPairRDD<String, String> mapToPairRdd = javaRdd.mapToPair(new PairFunction<TempDraw, String, String>() {
+//			@Override
+//			public Tuple2<String, String> call(TempDraw t) throws Exception {
+//				return new Tuple2<>(t.getName1(), t.getName2());
+//			}
+//		});
+//		Map<String, Iterable<String>> dataRelationMap = mapToPairRdd.groupByKey().collectAsMap();
+		Map<String, String> groupByName1 = list.stream().collect(Collectors.toMap(TempDraw::getName1, TempDraw::getName2, (k1,k2)->k1 + "," + k2));
+		List<List<String>> res = new ArrayList<>();
+		Stack<String> previous = new Stack<>();
+		previous.push("陈志勇");
+		this.findAllPaths(groupByName1, res, previous, "陈志勇", "陈富平");
+		for (List<String> path : res) {
+			StringBuilder sb = new StringBuilder();
+			for (String s : path) {
+				sb.append(s).append("->");
+			}
+			System.out.println(groupByName1.toString());
+		}
+	}
+
 	/**
 	 * 查找有向图节点间路径
 	 *
@@ -307,25 +333,25 @@ public class CommonService implements Serializable{
 	 * @param cur      当前节点
 	 * @param des      目标节点
 	 */
-	public static void findAllPaths(Map<Integer, Iterable<Integer>> data, List<List<Integer>> res,
-			Stack<Integer> previous, int cur, int des, int loopCount) {
-		if (cur == des) {
-			res.add(new ArrayList<Integer>(previous));
+	public static void findAllPaths(Map<String, String> data, List<List<String>> res,
+			Stack<String> previous, String cur, String des) {
+		if (cur.equals(des)) {
+			res.add(new ArrayList<String>(previous));
 			return;
 		}
-		Iterable<Integer> linkNodes = data.get(cur);
+		String linkNodes = data.get(cur);
 		if (linkNodes == null) {
 			return;
 		}
-		Iterator<Integer> iter = linkNodes.iterator();
-		while (iter.hasNext()) {
-			int node = iter.next();
-			int count = findCount(previous, node);
-			if (count > loopCount) {
+		String[] arr = linkNodes.split(",");
+		for (String s : arr) {
+//			int count = findCount(previous, node);
+//			if (count > loopCount) {
+			if (previous.contains(s)) {
 				return;
 			}
-			previous.push(node);
-			findAllPaths(data, res, previous, node, des, loopCount);
+			previous.push(s);
+			findAllPaths(data, res, previous, s, des);
 			previous.pop();
 		}
 	}

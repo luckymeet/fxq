@@ -36,6 +36,12 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 		<if test="amount != null and amount != ''">
 			t.Money &gt;= #{amount}
 		</if>
+		<if test="startTime != null and startTime != ''">
+			t.time &gt;= #{startTime}
+		</if>
+		<if test="endTime != null and endTime != ''">
+			t.time &lt;= #{endTime}
+		</if>
 		GROUP BY
 			t.Name1,
 			t.Name2,
