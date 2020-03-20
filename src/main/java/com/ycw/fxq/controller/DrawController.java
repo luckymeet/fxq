@@ -106,12 +106,4 @@ public class DrawController {
 		return linkList;
 	}
 
-	@GetMapping("/test")
-	public ModelAndView findAllPaths(HttpServletRequest request){
-		this.commonService.findAllDeal(data);
-		ModelAndView mv = new ModelAndView();
-		mv.setViewName("index");
-		return mv;
-	}
-
 }
