@@ -7,7 +7,6 @@ import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -28,14 +27,13 @@ import org.springframework.web.context.request.ServletRequestAttributes;
 import com.ycw.fxq.bean.Node;
 import com.ycw.fxq.bean.TempDraw;
 import com.ycw.fxq.louvain.LouvainHelper;
+import com.ycw.fxq.service.impl.CommonService;
 
 @Service
-public class CommonService implements Serializable{
+public class CommonServiceImpl implements CommonService {
 
-	private static final long serialVersionUID = 1L;
-
-	Logger logger = LoggerFactory.getLogger(CommonService.class);
-	private static final String ROOT_PATH = CommonService.class.getResource("/").getPath();
+	Logger logger = LoggerFactory.getLogger(CommonServiceImpl.class);
+	private static final String ROOT_PATH = CommonServiceImpl.class.getResource("/").getPath();
 	private static final String CLUSTER_PATH = ROOT_PATH + "cluster/";
 	private static final String IMG_PATH = ROOT_PATH + "static/images/";
 
@@ -47,6 +45,7 @@ public class CommonService implements Serializable{
 	 * @param rootPath
 	 * @return
 	 */
+	@Override
 	public List<Node> getClusterNodeList(List<TempDraw> linkList, List<String> nameList) {
 		Map<String, Integer> nameIndexMap = new HashMap<>();
 		Map<Integer, String> indexNameMap = new HashMap<>();
@@ -75,7 +74,8 @@ public class CommonService implements Serializable{
 	}
 
 	private HttpSession getSession() {
-		HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
+		HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes())
+				.getRequest();
 		return request.getSession();
 	}
 
@@ -191,7 +191,8 @@ public class CommonService implements Serializable{
 	 * @param CLUSTER_PATH
 	 * @throws IOException
 	 */
-	private void cluster(List<TempDraw> linkList, List<String> nameList, Map<String, Integer> indexMap) throws IOException {
+	private void cluster(List<TempDraw> linkList, List<String> nameList, Map<String, Integer> indexMap)
+			throws IOException {
 		File dir = new File(CLUSTER_PATH);
 		if (!dir.exists()) {
 			dir.mkdir();
@@ -223,7 +224,6 @@ public class CommonService implements Serializable{
 		}
 	}
 
-
 	/**
 	 * 查找有向图节点间路径
 	 *
@@ -232,8 +232,9 @@ public class CommonService implements Serializable{
 	 * @param cur      当前节点
 	 * @param des      目标节点
 	 */
-	public static void findAllPaths(Map<String, String> data, List<List<String>> res,
-			Stack<String> previous, String cur, String des) {
+	@Override
+	public void findAllPaths(Map<String, String> data, List<List<String>> res, Stack<String> previous,
+			String cur, String des) {
 		if (cur.equals(des)) {
 			res.add(new ArrayList<String>(previous));
 			return;
@@ -255,7 +256,7 @@ public class CommonService implements Serializable{
 		}
 	}
 
-	private static int findCount(Stack<Integer> stack, int e) {
+	private int findCount(Stack<Integer> stack, int e) {
 		int count = 0;
 		for (Integer i : stack) {
 			if (i == e)

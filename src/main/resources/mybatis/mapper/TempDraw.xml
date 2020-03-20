@@ -2,11 +2,7 @@
 <!DOCTYPE mapper
 PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.ycw.fxq.dao.TempDrawDao">
-
-    <select id="creatstrid" resultType="String">
-		select SYS_GUID() from dual
-	</select>
+<mapper namespace="com.ycw.fxq.mapper.TempDrawMapper">
 
 	<select id="findall" resultType="com.ycw.fxq.bean.TempDraw" parameterType="Map">
 		SELECT
