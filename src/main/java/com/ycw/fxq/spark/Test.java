@@ -72,7 +72,7 @@ public class Test {
 	 * @param des      目标节点
 	 */
 	public static void findAllPaths(List<List<Integer>> res, Stack<Integer> previous, int cur, int des) {
-		if (cur == des) {
+		if (cur == des && previous.size() > 1) {
 			res.add(new ArrayList<Integer>(previous));
 			return;
 		}
@@ -88,7 +88,7 @@ public class Test {
 //			previous.pop();
 //		}
 		List<Tuple2<Integer, Integer>> linkNodes = getLinkNodes(cur);
-		for (Tuple2<Integer,Integer> tuple : linkNodes) {
+		for (Tuple2<Integer, Integer> tuple : linkNodes) {
 			int count = findCount(previous, tuple._2);
 			if (count > LOOP_COUNT) {
 				return;
