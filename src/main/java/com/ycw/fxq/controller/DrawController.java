@@ -1,8 +1,6 @@
 package com.ycw.fxq.controller;
 
-import java.text.DateFormat;
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -23,8 +21,8 @@ import org.springframework.web.servlet.ModelAndView;
 
 import com.ycw.fxq.bean.Node;
 import com.ycw.fxq.bean.TempDraw;
-import com.ycw.fxq.service.CommonService;
-import com.ycw.fxq.service.TempDrawService;
+import com.ycw.fxq.service.impl.CommonService;
+import com.ycw.fxq.service.impl.TempDrawService;
 
 @Controller
 public class DrawController {
@@ -90,45 +88,20 @@ public class DrawController {
 	private List<TempDraw> getLinkList(HttpServletRequest request) {
 		String frequency = request.getParameter("frequency");// 频率
 		String amount = request.getParameter("amount");// 金额
-		DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+		String everyDayFrequency = request.getParameter("everyDayFrequency");// 频率
+		String everyDayAmount = request.getParameter("everyDayAmount");// 金额
 		String start = request.getParameter("starttime");
 		String end = request.getParameter("endtime");
-//		Date startTime = null;
-//		Date endTime = null;
-//		try {
-//			startTime = dateFormat.parse(start);
-//			endTime = dateFormat.parse(end);
-//		} catch (ParseException e) {
-//			logger.error(e.toString());
-//		}
 
 		Map<String, String> params = new HashMap<>();
 		params.put("frequency", frequency);
 		params.put("amount", amount);
+		params.put("everyDayFrequency", everyDayFrequency);
+		params.put("everyDayAmount", everyDayAmount);
 		params.put("startTime", start);
 		params.put("endTime", end);
 		List<TempDraw> linkList = tempDrawService.filterData(params);
 		return linkList;
 	}
-
-	@GetMapping("/test")
-	public ModelAndView findAllPaths(HttpServletRequest request){
-		this.commonService.findAllDeal(data);
-		ModelAndView mv = new ModelAndView();
-		mv.setViewName("index");
-		return mv;
-	}
-
-//	@GetMapping("/list")
-//	public ModelAndView findAllDubiousPath (HttpServletRequest request) {
-//		String numStr = request.getParameter("num");// 路径数量
-//		int num = StringUtils.isNumeric(numStr) ? Integer.parseInt(numStr) : 1;
-//		List<Map<String, Object>> dubiousPath = commonService.findAllDubiousPath(num);
-//		ModelAndView mv = new ModelAndView();
-//		mv.addObject("pageList", dubiousPath);
-//		mv.setViewName("index");
-//		System.out.println(dubiousPath);
-//		return mv;
-//	}
 
 }

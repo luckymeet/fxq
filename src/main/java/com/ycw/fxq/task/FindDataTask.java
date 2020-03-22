@@ -8,7 +8,7 @@ import java.util.concurrent.RecursiveTask;
 import org.springframework.stereotype.Component;
 
 import com.ycw.fxq.bean.TempDraw;
-import com.ycw.fxq.service.TempDrawService;
+import com.ycw.fxq.service.TempDrawServiceImpl;
 
 @Component
 public class FindDataTask extends RecursiveTask<List<TempDraw>> {
@@ -18,7 +18,7 @@ public class FindDataTask extends RecursiveTask<List<TempDraw>> {
 	private static final Integer THRESHOLD = 10000;
 	private Integer start;
 	private Integer end;
-	private TempDrawService tempDrawService;
+	private TempDrawServiceImpl tempDrawService;
 
 	public FindDataTask() {
 		super();
@@ -30,7 +30,7 @@ public class FindDataTask extends RecursiveTask<List<TempDraw>> {
 	}
 
 
-	public void setService(TempDrawService service) {
+	public void setService(TempDrawServiceImpl service) {
 		this.tempDrawService = service;
 	}
 

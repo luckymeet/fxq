@@ -227,10 +227,12 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 <!--         <span>交易金额：</span><input id="sxm" type="text" class="form-control" οnkeyup="clearNoNum(this)" />至<input type="text" id="sxmz" class="form-control" οnkeyup="clearNoNum(this)" /><br/> -->
 <!--         <span> 交易时间：</span><input id="sxd" type="date" class="form-control" />至<input type="date" id="sxdz" class="form-control" /><br/> -->
 <!--         <span>汇款方姓名：</span><input type="text" id="sxn" class="form-control" /><br/> -->
-		<span>交易金额：</span><input type="text" id="amount" class="form-control" /><br/>
-		<span>交易频率：</span><input type="text" id="frequency" class="form-control" /><br/>
-		<span>开始时间：</span><input type="text" id="starttime" class="form-control" /><br/>
-		<span>结束时间：</span><input type="text" id="endtime" class="form-control" /><br/>
+		<span>总交易金额：</span><input type="text" id="amount" class="form-control" /><br/>
+		<span>总交易数：</span><input type="text" id="frequency" class="form-control" /><br/>
+		<span>日交易金额：</span><input type="text" id="everyDayAmount" class="form-control" /><br/>
+		<span>日交易数：</span><input type="text" id="everyDayFrequency" class="form-control" /><br/>
+		<span>开始时间：</span><input type="text" id="starttime" placeholder="格式：yyyy-MM-dd HH:mm:ss" class="form-control" /><br/>
+		<span>结束时间：</span><input type="text" id="endtime" placeholder="格式：yyyy-MM-dd HH:mm:ss" class="form-control" /><br/>
         <button class="md-close btn-sm btn-primary">取消</button>
         <button class="md-close btn-sm btn-danger" onclick="filter()">开始筛选</button>
       </div>
@@ -251,11 +253,15 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
     }
 
     function filter(){
-    	var frequency = $("#frequency").val();
     	var amount = $("#amount").val();
+    	var frequency = $("#frequency").val();
+    	var everyDayAmount = $("#everyDayAmount").val();
+    	var everyDayFrequency = $("#everyDayFrequency").val();
     	var starttime = $("#starttime").val();
     	var endtime = $("#endtime").val();
-    	window.location.href = "filter?frequency=" + frequency + "&amount=" + amount + "&starttime=" + starttime + "&endtime=" + endtime;
+    	window.location.href = "filter?frequency=" + frequency + "&amount=" + amount
+    			+ "&everyDayAmount=" + everyDayAmount + "&everyDayFrequency=" + everyDayFrequency
+    			+ "&starttime=" + starttime + "&endtime=" + endtime;
     }
 
     function LinkColorSet(Money) {
