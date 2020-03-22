@@ -35,7 +35,7 @@ public class CommonServiceImpl implements CommonService {
 	Logger logger = LoggerFactory.getLogger(CommonServiceImpl.class);
 	private static final String ROOT_PATH = CommonServiceImpl.class.getResource("/").getPath();
 	private static final String CLUSTER_PATH = ROOT_PATH + "cluster/";
-	private static final String IMG_PATH = ROOT_PATH + "static/images/";
+	private static final String IMG_PATH = ROOT_PATH + "static/img/node/";
 
 	/**
 	 * 获取聚类后的节点列表

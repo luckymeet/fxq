@@ -19,4 +19,6 @@ public interface TempDrawService extends IService<TempDraw>{
 
 	List<TempDraw> findAllData();
 
+	List<TempDraw> findDataByList(String startTime,String endTime, String cardNos);
+
 }
