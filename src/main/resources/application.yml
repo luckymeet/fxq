@@ -1,6 +1,8 @@
 server:
   # HTTP端口
   port: 8080
+  tomcat: 
+    uri-encoding: utf-8
 spring:
   # 解决 多个接口上的@FeignClient("相同服务名")会报错,overriding is disabled
   main:
@@ -10,7 +12,7 @@ spring:
     # 数据库驱动类名
     driver-class-name: com.mysql.cj.jdbc.Driver
     # 数据库连接
-    url: jdbc:mysql://39.105.58.23/dbdata?characterEncoding=utf-8&useSSL=true&allowMultiQueries=true&zeroDateTimeBehavior=convertToNull&serverTimezone=GMT%2b8
+    url: jdbc:mysql://39.105.58.23/fxq?characterEncoding=utf-8&useSSL=true&allowMultiQueries=true&zeroDateTimeBehavior=convertToNull&serverTimezone=GMT%2b8
     # 数据库用户名
     username: root
     # 数据库访问密码
@@ -52,6 +54,11 @@ spring:
     view:
       prefix: /static/jsp/
       suffix: .jsp
+  http:
+    encoding: 
+      force: true
+      enabled: true
+      charset: utf-8
   redis:
     host: 39.105.58.23
     port: 6379

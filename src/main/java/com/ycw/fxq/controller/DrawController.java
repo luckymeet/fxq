@@ -17,6 +17,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.ycw.fxq.bean.Node;
@@ -25,6 +26,7 @@ import com.ycw.fxq.service.impl.CommonService;
 import com.ycw.fxq.service.impl.TempDrawService;
 
 @Controller
+@RequestMapping("/draw")
 public class DrawController {
 
 	Logger logger = LoggerFactory.getLogger(DrawController.class);
@@ -42,12 +44,15 @@ public class DrawController {
 		data = tempDrawService.findAllData();
 	}
 
-	@GetMapping("/index")
-	public void goindex(Model model, Model model2, Model maxmoeny, Model minmoeny, HttpServletRequest request) {
-		model.addAttribute("linklist", data);
-		maxmoeny.addAttribute("maxmoeny", data.isEmpty() ? "" : data.get(0).getMoney());
-		minmoeny.addAttribute("minmoeny", data.isEmpty() ? "" : data.get(data.size() - 1).getMoney());
-		model2.addAttribute("nodelist", tempDrawService.findname());
+	@GetMapping("/topology")
+	public ModelAndView goindex(HttpServletRequest request) {
+		ModelAndView mv = new ModelAndView();
+		mv.addObject("linklist", data);
+		mv.addObject("nodelist", tempDrawService.findname());
+		mv.addObject("maxmoeny", data.isEmpty() ? "" : data.get(0).getMoney());
+		mv.addObject("minmoeny", data.isEmpty() ? "" : data.get(data.size() - 1).getMoney());
+		mv.setViewName("topology");
+		return mv;
 	}
 
 	/**
