@@ -30,7 +30,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 			temp_draw t
 		WHERE 1=1
 		<if test="amount != null and amount != ''">
-			t.money &gt;= #{amount}
+			AND t.money &gt;= #{amount}
 		</if>
 		<if test="startTime != null and startTime != ''">
 			AND t.time &gt;= #{startTime}
