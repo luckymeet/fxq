@@ -3,7 +3,11 @@ package com.ycw.fxq.service;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ForkJoinPool;
+import java.util.regex.Pattern;
 
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.toolkit.Wrappers;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -52,5 +56,26 @@ public class TempDrawServiceImpl extends ServiceImpl<TempDrawMapper, TempDraw> i
 		FindDataTask task = new FindDataTask(0, count);
 		task.setService(this);
 		return forkJoinPool.invoke(task);
+	}
+
+	@Override
+	public List<TempDraw> findDataByList(String startTime, String endTime, String cardNos) {
+		LambdaQueryWrapper<TempDraw> wrapper = Wrappers.lambdaQuery();
+
+		if(StringUtils.isNotBlank(startTime)) {
+			wrapper.gt(TempDraw::getTime,startTime);
+		}
+		if(StringUtils.isNotBlank(endTime)) {
+			wrapper.lt(TempDraw::getTime,endTime);
+		}
+		if(StringUtils.isNotBlank(cardNos)) {
+			wrapper.and(w -> {
+						Pattern.compile(",").splitAsStream(cardNos).forEach(s ->
+							w.or(w1 -> w1.eq(TempDraw::getCard1,s))
+						);
+						return w;
+			});
+		}
+		return dao.selectList(wrapper);
 	}
 }
