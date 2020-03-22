@@ -605,8 +605,8 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
     var nodes = [];
     var childNodes = [];
     var links = [];
-//     var Maxmoney = document.getElementById("maxmon").getAttribute("maxmon");
-//     var Minmoney = document.getElementById("minmon").getAttribute("minmon");
+    var Maxmoney = document.getElementById("maxmon").getAttribute("maxmon");
+    var Minmoney = document.getElementById("minmon").getAttribute("minmon");
     var childLinks = [];
 
 

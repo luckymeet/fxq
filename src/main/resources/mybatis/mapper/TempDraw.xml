@@ -32,15 +32,15 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 			t.Card2
 		FROM
 			temp_draw t
-		WHERE
+		WHERE 1=1
 		<if test="amount != null and amount != ''">
-			t.Money &gt;= #{amount}
+			AND t.Money &gt;= #{amount}
 		</if>
 		<if test="startTime != null and startTime != ''">
-			t.time &gt;= #{startTime}
+			AND t.time &gt;= #{startTime}
 		</if>
 		<if test="endTime != null and endTime != ''">
-			t.time &lt;= #{endTime}
+			AND t.time &lt;= #{endTime}
 		</if>
 		GROUP BY
 			t.Name1,
