@@ -79,7 +79,7 @@ public class DrawController {
 		mv.addObject("nodelist", nodeList);
 		mv.addObject("maxmoeny", linkList.isEmpty() ? "" : linkList.get(0).getMoney());
 		mv.addObject("minmoeny", linkList.isEmpty() ? "" : linkList.get(linkList.size() - 1).getMoney());
-		mv.setViewName("index");
+		mv.setViewName("topology");
 		return mv;
 	}
 

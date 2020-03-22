@@ -21,32 +21,52 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 
 	<!-- 根据频率和转账金额过滤出可疑数据 -->
 	<select id="filterData" resultType="com.ycw.fxq.bean.TempDraw" parameterType="Map">
+		select * from temp_draw aa inner join (
 		SELECT
-			t.name1,
-			t.name2,
-			t.money,
-			t.card2
+		t.name1,t.name2
 		FROM
-			temp_draw t
-		WHERE 1=1
-		<if test="amount != null and amount != ''">
-			AND t.money &gt;= #{amount}
-		</if>
-		<if test="startTime != null and startTime != ''">
-			AND t.time &gt;= #{startTime}
-		</if>
-		<if test="endTime != null and endTime != ''">
-			AND t.time &lt;= #{endTime}
-		</if>
-		<if test="frequency != null and frequency != ''">
+		temp_draw t
+		<where>
+			<if test="startTime != null and startTime != ''">
+				AND t.time &gt;= #{startTime}
+			</if>
+			<if test="endTime != null and endTime != ''">
+				AND t.time &lt;= #{endTime}
+			</if>
+			<if test="amount != null and amount != ''">
+				AND t.money &gt;= #{amount}
+			</if>
+		</where>
 		GROUP BY
-			t.name1,
-			t.name2,
-			t.money,
-			t.card2
-		HAVING
-			COUNT( t.card2 ) &gt;= #{frequency}
+		t.name1,t.name2
+		<if test="frequency != null and frequency != ''">
+			HAVING COUNT(t.card2) &gt;= #{frequency}
 		</if>
+		<if test="(everyDayFrequency != null and everyDayFrequency != '') or (everyDayAmount != null and everyDayAmount != '')">
+			UNION
+			SELECT
+			tt.name1,tt.name2
+			FROM
+			temp_draw tt
+			<where>
+				<if test="startTime != null and startTime != ''">
+					AND tt.time &gt;= #{startTime}
+				</if>
+				<if test="endTime != null and endTime != ''">
+					AND tt.time &lt;= #{endTime}
+				</if>
+			</where>
+			GROUP BY
+			tt.name1,tt.name2,DATE_FORMAT(tt.time,'%Y-%c-%e')
+			HAVING 1=1
+			<if test="everyDayFrequency != null and everyDayFrequency != ''">
+				AND COUNT(tt.card2) >= #{everyDayFrequency}
+			</if>
+			<if test="everyDayAmount != null and everyDayAmount != ''">
+				AND SUM(tt.money) > #{everyDayAmount}
+			</if>
+		</if>
+		) bb on (aa.name1 = bb.name1 and aa.name2 = bb.name2)
 	</select>
 
 	<!-- 根据频率和转账金额过滤出可疑数据 -->
