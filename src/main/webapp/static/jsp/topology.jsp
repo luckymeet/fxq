@@ -306,7 +306,7 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
             method: "get",
             striped: true,
             singleSelect: false,
-            url: "json/case.json",
+            url: "loop",
             dataType: "json",
             pagination: true, //分页
             pageSize: 10,
@@ -317,7 +317,7 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
             columns: [
                 {
                     title: "环路",
-                    field: 'id',
+                    field: 'path',
                     align: 'center',
                     width: 160,
                     valign: 'middle'
