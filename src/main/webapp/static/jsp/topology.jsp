@@ -1,8 +1,8 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
-    pageEncoding="UTF-8"%>
-    <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
-    <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"%>
-    <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
+	pageEncoding="UTF-8"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"%>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"%>
 <%
 String path = request.getContextPath();
 String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.getServerPort()+path+"/";
@@ -14,241 +14,274 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 <title>银行数据分析网络</title>
 <link rel="stylesheet" type="text/css" href="${path}/css/bootstrap.css">
 <link href="${path}/css/component.css" rel="stylesheet">
+<link href="${path}/js/bstable/css/bootstrap.min.css" rel="stylesheet"
+	type="text/css">
+<link href="${path}/js/bstable/css/bootstrap-table.css" rel="stylesheet"
+	type="text/css">
+<link href="${path}/css/zTreeStyle/zTreeStyle.css" rel="stylesheet"
+	type="text/css" />
+<link href="${path}/css/table.css" rel="stylesheet" type="text/css" />
 <script src="${path}/js/d3.v3.min.js"></script>
 <script src="${path}/js/jquery-2.2.0.min.js"></script>
 <style type="text/css">
-    .link {
-        stroke: black;
-        stroke-linejoin: bevel;
-        stroke-width: 2;
-    }
+.link {
+	stroke: black;
+	stroke-linejoin: bevel;
+	stroke-width: 2;
+}
 
-    .link_zjhl {
-        stroke:#86f307;
-        stroke-linejoin: bevel;
-        stroke-width: 5;
-    }
+.link_zjhl {
+	stroke: #86f307;
+	stroke-linejoin: bevel;
+	stroke-width: 5;
+}
 
-    .link_error {
-        stroke: red;
-        stroke-linejoin: bevel;
-        stroke-width: 5;
-    }
+.link_error {
+	stroke: red;
+	stroke-linejoin: bevel;
+	stroke-width: 5;
+}
 
-    .link_scuess {
-        stroke: blue;
-        stroke-linejoin: bevel;
-    }
+.link_scuess {
+	stroke: blue;
+	stroke-linejoin: bevel;
+}
 
-    .link_right {
-        stroke: green;
-        stroke-linejoin: bevel;
-    }
-    .link_5 {
-        stroke:#f1aa0a;
-        stroke-linejoin: bevel;
-        stroke-width: 2;
-    }
-    .link_4 {
-        stroke:#6cca06;
-        stroke-linejoin: bevel;
-        stroke-width: 2;
-    }
-    .link_3 {
-        stroke:#04a268;
-        stroke-linejoin: bevel;
-        stroke-width: 2;
-    }
-    .link_2 {
-        stroke:#049ba2;
-        stroke-linejoin: bevel;
-        stroke-width: 2;
-    }
-    .link_1 {
-        stroke:#0575b7;
-        stroke-linejoin: bevel;
-        stroke-width: 2;
-    }
-    .nodetext {
-        font: 16px sans-serif;
-        -webkit-user-select: none;
-        -moze-user-select: none;
-        stroke-linejoin: bevel;
-        fill: #fff;
-    }
-    .nodetext-click {
-        font: 16px sans-serif;
-        -webkit-user-select: none;
-        -moze-user-select: none;
-        stroke-linejoin: bevel;
-        fill: #ff9800;
-    }
+.link_right {
+	stroke: green;
+	stroke-linejoin: bevel;
+}
 
-    #container {
-        width: 70%;
-        border: 1px solid gray;
-        border-radius: 5px;
-        position: relative;
-        float: left;
-        background-color: #022a50;
-        overflow-y: auto;
-        overflow-x: auto;
-    }
+.link_5 {
+	stroke: #f1aa0a;
+	stroke-linejoin: bevel;
+	stroke-width: 2;
+}
 
-    .leftdiv {
-        width: 14%;
-        height: 700px;
-        float: left;
-    }
+.link_4 {
+	stroke: #6cca06;
+	stroke-linejoin: bevel;
+	stroke-width: 2;
+}
 
-    .rightdiv {
-        width: 15%;
-        height: 700px;
-        float: right;
-    }
+.link_3 {
+	stroke: #04a268;
+	stroke-linejoin: bevel;
+	stroke-width: 2;
+}
 
-    #divInfo-node {
-        position: absolute;
-        background-color: aquamarine;
-        padding: 20px;
-    }
+.link_2 {
+	stroke: #049ba2;
+	stroke-linejoin: bevel;
+	stroke-width: 2;
+}
 
-    #divInfo-link {
-        position: absolute;
-        background-color: cornflowerblue;
-        padding: 20px;
-    }
+.link_1 {
+	stroke: #0575b7;
+	stroke-linejoin: bevel;
+	stroke-width: 2;
+}
 
-    .nodeinfo {
-        width: 100%;
-        height: 20%;
-        padding: 10px;
-        background-color: #eeeeee;
-    }
+.nodetext {
+	font: 16px sans-serif;
+	-webkit-user-select: none;
+	-moze-user-select: none;
+	stroke-linejoin: bevel;
+	fill: #fff;
+}
 
-    .linkinfo {
-        background-color: #eeeeee;
-        padding: 10px;
-        width: 100%;
-        height: 40%;
-        margin-top: 10px;
-    }
+.nodetext-click {
+	font: 16px sans-serif;
+	-webkit-user-select: none;
+	-moze-user-select: none;
+	stroke-linejoin: bevel;
+	fill: #ff9800;
+}
 
-    .zzstart {
-        width: 80%;
-        height: 50px;
-        background-color: #FF5722;
-        color: #f8f8f5;
-        font-weight: 800;
-        border: #FF5722;
-        font-size: x-large;
-        margin-left: 6%;
-        margin-bottom: 4px;
-    }
+#container {
+	width: 70%;
+	border: 1px solid gray;
+	border-radius: 5px;
+	position: relative;
+	float: left;
+	background-color: #022a50;
+	overflow-y: auto;
+	overflow-x: auto;
+}
 
-        .zzstart:hover {
-            background-color: #FFC107;
-        }
+.leftdiv {
+	width: 14%;
+	height: 700px;
+	float: left;
+}
 
-    .info {
-        font-size: x-large;
-        font-weight: 600;
-    }
-    .info-moeny {
-        font-size: xx-large;
-        font-weight: 600;
-        color:darkred;
-    }
-    .slt{
-    background-color: #d3e4f2;
-    width: 150px;
-    height: 150px;
-    z-index: 99999;
-    float: left;
-    }
+.rightdiv {
+	width: 15%;
+	height: 700px;
+	float: right;
+}
 
+#divInfo-node {
+	position: absolute;
+	background-color: aquamarine;
+	padding: 20px;
+}
 
+#divInfo-link {
+	position: absolute;
+	background-color: cornflowerblue;
+	padding: 20px;
+}
+
+.nodeinfo {
+	width: 100%;
+	height: 20%;
+	padding: 10px;
+	background-color: #eeeeee;
+}
+
+.linkinfo {
+	background-color: #eeeeee;
+	padding: 10px;
+	width: 100%;
+	height: 40%;
+	margin-top: 10px;
+}
+
+.zzstart {
+	width: 80%;
+	height: 50px;
+	background-color: #FF5722;
+	color: #f8f8f5;
+	font-weight: 800;
+	border: #FF5722;
+	font-size: x-large;
+	margin-left: 6%;
+	margin-bottom: 4px;
+}
+
+.zzstart:hover {
+	background-color: #FFC107;
+}
+
+.info {
+	font-size: x-large;
+	font-weight: 600;
+}
+
+.info-moeny {
+	font-size: xx-large;
+	font-weight: 600;
+	color: darkred;
+}
+
+.slt {
+	background-color: #d3e4f2;
+	width: 150px;
+	height: 150px;
+	z-index: 99999;
+	float: left;
+}
 </style>
 </head>
 <body>
-    <span id="colink" colink = ${fn:length(linklist) } style="display:none"></span>
-    <span id="conode" conode = ${fn:length(nodelist) } style="display:none"></span>
-    <span id="maxmon" maxmon = ${maxmoeny } style="display:none"></span>
-    <span id="minmon" minmon = ${minmoeny } style="display:none"></span>
-    <c:set var="flag" value= "0" />
-    <c:forEach items="${linklist }" var="link">
-       <span id="${flag}" sourse = "${link.name1}" amount = "${link.money}" target = "${link.name2}" style="display:none"></span>
-    <c:set var="flag" value="${flag+1}" />
-    </c:forEach>
-    <c:set var="flag" value= "0" />
-    <c:forEach items="${nodelist }" var="node">
-       <span id="%${flag}" sh="${flag}" name = "${node.name}" img = "${node.imgName}" style="display:none"></span>
-    <c:set var="flag" value="${flag+1}" />
-    </c:forEach>
- <div class="leftdiv">
-    <h3 style="margin-top: 17%;margin-left: 28%;">人物信息</h3>
-    <div class="nodeinfo">
-        <span id="infoid-n" class="info"></span>
-    </div>
-    <h3 style="margin-left: 28%;">流水信息</h3>
-    <div class="linkinfo">
-        <span id="infon-l" class="info"></span><br />
-        <h4>交易金额: <span id="infom-l" class="info-moeny"></span>元</h4>
-    </div>
-    <div id="thumbMap" class="slt"></div>
-</div>
-<div>
-    <div>
-<!--         <h1 style="margin-left: 40%;font-weight: 700;">银行数据高效分析系统拓扑图</h1> -->
-    </div>
-    <div id='container' class="">
-    </div>
-	<ul class="news_table department_table">
-		<li>
-			<table id="table" class="table_style" style="margin: 0 auto"></table>
-		</li>
-	</ul>
-</div>
-<div class="rightdiv">
-    <div>
-        <h2 id="pointinfo"></h2>
-    </div>
-    <div>
-<!--         <input id="zz" class="zzstart" type="button" value="开启追踪模式" onclick="gozz()" /> -->
-<%--         <input id="zjhl" type="button" value="资金回流检测" class="zzstart" onclick="hljc(${fn:length(linklist) },${fn:length(nodelist) })" /> --%>
-        <input id="zzsx" type="button" value="数据筛选" class="zzstart md-trigger" data-modal="modal-13" />
-<!--         <input id="gd" type="button" value="固定静止" class="zzstart md-trigger" onclick="gds()" /> -->
-<!--         <input id="goreal" type="button" value="真实数据" class="zzstart md-trigger" onclick="real()" /> -->
-<!--         <input id="gofz" type="button" value="仿真数据" class="zzstart md-trigger" onclick="fz()" /> -->
+	<span id="colink" colink=${fn:length(linklist) } style="display: none"></span>
+	<span id="conode" conode=${fn:length(nodelist) } style="display: none"></span>
+	<span id="maxmon" maxmon=${maxmoeny } style="display: none"></span>
+	<span id="minmon" minmon=${minmoeny } style="display: none"></span>
+	<c:set var="flag" value="0" />
+	<c:forEach items="${linklist }" var="link">
+		<span id="${flag}" sourse="${link.name1}" amount="${link.money}"
+			target="${link.name2}" style="display: none"></span>
+		<c:set var="flag" value="${flag+1}" />
+	</c:forEach>
+	<c:set var="flag" value="0" />
+	<c:forEach items="${nodelist }" var="node">
+		<span id="%${flag}" sh="${flag}" name="${node.name}"
+			img="${node.imgName}" style="display: none"></span>
+		<c:set var="flag" value="${flag+1}" />
+	</c:forEach>
+	<div>
+		<div class="leftdiv">
+			<h3 style="margin-top: 17%; margin-left: 28%;">人物信息</h3>
+			<div class="nodeinfo">
+				<span id="infoid-n" class="info"></span>
+			</div>
+			<h3 style="margin-left: 28%;">流水信息</h3>
+			<div class="linkinfo">
+				<span id="infon-l" class="info"></span><br />
+				<h4>
+					交易金额: <span id="infom-l" class="info-moeny"></span>元
+				</h4>
+			</div>
+			<div id="thumbMap" class="slt" style="display: none"></div>
 
-    </div>
-</div>
-<!-- 筛选模态框 -->
-<div class="md-modal md-effect-13" id="modal-13">
-    <div class="md-content">
-      <h3>数据网络筛选</h3>
-      <div>
-        <p>筛选出你想画出的数据网络：</p>
-<!--         <span>交易金额：</span><input id="sxm" type="text" class="form-control" οnkeyup="clearNoNum(this)" />至<input type="text" id="sxmz" class="form-control" οnkeyup="clearNoNum(this)" /><br/> -->
-<!--         <span> 交易时间：</span><input id="sxd" type="date" class="form-control" />至<input type="date" id="sxdz" class="form-control" /><br/> -->
-<!--         <span>汇款方姓名：</span><input type="text" id="sxn" class="form-control" /><br/> -->
-		<span>总交易金额：</span><input type="text" id="amount" class="form-control" /><br/>
-		<span>总交易数：</span><input type="text" id="frequency" class="form-control" /><br/>
-		<span>日交易金额：</span><input type="text" id="everyDayAmount" class="form-control" /><br/>
-		<span>日交易数：</span><input type="text" id="everyDayFrequency" class="form-control" /><br/>
-		<span>开始时间：</span><input type="text" id="starttime" placeholder="格式：yyyy-MM-dd HH:mm:ss" class="form-control" /><br/>
-		<span>结束时间：</span><input type="text" id="endtime" placeholder="格式：yyyy-MM-dd HH:mm:ss" class="form-control" /><br/>
-        <button class="md-close btn-sm btn-primary">取消</button>
-        <button class="md-close btn-sm btn-danger" onclick="filter()">开始筛选</button>
-      </div>
-    </div>
-  </div>
-  <div class="md-overlay">
-  <!-- the overlay element -->
-  </div>
-  <!-- 筛选模态框end -->
+		</div>
+		<div>
+			<div id='container' class=""></div>
+		</div>
+		<!-- 筛选模态框 -->
+		<div class="md-modal md-effect-13" id="modal-13">
+			<div class="md-content">
+				<h3>数据网络筛选</h3>
+				<div>
+					<p>筛选出你想画出的数据网络：</p>
+					<span>总交易金额：</span><input type="text" id="amount"
+						class="form-control" /><br /> <span>总交易数：</span><input
+						type="text" id="frequency" class="form-control" /><br /> <span>日交易金额：</span><input
+						type="text" id="everyDayAmount" class="form-control" /><br /> <span>日交易数：</span><input
+						type="text" id="everyDayFrequency" class="form-control" /><br />
+					<span>开始时间：</span><input type="text" id="starttime"
+						placeholder="格式：yyyy-MM-dd HH:mm:ss" class="form-control" /><br />
+					<span>结束时间：</span><input type="text" id="endtime"
+						placeholder="格式：yyyy-MM-dd HH:mm:ss" class="form-control" /><br />
+					<button class="md-close btn-sm btn-primary">取消</button>
+					<button class="md-close btn-sm btn-danger" onclick="filter()">开始筛选</button>
+				</div>
+			</div>
+		</div>
+		<div class="md-overlay">
+			<!-- the overlay element -->
+		</div>
+	</div>
 
-<script type="text/javascript">
+	<div class="l_left news_right" style="width: 100%;margin-bottom:20%">
+		<h6>案件管理</h6>
+		<div class="notice_check"></div>
+		<div class="clear"></div>
+		<div class="notice_check">
+			<div class="notice_nav r_right paddingBotme">
+				<P>
+					<input id="zzsx" type="button" value="数据筛选"
+						class="zzstart md-trigger" data-modal="modal-13" />
+				</P>
+			</div>
+		</div>
+		<div class="clear"></div>
+
+		<ul class="news_table department_table">
+			<li>
+				<table id="table" class="table_style" style="margin: 0 auto"></table>
+			</li>
+		</ul>
+
+	</div>
+	<div class="clear"></div>
+
+	<!-- 筛选模态框end -->
+	<script src="${path}/js/jquery/jQuery-2.2.0.min.js"></script>
+	<script src="${path}/js/bstable/js/bootstrap.min.js"></script>
+	<script src="${path}/js/bstable/js/bootstrap-table.js"></script>
+	<script src="${path}/js/bstable/js/bootstrap-table-zh-CN.min.js"></script>
+	<script type="text/javascript"
+		src="${path}/js/ztree/jquery.ztree.core-3.5.js"></script>
+	<script type="text/javascript"
+		src="${path}/js/ztree/jquery.ztree.excheck-3.5.js"></script>
+	<script type="text/javascript"
+		src="${path}/js/ztree/jquery.ztree.exedit-3.5.js"></script>
+	<script src="${path}/js/layer_v2.1/layer/layer.js"></script>
+	<script src="${path}/js/localLight.js"></script>
+	<script type="text/javascript">
 
     var total = document.documentElement.clientHeight;
     document.getElementById("container").style.height = total+"px";
@@ -268,7 +301,6 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
     			+ "&everyDayAmount=" + everyDayAmount + "&everyDayFrequency=" + everyDayFrequency
     			+ "&starttime=" + starttime + "&endtime=" + endtime;
     }
-
     $(function () {
         $('#table').bootstrapTable({
             method: "get",
@@ -284,58 +316,15 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
             queryParams:null,
             columns: [
                 {
-                    checkbox: "true",
-                    field: 'check',
-                    align: 'center',
-
-                    valign: 'middle'
-                }
-                ,
-                {
-                    title: "案件编号",
+                    title: "环路",
                     field: 'id',
                     align: 'center',
                     width: 160,
                     valign: 'middle'
-                },
-                {
-                    title: "案件名称",
-                    field: 'name',
-                    align: 'center',
-                    width: 160,
-                    valign: 'middle'
-                },
-                {
-                    title: "负责人",
-                    field: 'num',
-                    align: 'center',
-                    width: 80,
-                    valign: 'middle'
-                },
-                {
-                    title: '案件类型',
-                    field: 'url',
-                    align: 'center',
-                    width: 120,
-                    valign: 'middle'
-                },
-                {
-                    title: '操作',
-                    field: 'person',
-                    width: 120,
-                    align: 'center',
-                    formatter: function (cellval, row) {
-                        var  e = '<button  id="add" data-id="98" class="btn btn-xs btn-success" onclick="add(\'' + row.id + '\')">编辑</button> ';
-
-                        var  d = '<button  id="add" data-id="98" class="btn btn-xs btn-danger" onclick="del(\'' + row.id + '\')">删除</button> ';
-                        return  e + d;
-                    }
                 }
-
             ]
         });
     });
-
     function LinkColorSet(Money) {
         if (Maxmoney - Minmoney == 0) {
             return 'link';
@@ -883,7 +872,7 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 
 
 </script>
-<script src="${pageContext.request.contextPath}/js/classie.js"></script>
-<script src="${pageContext.request.contextPath}/js/modalEffects.js"></script>
+	<script src="${pageContext.request.contextPath}/js/classie.js"></script>
+	<script src="${pageContext.request.contextPath}/js/modalEffects.js"></script>
 </body>
 </html>

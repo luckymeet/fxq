@@ -235,7 +235,7 @@ public class CommonServiceImpl implements CommonService {
 	@Override
 	public void findAllPaths(Map<String, String> data, List<List<String>> res, Stack<String> previous,
 			String cur, String des) {
-		if (cur.equals(des)) {
+		if (previous.contains(cur)) {
 			res.add(new ArrayList<String>(previous));
 			return;
 		}
@@ -247,9 +247,9 @@ public class CommonServiceImpl implements CommonService {
 		for (String s : arr) {
 //			int count = findCount(previous, node);
 //			if (count > loopCount) {
-			if (previous.contains(s)) {
-				return;
-			}
+//			if (previous.contains(s)) {
+//				return;
+//			}
 			previous.push(s);
 			findAllPaths(data, res, previous, s, des);
 			previous.pop();
