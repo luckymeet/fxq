@@ -233,9 +233,9 @@ public class CommonServiceImpl implements CommonService {
 	 * @param des      目标节点
 	 */
 	@Override
-	public void findAllPaths(Map<String, String> data, List<List<String>> res, Stack<String> previous,
-			String cur, String des) {
-		if (previous.size() > 1 && previous.lastElement().equals(previous.firstElement())) {
+	public void findLoops(Map<String, String> data, List<List<String>> res, Stack<String> previous, String cur,
+			String des) {
+		if (previous.size() > 1 && cur.equals(des)) {
 			res.add(new ArrayList<String>(previous));
 			return;
 		}
@@ -251,7 +251,7 @@ public class CommonServiceImpl implements CommonService {
 //				return;
 //			}
 			previous.push(s);
-			findAllPaths(data, res, previous, s, des);
+			findLoops(data, res, previous, s, des);
 			previous.pop();
 		}
 	}

@@ -25,7 +25,7 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 <script src="${path}/js/jquery-2.2.0.min.js"></script>
 <style type="text/css">
 .link {
-	stroke: black;
+	stroke: white;
 	stroke-linejoin: bevel;
 	stroke-width: 2;
 }
@@ -192,7 +192,7 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 	<c:set var="flag" value="0" />
 	<c:forEach items="${linklist }" var="link">
 		<span id="${flag}" sourse="${link.name1}" amount="${link.money}"
-			target="${link.name2}" style="display: none"></span>
+			target="${link.name2}" style="display: none" color="${link.color}"></span>
 		<c:set var="flag" value="${flag+1}" />
 	</c:forEach>
 	<c:set var="flag" value="0" />
@@ -221,22 +221,32 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 			<div id='container' class=""></div>
 		</div>
 		<!-- 筛选模态框 -->
-		<div class="md-modal md-effect-13" id="modal-13">
+		<div class="md-modal md-effect-13" id="modal-1">
 			<div class="md-content">
 				<h3>数据网络筛选</h3>
 				<div>
 					<p>筛选出你想画出的数据网络：</p>
-					<span>总交易金额：</span><input type="text" id="amount"
-						class="form-control" /><br /> <span>总交易数：</span><input
-						type="text" id="frequency" class="form-control" /><br /> <span>日交易金额：</span><input
-						type="text" id="everyDayAmount" class="form-control" /><br /> <span>日交易数：</span><input
-						type="text" id="everyDayFrequency" class="form-control" /><br />
-					<span>开始时间：</span><input type="text" id="starttime"
-						placeholder="格式：yyyy-MM-dd HH:mm:ss" class="form-control" /><br />
-					<span>结束时间：</span><input type="text" id="endtime"
-						placeholder="格式：yyyy-MM-dd HH:mm:ss" class="form-control" /><br />
+					<span>单笔交易金额：</span><input type="text" id="amount" class="form-control" /><br />
+					<span>交易数：</span><input type="text" id="frequency" class="form-control" /><br />
+					<span>日交易金额：</span><input type="text" id="everyDayAmount" class="form-control" /><br />
+					<span>日交易数：</span><input type="text" id="everyDayFrequency" class="form-control" /><br />
+					<span>开始时间：</span><input type="date" id="starttime" class="form-control" /><br />
+					<span>结束时间：</span><input type="date" id="endtime" class="form-control" /><br />
 					<button class="md-close btn-sm btn-primary">取消</button>
 					<button class="md-close btn-sm btn-danger" onclick="filter()">开始筛选</button>
+				</div>
+			</div>
+		</div>
+	 	<div class="md-modal md-effect-13" id="modal-2">
+			<div class="md-content">
+				<h3>数据网络筛选</h3>
+				<div>
+					<p>筛选出你想画出的数据网络：</p>
+					<span>开始时间：</span><input type="date" id="startTime" class="form-control" /><br/>
+					<span>结束时间：</span><input type="date" id="endTime" class="form-control" /><br/>
+				    <span>账号：</span><textarea type="text" id="cardNos" placeholder="可输入多个账号，以英文逗号隔开" class="form-control"></textarea> /><br/>
+					<button class="md-close btn-sm btn-primary">取消</button>
+					<button class="md-close btn-sm btn-danger" onclick="findLoop()">开始查找</button>
 				</div>
 			</div>
 		</div>
@@ -247,13 +257,19 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 
 	<div class="l_left news_right" style="width: 100%;margin-bottom:20%">
 		<h6>案件管理</h6>
-		<div class="notice_check"></div>
+		<div class="notice_check">
+		      <p>
+					<input id="zzsx" type="button" value="数据筛选" style="width: 10%"
+						class="zzstart md-trigger" data-modal="modal-1" />
+					<input id="zzsx" type="button" value="查找回路" style="width: 10%"
+						class="zzstart md-trigger" data-modal="modal-2" />
+              </p>
+		</div>
 		<div class="clear"></div>
 		<div class="notice_check">
 			<div class="notice_nav r_right paddingBotme">
 				<P>
-					<input id="zzsx" type="button" value="数据筛选"
-						class="zzstart md-trigger" data-modal="modal-13" />
+<!-- 					<a class="btn btn-default" onclick="add()"><span class="glyphicon glyphicon-plus"></span>新增</a> -->
 				</P>
 			</div>
 		</div>
@@ -301,12 +317,21 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
     			+ "&everyDayAmount=" + everyDayAmount + "&everyDayFrequency=" + everyDayFrequency
     			+ "&starttime=" + starttime + "&endtime=" + endtime;
     }
+
+    function findLoop(){
+    	var startTime = $("#startTime").val();
+    	var endTime = $("#endTime").val();
+    	var cardNos = $("#cardNos").val();
+    	window.location.href = "loop?startTime=" + startTime
+    			+ "&endTime=" + endTime + "&cardNos=" + cardNos;
+    }
+
     $(function () {
         $('#table').bootstrapTable({
             method: "get",
             striped: true,
             singleSelect: false,
-            url: "loop",
+            url: "${path}/draw/loop",
             dataType: "json",
             pagination: true, //分页
             pageSize: 10,
@@ -325,23 +350,35 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
             ]
         });
     });
+//     function openFilter(){
+//         layer.open({
+//             type: 2,
+//             title: '可疑数据查询',
+//             shadeClose: true,
+//             shade: 0.5,
+//             skin: 'layui-layer-rim',
+//             closeBtn:1,
+//             area: ['1000px', '600px'],
+//             content: '${path}/static/suspiciousDataQuery.html'
+//         });
+//     }
     function LinkColorSet(Money) {
-        if (Maxmoney - Minmoney == 0) {
+//         if (Maxmoney - Minmoney == 0) {
             return 'link';
-        } else {
-            var Gap = (Money - Minmoney) / (Maxmoney - Minmoney);
-            if (Gap >= 4 / 5) {
-                return 'link link_5';
-            } else if (Gap >= 3 / 5) {
-                return 'link link_4';
-            } else if (Gap >= 2 / 5) {
-                return 'link link_3';
-            } else if (Gap >= 1 / 5) {
-                return 'link link_2';
-            } else {
-                return 'link link_1';
-            }
-        }
+//         } else {
+//             var Gap = (Money - Minmoney) / (Maxmoney - Minmoney);
+//             if (Gap >= 4 / 5) {
+//                 return 'link link_5';
+//             } else if (Gap >= 3 / 5) {
+//                 return 'link link_4';
+//             } else if (Gap >= 2 / 5) {
+//                 return 'link link_3';
+//             } else if (Gap >= 1 / 5) {
+//                 return 'link link_2';
+//             } else {
+//                 return 'link link_5';
+//             }
+//         }
     }
 
     //定义功能标记，已判别不同功能代码
@@ -586,13 +623,20 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
             		return  queryhl(s[0].getAttribute("sh"),t[0].getAttribute("sh")) ? 'link link_zjhl' : LinkColorSet(d.amount);
             	}
                 return d['source']['status'] ? LinkColorSet(d.amount) : 'link link_error';
-            });
+            })
+            .style("stroke",function(d){
+            	debugger;
+		         return d.color ? d.color : "white";
+		     })
 
         link.enter().insert("svg:line", "g.node")
             .attr("marker-end", "url(#resolved)")
             .attr("class", function (d) {
                 return d['source']['status'] ? LinkColorSet(d.amount) : 'link link_error';
             })
+            .style("stroke",function(d){
+		         return d.color ? d.color : "white";
+		     })
            .on('mouseover', function (d) {
                 document.getElementById("infon-l").innerHTML ="流水方向: "+ d['source']['id'] + " --> " + d['target']['id'];
                 document.getElementById("infom-l").innerHTML = d.amount;
@@ -679,7 +723,9 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 
 
     for(var i = 0;i<document.getElementById("colink").getAttribute("colink");i++){
-        links.push({ source: document.getElementById(i.toString()).getAttribute("sourse"), amount: document.getElementById(i.toString()).getAttribute("amount"), target: document.getElementById(i.toString()).getAttribute("target") });
+    	var content = document.getElementById(i.toString());
+    	debugger;
+        links.push({ source: content.getAttribute("sourse"), amount: content.getAttribute("amount"), color:content.getAttribute("color"), target: content.getAttribute("target") });
     }
     for(var i = 0;i<document.getElementById("conode").getAttribute("conode");i++){
     	 var content = document.getElementById('%'+i);

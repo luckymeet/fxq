@@ -11,6 +11,6 @@ public interface CommonService {
 
 	List<Node> getClusterNodeList(List<TempDraw> linkList, List<String> nameList);
 
-	void findAllPaths(Map<String, String> data, List<List<String>> res, Stack<String> previous, String cur, String des);
+	void findLoops(Map<String, String> data, List<List<String>> res, Stack<String> previous, String cur, String des);
 
 }

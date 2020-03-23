@@ -7,6 +7,8 @@ import java.util.regex.Pattern;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
+
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -59,22 +61,16 @@ public class TempDrawServiceImpl extends ServiceImpl<TempDrawMapper, TempDraw> i
 	}
 
 	@Override
-	public List<TempDraw> findDataByList(String startTime, String endTime, String cardNos) {
+	public List<TempDraw> findDataByList(String startTime, String endTime, String[] cardNo) {
 		LambdaQueryWrapper<TempDraw> wrapper = Wrappers.lambdaQuery();
-
 		if(StringUtils.isNotBlank(startTime)) {
 			wrapper.gt(TempDraw::getTime,startTime);
 		}
 		if(StringUtils.isNotBlank(endTime)) {
 			wrapper.lt(TempDraw::getTime,endTime);
 		}
-		if(StringUtils.isNotBlank(cardNos)) {
-			wrapper.and(w -> {
-						Pattern.compile(",").splitAsStream(cardNos).forEach(s ->
-							w.or(w1 -> w1.eq(TempDraw::getCard1,s))
-						);
-						return w;
-			});
+		if (cardNo != null && cardNo.length > 0) {
+			wrapper.in(TempDraw::getCard1, cardNo);
 		}
 		return dao.selectList(wrapper);
 	}
