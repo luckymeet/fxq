@@ -61,6 +61,16 @@ public class TempDrawServiceImpl extends ServiceImpl<TempDrawMapper, TempDraw> i
 		return forkJoinPool.invoke(task);
 	}
 
+	/**
+	 * 根据条件查询流水数据
+	 *
+	 * @author ycw
+	 * @date 2020/03/24 16:50:03
+	 * @param startTime 开始时间
+	 * @param endTime   结束时间
+	 * @param cardNo    账号（多个账号以逗号隔开）
+	 * @return
+	 */
 	@Override
 	public List<TempDraw> findDataByList(String startTime, String endTime, String[] cardNo) {
 		LambdaQueryWrapper<TempDraw> wrapper = Wrappers.lambdaQuery();

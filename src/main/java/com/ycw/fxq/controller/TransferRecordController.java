@@ -20,25 +20,58 @@ import com.ycw.fxq.common.response.ResponseVO;
 import com.ycw.fxq.service.impl.CommonService;
 import com.ycw.fxq.service.impl.TempDrawService;
 
+import lombok.extern.slf4j.Slf4j;
+
+/**
+ * 交易流水
+ * @author ycw
+ * @date 2020/03/24 16:43:47
+ * @version 1.00
+ *
+ * @record
+ * <pre>
+ * version  author      date          desc
+ * -------------------------------------------------
+ * 1.00     ycw         2020/03/24    新建
+ * -------------------------------------------------
+ * </pre>
+ */
+@Slf4j
 @RestController
 public class TransferRecordController {
+
 	@Autowired
 	private TempDrawService tempDrawService;
 
 	@Autowired
 	private CommonService commonService;
 
+	/**
+	 * 查找有向图间的路径
+	 *
+	 * @author ycw
+	 * @date 2020/03/24 16:38:37
+	 * @param startTime   开始时间
+	 * @param endTime     结束时间
+	 * @param cardNos     账号（多个账号以逗号隔开）
+	 * @param payAcntName 付款账号
+	 * @param recAcntName 收款账号
+	 * @param type        类型：1-查询环路，2-查询路径
+	 * @return
+	 */
 	@GetMapping("/draw/path/list")
 	public ResponseVO<List<Map<String, String>>> findPath(String startTime, String endTime, String cardNos,
 			String payAcntName, String recAcntName, String type) {
 		List<List<String>> pathList = null;
 		if ("1".equals(type)) {
+			// 获取账户间的环路
 			pathList = findLoop(startTime, endTime, cardNos);
 		} else {
+			// 获取两个账户间的所有路径
 			pathList = findPath(startTime, endTime, payAcntName, recAcntName);
 		}
 
-		/* 环路列表 1——2——3——1*/
+		/* 路线列表 1——2——3——1 */
 		List<Map<String, String>> loopResult = pathList.stream().map(stringList -> {
 			Map<String, String> map = new HashMap<>();
 			map.put("startNode", stringList.get(0));
@@ -55,14 +88,15 @@ public class TransferRecordController {
 			payAcntName = new String(payAcntName.getBytes("iso-8859-1"), "utf-8");
 			recAcntName = new String(recAcntName.getBytes("iso-8859-1"), "utf-8");
 		} catch (UnsupportedEncodingException e) {
-			 e.printStackTrace();
+			log.error("请求参数解码失败", e);
 		}
+
 		/* 根据条件查询流水 */
 		LambdaQueryWrapper<TempDraw> queryWrapper = Wrappers.lambdaQuery();
-		if(StringUtils.isNotBlank(startTime)) {
+		if (StringUtils.isNotBlank(startTime)) {
 			queryWrapper.ge(TempDraw::getTime, startTime);
 		}
-		if(StringUtils.isNotBlank(endTime)) {
+		if (StringUtils.isNotBlank(endTime)) {
 			queryWrapper.le(TempDraw::getTime, endTime);
 		}
 		List<TempDraw> drawList = tempDrawService.list(queryWrapper);

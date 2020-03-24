@@ -22,7 +22,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.ModelAndView;
 
-import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.ycw.fxq.bean.Node;
@@ -32,6 +31,20 @@ import com.ycw.fxq.common.utils.BeanHandleUtils;
 import com.ycw.fxq.service.impl.CommonService;
 import com.ycw.fxq.service.impl.TempDrawService;
 
+/**
+ * 拓扑图
+ * @author ycw
+ * @date 2020/03/24 16:42:20
+ * @version 1.00
+ *
+ * @record
+ * <pre>
+ * version  author      date          desc
+ * -------------------------------------------------
+ * 1.00     ycw         2020/03/24    新建
+ * -------------------------------------------------
+ * </pre>
+ */
 @Controller
 @RequestMapping("/draw")
 public class DrawController {
@@ -52,7 +65,7 @@ public class DrawController {
 	}
 
 	@GetMapping("/topology")
-	public ModelAndView goindex(HttpServletRequest request) {
+	public ModelAndView topology(HttpServletRequest request) {
 		ModelAndView mv = new ModelAndView();
 		mv.addObject("linklist", data);
 		mv.addObject("nodelist", tempDrawService.findname());
@@ -116,8 +129,18 @@ public class DrawController {
 		return linkList;
 	}
 
+	/**
+	 * 查找有向图间的环路
+	 *
+	 * @author ycw
+	 * @date 2020/03/24 16:46:21
+	 * @param startTime 开始时间
+	 * @param endTime   结束时间
+	 * @param cardNos   账号（多个账号以逗号隔开）
+	 * @return
+	 */
 	@GetMapping("/loop")
-	public ModelAndView getLoop(String startTime, String endTime, String cardNos) {
+	public ModelAndView findLoop(String startTime, String endTime, String cardNos) {
 		/* 根据条件查出流水 */
 		String[] cardNoArray = StringUtils.split(StringUtils.trimToEmpty(cardNos), ',');
 		List<TempDraw> drawList = tempDrawService.findDataByList(startTime, endTime, cardNoArray);
@@ -170,14 +193,25 @@ public class DrawController {
 		return mv;
 	}
 
+	/**
+	 * 查找有向图间的路径
+	 *
+	 * @author yuminjun
+	 * @date 2020/03/24 16:48:33
+	 * @param startTime   开始时间
+	 * @param endTime     结束时间
+	 * @param payAcntName 付款账户
+	 * @param recAcntName 收款账户
+	 * @return
+	 */
 	@GetMapping("/path")
-	public ModelAndView getPath(String startTime, String endTime, String payAcntName, String recAcntName) {
+	public ModelAndView findPath(String startTime, String endTime, String payAcntName, String recAcntName) {
 		/* 根据条件查询流水 */
 		LambdaQueryWrapper<TempDraw> queryWrapper = Wrappers.lambdaQuery();
-		if(StringUtils.isNotBlank(startTime)) {
+		if (StringUtils.isNotBlank(startTime)) {
 			queryWrapper.ge(TempDraw::getTime, startTime);
 		}
-		if(StringUtils.isNotBlank(endTime)) {
+		if (StringUtils.isNotBlank(endTime)) {
 			queryWrapper.le(TempDraw::getTime, endTime);
 		}
 		List<TempDraw> drawList = tempDrawService.list(queryWrapper);
@@ -229,7 +263,7 @@ public class DrawController {
 		return mv;
 	}
 
-	public Set<String> getTransSet(List<List<String>> accRes){
+	private Set<String> getTransSet(List<List<String>> accRes) {
 		Set<String> pathSet = new HashSet<>();
 		for (List<String> accPath : accRes) {
 			for (int i = 0; i < accPath.size() - 1; i++) {
