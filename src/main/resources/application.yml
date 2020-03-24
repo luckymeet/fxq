@@ -2,7 +2,7 @@ server:
   # HTTP端口
   port: 8080
   tomcat: 
-    uri-encoding: utf-8
+    uri-encoding: UTF-8
 spring:
   # 解决 多个接口上的@FeignClient("相同服务名")会报错,overriding is disabled
   main:
@@ -56,9 +56,9 @@ spring:
       suffix: .jsp
   http:
     encoding: 
+      charset: UTF-8
       force: true
       enabled: true
-      charset: utf-8
   redis:
     host: 39.105.58.23
     port: 6379

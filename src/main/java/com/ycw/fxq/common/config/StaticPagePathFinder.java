@@ -55,10 +55,10 @@ public class StaticPagePathFinder {
 	}
 
 	private String relativeFliePath(String basePath, Resource resource) throws IOException {
-		return resource.getURL().getPath().substring(basePath.length());
+		return resource.getURL().getPath().substring(basePath.length()).replace(".html","");
 	}
 
 	private String buildRequestMapping(String filePath) {
-		return filePath.substring(filePath.lastIndexOf('/'));
+		return filePath.substring(filePath.lastIndexOf('/')).replace(".html","");
 	}
 }

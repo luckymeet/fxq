@@ -99,7 +99,7 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 }
 
 #container {
-	width: 70%;
+	width: 85%;
 	border: 1px solid gray;
 	border-radius: 5px;
 	position: relative;
@@ -110,9 +110,10 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 }
 
 .leftdiv {
-	width: 14%;
+	width: 15%;
 	height: 700px;
 	float: left;
+	border:1px solid #ccc;
 }
 
 .rightdiv {
@@ -226,12 +227,12 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 				<h3>数据网络筛选</h3>
 				<div>
 					<p>筛选出你想画出的数据网络：</p>
-					<span>单笔交易金额：</span><input type="text" id="amount" class="form-control" /><br />
-					<span>交易数：</span><input type="text" id="frequency" class="form-control" /><br />
-					<span>日交易金额：</span><input type="text" id="everyDayAmount" class="form-control" /><br />
-					<span>日交易数：</span><input type="text" id="everyDayFrequency" class="form-control" /><br />
-					<span>开始时间：</span><input type="date" id="starttime" class="form-control" /><br />
-					<span>结束时间：</span><input type="date" id="endtime" class="form-control" /><br />
+					<span>单笔交易金额：</span><input type="text" id="amount" class="form-control" /><br/>
+					<span>交易数：</span><input type="text" id="frequency" class="form-control" /><br/>
+					<span>日交易金额：</span><input type="text" id="everyDayAmount" class="form-control" /><br/>
+					<span>日交易数：</span><input type="text" id="everyDayFrequency" class="form-control" /><br/>
+					<span>开始时间：</span><input type="date" id="startTime1" class="form-control" /><br/>
+					<span>结束时间：</span><input type="date" id="endTime1" class="form-control" /><br/>
 					<button class="md-close btn-sm btn-primary">取消</button>
 					<button class="md-close btn-sm btn-danger" onclick="filter()">开始筛选</button>
 				</div>
@@ -242,11 +243,25 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 				<h3>数据网络筛选</h3>
 				<div>
 					<p>筛选出你想画出的数据网络：</p>
-					<span>开始时间：</span><input type="date" id="startTime" class="form-control" /><br/>
-					<span>结束时间：</span><input type="date" id="endTime" class="form-control" /><br/>
-				    <span>账号：</span><textarea type="text" id="cardNos" placeholder="可输入多个账号，以英文逗号隔开" class="form-control"></textarea> /><br/>
+					<span>开始时间：</span><input type="date" id="startTime2" class="form-control" /><br/>
+					<span>结束时间：</span><input type="date" id="endTime2" class="form-control" /><br/>
+				    <span>账号：</span><textarea type="text" id="cardNos" placeholder="可输入多个账号，以英文逗号隔开" class="form-control"></textarea><br/>
 					<button class="md-close btn-sm btn-primary">取消</button>
 					<button class="md-close btn-sm btn-danger" onclick="findLoop()">开始查找</button>
+				</div>
+			</div>
+		</div>
+		<div class="md-modal md-effect-13" id="modal-3">
+			<div class="md-content">
+				<h3>数据网络筛选</h3>
+				<div>
+					<p>筛选出你想画出的数据网络：</p>
+					<span>开始时间：</span><input type="date" id="startTime3" class="form-control" /><br/>
+					<span>结束时间：</span><input type="date" id="endTime3" class="form-control" /><br/>
+				    <span>付款账户：</span><input type="text" id="payAcntName" class="form-control" /><br/>
+					<span>收款账户：</span><input type="text" id="recAcntName" class="form-control" /><br/>
+					<button class="md-close btn-sm btn-primary">取消</button>
+					<button class="md-close btn-sm btn-danger" onclick="findPath()">开始查找</button>
 				</div>
 			</div>
 		</div>
@@ -256,13 +271,13 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 	</div>
 
 	<div class="l_left news_right" style="width: 100%;margin-bottom:20%">
-		<h6>案件管理</h6>
 		<div class="notice_check">
-		      <p>
-					<input id="zzsx" type="button" value="数据筛选" style="width: 10%"
-						class="zzstart md-trigger" data-modal="modal-1" />
-					<input id="zzsx" type="button" value="查找回路" style="width: 10%"
-						class="zzstart md-trigger" data-modal="modal-2" />
+		      <p style="margin-left:15%">
+					<input id="zz" class="zzstart" type="button" style="width: 10%" value="重置数据" onclick="reset()" />
+<!-- 					<input id="gd" type="button" value="固定静止" style="width: 10%" class="zzstart md-trigger" onclick="gds()" /> -->
+					<input id="zzsx" type="button" value="数据筛选" style="width: 10%" class="zzstart md-trigger" data-modal="modal-1" />
+					<input id="zzsx1" type="button" value="查找回路" style="width: 10%" class="zzstart md-trigger" data-modal="modal-2" />
+					<input id="zzsx2" type="button" value="查找路径" style="width: 10%" class="zzstart md-trigger" data-modal="modal-3" />
               </p>
 		</div>
 		<div class="clear"></div>
@@ -299,11 +314,15 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 	<script src="${path}/js/localLight.js"></script>
 	<script type="text/javascript">
 
-    var total = document.documentElement.clientHeight;
-    document.getElementById("container").style.height = total+"px";
+	var total = document.documentElement.clientHeight;
+    document.getElementById("container").style.height = total * 0.8 + "px";
 
     function submitsx(){
 
+    }
+
+    function reset(){
+    	window.location.href = "topology";
     }
 
     function filter(){
@@ -311,37 +330,106 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
     	var frequency = $("#frequency").val();
     	var everyDayAmount = $("#everyDayAmount").val();
     	var everyDayFrequency = $("#everyDayFrequency").val();
-    	var starttime = $("#starttime").val();
-    	var endtime = $("#endtime").val();
+    	var starttime = $("#startTime1").val();
+    	var endtime = $("#endTime1").val();
     	window.location.href = "filter?frequency=" + frequency + "&amount=" + amount
     			+ "&everyDayAmount=" + everyDayAmount + "&everyDayFrequency=" + everyDayFrequency
     			+ "&starttime=" + starttime + "&endtime=" + endtime;
     }
 
+    function isEmpty(obj){
+        if(typeof obj == "undefined" || obj == null || obj == ""){
+            return true;
+        }else{
+            return false;
+        }
+    }
+
+    function getUrlParam(name) {
+        var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)"); //构造一个含有目标参数的正则表达式对象
+        var r = window.location.search.substr(1).match(reg);  //匹配目标参数
+        if (r != null) return unescape(r[2]); return null; //返回参数值
+    }
+
     function findLoop(){
-    	var startTime = $("#startTime").val();
-    	var endTime = $("#endTime").val();
+    	var startTime = $("#startTime2").val();
+    	var endTime = $("#endTime2").val();
     	var cardNos = $("#cardNos").val();
+    	if (isEmpty(cardNos)) {
+    		layer.msg("账号不能为空");
+    	}
     	window.location.href = "loop?startTime=" + startTime
-    			+ "&endTime=" + endTime + "&cardNos=" + cardNos;
+    			+ "&endTime=" + endTime + "&cardNos=" + cardNos + "&type=1";
+    }
+
+    function findPath(){
+    	var payAcntName = $("#payAcntName").val();
+    	var recAcntName = $("#recAcntName").val();
+    	if (isEmpty(payAcntName)) {
+    		layer.msg("付款账户不能为空");
+    	}
+    	if (isEmpty(recAcntName)) {
+    		layer.msg("收款账户不能为空");
+    	}
+    	var startTime = $("#startTime3").val();
+    	var endTime = $("#endTime3").val();
+    	window.location.href = "path?startTime=" + startTime
+    			+ "&endTime=" + endTime + "&payAcntName=" + payAcntName + "&recAcntName=" + recAcntName + "&type=2";
     }
 
     $(function () {
+    	var type = getUrlParam("type");
+    	if (isEmpty(type)) {
+    		return;
+    	}
+    	var cardNos = getUrlParam("cardNos");
+    	if (type == '1' && isEmpty(type)) {
+    		return;
+    	}
+    	var payAcntName = getUrlParam("payAcntName");
+    	var recAcntName = getUrlParam("recAcntName");
+    	if (type == '2' && (isEmpty(payAcntName) || isEmpty(recAcntName))) {
+    		return;
+    	}
+    	var startTime = getUrlParam("startTime");
+    	var endTime = getUrlParam("endTime");
+        var queryParams = {
+        		startTime: startTime,
+        		endTime: endTime,
+        		cardNos: cardNos,
+        		payAcntName: payAcntName,
+        		recAcntName: recAcntName,
+        		type: type
+            };
         $('#table').bootstrapTable({
             method: "get",
             striped: true,
             singleSelect: false,
-            url: "${path}/draw/loop",
+            url: "${path}/draw/path/list",
             dataType: "json",
             pagination: true, //分页
             pageSize: 10,
             pageNumber: 1,
             search: false, //显示搜索框
             contentType: "application/x-www-form-urlencoded",
-            queryParams:null,
+            queryParams: queryParams,
             columns: [
                 {
-                    title: "环路",
+                    title: "开始节点",
+                    field: 'startNode',
+                    align: 'center',
+                    width: 50,
+                    valign: 'middle'
+                },
+                {
+                    title: "结束节点",
+                    field: 'endNode',
+                    align: 'center',
+                    width: 50,
+                    valign: 'middle'
+                },
+                {
+                    title: "路径",
                     field: 'path',
                     align: 'center',
                     width: 160,
@@ -487,8 +575,8 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
     }
 
     //增加连线
-    Topology.prototype.addLink = function (source, target,amoun) {
-        this.links.push({ source: this.findNode(source), target: this.findNode(target),amount:amoun });
+    Topology.prototype.addLink = function (source, target,linkAmount,linkColor) {
+        this.links.push({ source: this.findNode(source), target: this.findNode(target), amount: linkAmount, color: linkColor});
     }
 
     //增加多个连线
@@ -496,7 +584,7 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
         if (Object.prototype.toString.call(links) == '[object Array]') {
             var self = this;
             links.forEach(function (link) {
-                self.addLink(link['source'], link['target'],link['amount']);
+                self.addLink(link['source'], link['target'],link['amount'],link['color']);
             });
         }
     }
@@ -625,7 +713,6 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
                 return d['source']['status'] ? LinkColorSet(d.amount) : 'link link_error';
             })
             .style("stroke",function(d){
-            	debugger;
 		         return d.color ? d.color : "white";
 		     })
 
@@ -671,7 +758,7 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
         nodeEnter.append("svg:image")
             .attr("class", "circle")
             .attr("xlink:href", function (d) {
-                return (d.img == null || d.img == "") ? "${path}/img/node/person.png" : "${pageContext.request.contextPath}//img/node/" + d.img;
+                return (d.img == null || d.img == "") ? "${path}/img/node/person.png" : "${pageContext.request.contextPath}/img/node/" + d.img;
             })
             .attr("x", "-32px")
             .attr("y", "-32px")
@@ -724,7 +811,6 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 
     for(var i = 0;i<document.getElementById("colink").getAttribute("colink");i++){
     	var content = document.getElementById(i.toString());
-    	debugger;
         links.push({ source: content.getAttribute("sourse"), amount: content.getAttribute("amount"), color:content.getAttribute("color"), target: content.getAttribute("target") });
     }
     for(var i = 0;i<document.getElementById("conode").getAttribute("conode");i++){

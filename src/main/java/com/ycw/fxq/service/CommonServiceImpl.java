@@ -26,6 +26,7 @@ import org.springframework.web.context.request.ServletRequestAttributes;
 
 import com.ycw.fxq.bean.Node;
 import com.ycw.fxq.bean.TempDraw;
+import com.ycw.fxq.bean.TempDrawVO;
 import com.ycw.fxq.louvain.LouvainHelper;
 import com.ycw.fxq.service.impl.CommonService;
 
@@ -46,7 +47,7 @@ public class CommonServiceImpl implements CommonService {
 	 * @return
 	 */
 	@Override
-	public List<Node> getClusterNodeList(List<TempDraw> linkList, List<String> nameList) {
+	public List<Node> getClusterNodeList(List<TempDrawVO> linkList, List<String> nameList) {
 		Map<String, Integer> nameIndexMap = new HashMap<>();
 		Map<Integer, String> indexNameMap = new HashMap<>();
 		for (int i = 0; i < nameList.size(); i++) {
@@ -79,7 +80,7 @@ public class CommonServiceImpl implements CommonService {
 		return request.getSession();
 	}
 
-	private List<TempDraw> countWeight(List<TempDraw> linkList, List<String> nameList,
+	private List<TempDraw> countWeight(List<TempDrawVO> linkList, List<String> nameList,
 			Map<String, Integer> nameIndexMap, Map<Integer, String> indexNameMap) {
 		int node = nameList.size();
 		double[][] moneyMatrix = new double[node][node];
@@ -247,9 +248,9 @@ public class CommonServiceImpl implements CommonService {
 		for (String s : arr) {
 //			int count = findCount(previous, node);
 //			if (count > loopCount) {
-//			if (previous.contains(s)) {
-//				return;
-//			}
+			if (previous.indexOf(s) > 0) {
+				continue;
+			}
 			previous.push(s);
 			findLoops(data, res, previous, s, des);
 			previous.pop();

@@ -16,6 +16,7 @@ import org.springframework.stereotype.Service;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.ycw.fxq.bean.Node;
 import com.ycw.fxq.bean.TempDraw;
+import com.ycw.fxq.bean.TempDrawVO;
 import com.ycw.fxq.mapper.TempDrawMapper;
 import com.ycw.fxq.service.impl.TempDrawService;
 import com.ycw.fxq.task.FindDataTask;
@@ -27,7 +28,7 @@ public class TempDrawServiceImpl extends ServiceImpl<TempDrawMapper, TempDraw> i
 	TempDrawMapper dao;
 
 	@Override
-	public List<TempDraw> findDataByParams(Map<String, Integer> params) {
+	public List<TempDrawVO> findDataByParams(Map<String, Integer> params) {
 		return dao.findall(params);
 	}
 
@@ -37,7 +38,7 @@ public class TempDrawServiceImpl extends ServiceImpl<TempDrawMapper, TempDraw> i
 	}
 
 	@Override
-	public List<TempDraw> filterData(Map<String, String> params) {
+	public List<TempDrawVO> filterData(Map<String, String> params) {
 		return dao.filterData(params);
 	}
 
@@ -52,7 +53,7 @@ public class TempDrawServiceImpl extends ServiceImpl<TempDrawMapper, TempDraw> i
 	 * @return
 	 */
 	@Override
-	public List<TempDraw> findAllData() {
+	public List<TempDrawVO> findAllData() {
 		ForkJoinPool forkJoinPool = new ForkJoinPool();
 		Integer count = this.getTotalCount();// 查询总数
 		FindDataTask task = new FindDataTask(0, count);
@@ -69,9 +70,9 @@ public class TempDrawServiceImpl extends ServiceImpl<TempDrawMapper, TempDraw> i
 		if(StringUtils.isNotBlank(endTime)) {
 			wrapper.lt(TempDraw::getTime,endTime);
 		}
-		if (cardNo != null && cardNo.length > 0) {
-			wrapper.in(TempDraw::getCard1, cardNo);
-		}
+//		if (cardNo != null && cardNo.length > 0) {
+//			wrapper.in(TempDraw::getCard1, cardNo);
+//		}
 		return dao.selectList(wrapper);
 	}
 }

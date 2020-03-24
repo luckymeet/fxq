@@ -1,5 +1,6 @@
 package com.ycw.fxq.common.config;
 
+import java.io.IOException;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,15 +34,29 @@ public class WebMvcConfig implements WebMvcConfigurer {
 	@Autowired
 	private PageParamsMethodArgumentResolver pageParamsMethodArgumentResolver;
 
+	@Autowired
+	private StaticPagePathFinder staticPagePathFinder;
+
 	@Override
 	public void addArgumentResolvers(List<HandlerMethodArgumentResolver> argumentResolvers) {
 		argumentResolvers.add(pageParamsMethodArgumentResolver);// 分页参数处理
 	}
 
-    @Override
-    public void addViewControllers(ViewControllerRegistry registry) {
-        registry.addViewController("/").setViewName("static/index");
-        registry.setOrder(Ordered.HIGHEST_PRECEDENCE);
-    }
+	@Override
+	public void addViewControllers(ViewControllerRegistry registry) {
+		try {
+			registry.addViewController("/").setViewName("static/index");
+			registry.setOrder(Ordered.HIGHEST_PRECEDENCE);
+			for (StaticPagePathFinder.PagePaths pagePaths : staticPagePathFinder.findPath()) {
+				String urlPath = pagePaths.getUrlPath();
+				registry.addViewController(urlPath).setViewName("static/" + pagePaths.getFilePath());
+				if (!urlPath.isEmpty()) {
+					registry.addViewController(urlPath).setViewName("static/" + pagePaths.getFilePath());
+				}
+			}
+		} catch (IOException e) {
+			throw new RuntimeException("Unable to locate static pages:" + e.getMessage(), e);
+		}
+	}
 
 }

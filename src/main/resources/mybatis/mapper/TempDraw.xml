@@ -4,7 +4,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.ycw.fxq.mapper.TempDrawMapper">
 
-	<select id="findall" resultType="com.ycw.fxq.bean.TempDraw" parameterType="Map">
+	<select id="findall" resultType="com.ycw.fxq.bean.TempDrawVO" parameterType="Map">
 		SELECT
 			t.name1, t.name2, t.money FROM Temp_Draw t
 		<if test="index != null">
@@ -20,7 +20,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 	</select>
 
 	<!-- 根据频率和转账金额过滤出可疑数据 -->
-	<select id="filterData" resultType="com.ycw.fxq.bean.TempDraw" parameterType="Map">
+	<select id="filterData" resultType="com.ycw.fxq.bean.TempDrawVO" parameterType="Map">
 		select * from temp_draw aa inner join (
 		SELECT
 		t.name1,t.name2
