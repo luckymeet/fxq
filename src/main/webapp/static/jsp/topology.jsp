@@ -11,7 +11,6 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-<title>银行数据分析网络</title>
 <link rel="stylesheet" type="text/css" href="${path}/css/bootstrap.css">
 <link href="${path}/css/component.css" rel="stylesheet">
 <link href="${path}/js/bstable/css/bootstrap.min.css" rel="stylesheet"
