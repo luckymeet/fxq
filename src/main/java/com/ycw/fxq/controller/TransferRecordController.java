@@ -1,6 +1,7 @@
 package com.ycw.fxq.controller;
 
 import java.io.UnsupportedEncodingException;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -84,12 +85,8 @@ public class TransferRecordController {
 	}
 
 	private List<List<String>> findPath(String startTime, String endTime, String payAcntName, String recAcntName) {
-		try {
-			payAcntName = new String(payAcntName.getBytes("iso-8859-1"), "utf-8");
-			recAcntName = new String(recAcntName.getBytes("iso-8859-1"), "utf-8");
-		} catch (UnsupportedEncodingException e) {
-			log.error("请求参数解码失败", e);
-		}
+		payAcntName = new String(payAcntName.getBytes(StandardCharsets.ISO_8859_1), StandardCharsets.UTF_8);
+		recAcntName = new String(recAcntName.getBytes(StandardCharsets.ISO_8859_1), StandardCharsets.UTF_8);
 
 		/* 根据条件查询流水 */
 		LambdaQueryWrapper<TempDraw> queryWrapper = Wrappers.lambdaQuery();
