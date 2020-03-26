@@ -3,16 +3,13 @@ package com.ycw.fxq.service;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ForkJoinPool;
-import java.util.regex.Pattern;
 
-import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-import com.baomidou.mybatisplus.core.toolkit.Wrappers;
-
-import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.ycw.fxq.bean.Node;
 import com.ycw.fxq.bean.TempDraw;
@@ -25,26 +22,26 @@ import com.ycw.fxq.task.FindDataTask;
 public class TempDrawServiceImpl extends ServiceImpl<TempDrawMapper, TempDraw> implements TempDrawService {
 
 	@Autowired
-	TempDrawMapper dao;
+	TempDrawMapper tempDrawMapper;
 
 	@Override
 	public List<TempDrawVO> findDataByParams(Map<String, Integer> params) {
-		return dao.findall(params);
+		return tempDrawMapper.findall(params);
 	}
 
 	@Override
 	public List<Node> findname() {
-		return dao.findname();
+		return tempDrawMapper.findname();
 	}
 
 	@Override
 	public List<TempDrawVO> filterData(Map<String, String> params) {
-		return dao.filterData(params);
+		return tempDrawMapper.filterData(params);
 	}
 
 	@Override
 	public Integer getTotalCount() {
-		return dao.getTotalCount();
+		return tempDrawMapper.getTotalCount();
 	}
 
 	/**
@@ -83,6 +80,6 @@ public class TempDrawServiceImpl extends ServiceImpl<TempDrawMapper, TempDraw> i
 //		if (cardNo != null && cardNo.length > 0) {
 //			wrapper.in(TempDraw::getCard1, cardNo);
 //		}
-		return dao.selectList(wrapper);
+		return tempDrawMapper.selectList(wrapper);
 	}
 }

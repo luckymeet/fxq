@@ -89,13 +89,11 @@ public class DrawController {
 		List<TempDrawVO> linkList = getLinkList(request);
 
 		/* 获取节点名称 */
-		Set<String> nameSet = linkList.stream().map(item -> item.getName1()).collect(Collectors.toSet());
-		nameSet.addAll(linkList.stream().map(item -> item.getName2()).collect(Collectors.toSet()));
+		Set<String> nameSet = linkList.stream().map(TempDrawVO :: getName1).collect(Collectors.toSet());
+		nameSet.addAll(linkList.stream().map(TempDrawVO :: getName2).collect(Collectors.toSet()));
 
 		// 获取聚类后的节点列表
 		List<Node> nodeList = commonService.getClusterNodeList(linkList, new ArrayList<>(nameSet));
-		request.getSession().setAttribute("linkList", linkList);
-		request.getSession().setAttribute("nodeList", nodeList);
 
 		/* 渲染页面 */
 		ModelAndView mv = new ModelAndView();
@@ -184,8 +182,8 @@ public class DrawController {
 		}
 
 		/* 获取节点名称 */
-		Set<String> nameSet = drawList.stream().map(item -> item.getName1()).collect(Collectors.toSet());
-		nameSet.addAll(drawList.stream().map(item -> item.getName2()).collect(Collectors.toSet()));
+		Set<String> nameSet = drawList.stream().map(TempDraw :: getName1).collect(Collectors.toSet());
+		nameSet.addAll(drawList.stream().map(TempDraw :: getName2).collect(Collectors.toSet()));
 		List<Node> nodeList = new ArrayList<>();
 		for (String name : nameSet) {
 			Node node = new Node();
@@ -254,8 +252,8 @@ public class DrawController {
 		}
 
 		/* 获取节点名称 */
-		Set<String> nameSet = drawList.stream().map(item -> item.getName1()).collect(Collectors.toSet());
-		nameSet.addAll(drawList.stream().map(item -> item.getName2()).collect(Collectors.toSet()));
+		Set<String> nameSet = drawList.stream().map(TempDraw :: getName1).collect(Collectors.toSet());
+		nameSet.addAll(drawList.stream().map(TempDraw :: getName2).collect(Collectors.toSet()));
 		List<Node> nodeList = new ArrayList<>();
 		for (String name : nameSet) {
 			Node node = new Node();
