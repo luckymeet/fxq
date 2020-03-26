@@ -25,6 +25,20 @@ import com.ycw.fxq.bean.TempDrawVO;
 import com.ycw.fxq.louvain.LouvainHelper;
 import com.ycw.fxq.service.impl.CommonService;
 
+/**
+ * 公共业务逻辑Service实现类
+ * @author ycw
+ * @date 2020/03/26 14:04:41
+ * @version 1.00
+ *
+ * @record
+ * <pre>
+ * version  author      date          desc
+ * -------------------------------------------------
+ * 1.00     ycw         2020/03/26    新建
+ * -------------------------------------------------
+ * </pre>
+ */
 @Service
 public class CommonServiceImpl implements CommonService {
 
@@ -36,9 +50,10 @@ public class CommonServiceImpl implements CommonService {
 	/**
 	 * 获取聚类后的节点列表
 	 *
-	 * @param linkList
-	 * @param nameList
-	 * @param rootPath
+	 * @author ycw
+	 * @date 2020/03/26 13:49:45
+	 * @param linkList 边列表
+	 * @param nameList 节点列表
 	 * @return
 	 */
 	@Override
@@ -66,6 +81,17 @@ public class CommonServiceImpl implements CommonService {
 		return nodeList;
 	}
 
+	/**
+	 * 计算每条边的权重
+	 *
+	 * @author ycw
+	 * @date 2020/03/26 13:49:45
+	 * @param linkList     边列表
+	 * @param nameList     节点列表
+	 * @param nameIndexMap key:节点名称，value:节点编号
+	 * @param indexNameMap key:节点编号，value:节点名称
+	 * @return
+	 */
 	private List<TempDraw> countWeight(List<TempDrawVO> linkList, List<String> nameList,
 			Map<String, Integer> nameIndexMap, Map<Integer, String> indexNameMap) {
 		int node = nameList.size();
@@ -110,11 +136,10 @@ public class CommonServiceImpl implements CommonService {
 	/**
 	 * 获取节点列表
 	 *
-	 * @param indexNameMap
-	 * @param CLUSTER_PATH
-	 * @param IMG_PATH
+	 * @author ycw
+	 * @date 2020/03/26 13:54:29
+	 * @param indexNameMap key:节点编号，value:节点名称
 	 * @return
-	 * @throws IOException
 	 */
 	private List<Node> getNodeList(Map<Integer, String> indexNameMap) {
 		File imgFile = new File(IMG_PATH);// 图片文件夹路径
@@ -127,9 +152,9 @@ public class CommonServiceImpl implements CommonService {
 	/**
 	 * 从社区划分后的结果文件读取数据
 	 *
-	 * @param CLUSTER_PATH
+	 * @author ycw
+	 * @date 2020/03/26 13:55:04
 	 * @return
-	 * @throws IOException
 	 */
 	private List<List<String>> getClusterListByClusterFile() {
 		List<List<String>> clusterList = new ArrayList<>();
@@ -149,9 +174,11 @@ public class CommonServiceImpl implements CommonService {
 	/**
 	 * 组装节点列表
 	 *
-	 * @param indexNameMap
-	 * @param imgNamelist
-	 * @param clusterList
+	 * @author ycw
+	 * @date 2020/03/26 13:49:45
+	 * @param indexNameMap key:节点编号，value:节点名称
+	 * @param imgNamelist  节点图片文件列表
+	 * @param clusterList  社区划分结果列表
 	 * @return
 	 */
 	private List<Node> makeNodeList(Map<Integer, String> indexNameMap, String[] imgNamelist,
@@ -172,13 +199,14 @@ public class CommonServiceImpl implements CommonService {
 	/**
 	 * 进行社区划分
 	 *
-	 * @param linkList
-	 * @param nameList
-	 * @param indexMap
-	 * @param CLUSTER_PATH
+	 * @author ycw
+	 * @date 2020/03/26 13:49:45
+	 * @param linkList     边列表
+	 * @param nameList     节点列表
+	 * @param nameIndexMap key:节点名称，value:节点编号
 	 * @throws IOException
 	 */
-	private void cluster(List<TempDraw> linkList, List<String> nameList, Map<String, Integer> indexMap)
+	private void cluster(List<TempDraw> linkList, List<String> nameList, Map<String, Integer> nameIndexMap)
 			throws IOException {
 		File dir = new File(CLUSTER_PATH);
 		if (!dir.exists()) {
@@ -197,8 +225,8 @@ public class CommonServiceImpl implements CommonService {
 		try (BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(file), "UTF-8"))) {
 			StringBuilder sb = new StringBuilder(nameList.size() + " " + linkList.size() + "\n");
 			for (TempDraw drwa : linkList) {
-				sb.append(indexMap.get(drwa.getName1())).append(" ").append(indexMap.get(drwa.getName2())).append(" ")
-						.append(drwa.getMoney()).append("\n");
+				sb.append(nameIndexMap.get(drwa.getName1())).append(" ").append(nameIndexMap.get(drwa.getName2()))
+						.append(" ").append(drwa.getMoney()).append("\n");
 			}
 			bw.write(sb.toString().trim());
 		} catch (IOException e) {
@@ -214,6 +242,8 @@ public class CommonServiceImpl implements CommonService {
 	/**
 	 * 查找有向图节点间路径
 	 *
+	 * @author ycw
+	 * @date 2020/03/26 13:49:45
 	 * @param res      结果集
 	 * @param previous 当前路径
 	 * @param cur      当前节点
@@ -243,6 +273,15 @@ public class CommonServiceImpl implements CommonService {
 		}
 	}
 
+	/**
+	 * 查找栈中是否存在指定元素
+	 *
+	 * @author ycw
+	 * @date 2020/03/26 13:59:18
+	 * @param stack 栈
+	 * @param e     元素
+	 * @return
+	 */
 	private int findCount(Stack<Integer> stack, int e) {
 		int count = 0;
 		for (Integer i : stack) {
@@ -252,6 +291,14 @@ public class CommonServiceImpl implements CommonService {
 		return count;
 	}
 
+	/**
+	 * 组装有向图模型（利用Map表示有向图）
+	 *
+	 * @author ycw
+	 * @date 2020/03/26 14:00:19
+	 * @param drawList 流水记录列表
+	 * @return
+	 */
 	@Override
 	public Map<String, String> createDirectedGraphByMap(List<TempDraw> drawList) {
 		Map<String, String> dataMap = new HashMap<>((int) (drawList.size() / 0.75 + 1));

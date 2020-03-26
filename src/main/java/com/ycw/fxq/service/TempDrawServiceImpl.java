@@ -18,6 +18,20 @@ import com.ycw.fxq.mapper.TempDrawMapper;
 import com.ycw.fxq.service.impl.TempDrawService;
 import com.ycw.fxq.task.FindDataTask;
 
+/**
+ * 流水记录Service实现类
+ * @author ycw
+ * @date 2020/03/26 14:03:32
+ * @version 1.00
+ *
+ * @record
+ * <pre>
+ * version  author      date          desc
+ * -------------------------------------------------
+ * 1.00     ycw         2020/03/26    新建
+ * -------------------------------------------------
+ * </pre>
+ */
 @Service
 public class TempDrawServiceImpl extends ServiceImpl<TempDrawMapper, TempDraw> implements TempDrawService {
 
@@ -45,8 +59,10 @@ public class TempDrawServiceImpl extends ServiceImpl<TempDrawMapper, TempDraw> i
 	}
 
 	/**
-	 * 并行查询数据库记录
+	 * 并行查询数据库流水记录
 	 *
+	 * @author yuminjun
+	 * @date 2020/03/26 14:03:16
 	 * @return
 	 */
 	@Override
@@ -59,13 +75,12 @@ public class TempDrawServiceImpl extends ServiceImpl<TempDrawMapper, TempDraw> i
 	}
 
 	/**
-	 * 根据条件查询流水数据
+	 * 根据时间范围查询流水
 	 *
 	 * @author ycw
 	 * @date 2020/03/24 16:50:03
 	 * @param startTime 开始时间
 	 * @param endTime   结束时间
-	 * @param cardNo    账号（多个账号以逗号隔开）
 	 * @return
 	 */
 	@Override
