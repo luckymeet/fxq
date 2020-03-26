@@ -1,4 +1,4 @@
-package com.ycw.fxq.service.impl;
+package com.ycw.fxq.service;
 
 import java.util.List;
 import java.util.Map;

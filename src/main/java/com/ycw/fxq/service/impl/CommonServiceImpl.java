@@ -1,4 +1,4 @@
-package com.ycw.fxq.service;
+package com.ycw.fxq.service.impl;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -23,7 +23,7 @@ import com.ycw.fxq.bean.Node;
 import com.ycw.fxq.bean.TempDraw;
 import com.ycw.fxq.bean.TempDrawVO;
 import com.ycw.fxq.louvain.LouvainHelper;
-import com.ycw.fxq.service.impl.CommonService;
+import com.ycw.fxq.service.CommonService;
 
 /**
  * 公共业务逻辑Service实现类
@@ -292,7 +292,7 @@ public class CommonServiceImpl implements CommonService {
 	}
 
 	/**
-	 * 组装有向图模型（利用Map表示有向图）
+	 * 根据流水卡号组装有向图模型（利用Map表示有向图）
 	 *
 	 * @author ycw
 	 * @date 2020/03/26 14:00:19
@@ -300,12 +300,37 @@ public class CommonServiceImpl implements CommonService {
 	 * @return
 	 */
 	@Override
-	public Map<String, String> createDirectedGraphByMap(List<TempDraw> drawList) {
+	public Map<String, String> createDirectedGraphByAccNo(List<TempDraw> drawList) {
 		Map<String, String> dataMap = new HashMap<>((int) (drawList.size() / 0.75 + 1));
 		drawList.stream().forEach(tempDraw -> {
 			String card1 = tempDraw.getCard1();
-			dataMap.put(card1,
-					dataMap.get(card1) == null ? tempDraw.getCard2() : dataMap.get(card1) + "," + tempDraw.getCard2());
+			String card2 = tempDraw.getCard2();
+			String value = dataMap.get(card1);
+			if (value == null || value.indexOf(card2 + ",") == -1) {
+				dataMap.put(card1, value == null ? card2 + "," : value + card2 + ",");
+			}
+		});
+		return dataMap;
+	}
+
+	/**
+	 * 根据流水账户名组装有向图模型（利用Map表示有向图）
+	 *
+	 * @author ycw
+	 * @date 2020/03/26 14:00:19
+	 * @param drawList 流水记录列表
+	 * @return
+	 */
+	@Override
+	public Map<String, String> createDirectedGraphByAccName(List<TempDraw> drawList) {
+		Map<String, String> dataMap = new HashMap<>((int) (drawList.size() / 0.75 + 1));
+		drawList.stream().forEach(tempDraw -> {
+			String name1 = tempDraw.getName1();
+			String name2 = tempDraw.getName2();
+			String value = dataMap.get(name1);
+			if (value == null || value.indexOf(name2 + ",") == -1) {
+				dataMap.put(name1, value == null ? name2 + "," : value + name2 + ",");
+			}
 		});
 		return dataMap;
 	}

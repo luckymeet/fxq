@@ -15,8 +15,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.ycw.fxq.bean.TempDraw;
 import com.ycw.fxq.common.response.ResponseVO;
-import com.ycw.fxq.service.impl.CommonService;
-import com.ycw.fxq.service.impl.TempDrawService;
+import com.ycw.fxq.service.CommonService;
+import com.ycw.fxq.service.TempDrawService;
 
 /**
  * 交易流水
@@ -86,7 +86,7 @@ public class TransferRecordController {
 		// 根据时间范围查询流水
 		List<TempDraw> drawList = tempDrawService.findTempDrawList(startTime, endTime);
 		// 组装有向图模型（利用Map表示有向图）
-		Map<String, String> dataMap = commonService.createDirectedGraphByMap(drawList);
+		Map<String, String> dataMap = commonService.createDirectedGraphByAccName(drawList);
 
 		/* 调用算法求路径 */
 		List<List<String>> pathList = new ArrayList<>();
@@ -102,7 +102,7 @@ public class TransferRecordController {
 		// 根据时间范围查询流水
 		List<TempDraw> drawList = tempDrawService.findTempDrawList(startTime, endTime);
 		// 组装有向图模型（利用Map表示有向图）
-		Map<String, String> dataMap = commonService.createDirectedGraphByMap(drawList);
+		Map<String, String> dataMap = commonService.createDirectedGraphByAccNo(drawList);
 
 		/* 调用算法求环路 */
 		String[] cardNoArray = StringUtils.split(StringUtils.trimToEmpty(cardNos), ',');

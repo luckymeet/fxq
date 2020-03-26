@@ -9,7 +9,7 @@ import org.springframework.stereotype.Component;
 
 import com.ycw.fxq.bean.TempDraw;
 import com.ycw.fxq.bean.TempDrawVO;
-import com.ycw.fxq.service.TempDrawServiceImpl;
+import com.ycw.fxq.service.impl.TempDrawServiceImpl;
 
 @Component
 public class FindDataTask extends RecursiveTask<List<TempDrawVO>> {
