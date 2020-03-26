@@ -15,14 +15,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Stack;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
-import org.springframework.web.context.request.RequestContextHolder;
-import org.springframework.web.context.request.ServletRequestAttributes;
 
 import com.ycw.fxq.bean.Node;
 import com.ycw.fxq.bean.TempDraw;
@@ -54,9 +49,6 @@ public class CommonServiceImpl implements CommonService {
 			nameIndexMap.put(nameList.get(i), i);
 			indexNameMap.put(i, nameList.get(i));
 		}
-		HttpSession session = getSession();
-		session.setAttribute("indexNameMap", indexNameMap);
-		session.setAttribute("nameIndexMap", nameIndexMap);
 
 		/* 权值计算 */
 		List<TempDraw> res = countWeight(linkList, nameList, nameIndexMap, indexNameMap);
@@ -72,12 +64,6 @@ public class CommonServiceImpl implements CommonService {
 		List<Node> nodeList = null;
 		nodeList = getNodeList(indexNameMap);
 		return nodeList;
-	}
-
-	private HttpSession getSession() {
-		HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes())
-				.getRequest();
-		return request.getSession();
 	}
 
 	private List<TempDraw> countWeight(List<TempDrawVO> linkList, List<String> nameList,

@@ -1,6 +1,5 @@
 package com.ycw.fxq.controller;
 
-import java.io.UnsupportedEncodingException;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -47,6 +46,8 @@ public class TransferRecordController {
 	@Autowired
 	private CommonService commonService;
 
+	private static final String LOOP_QUERY = "1";
+
 	/**
 	 * 查找有向图间的路径
 	 *
@@ -64,7 +65,7 @@ public class TransferRecordController {
 	public ResponseVO<List<Map<String, String>>> findPath(String startTime, String endTime, String cardNos,
 			String payAcntName, String recAcntName, String type) {
 		List<List<String>> pathList = null;
-		if ("1".equals(type)) {
+		if (LOOP_QUERY.equals(type)) {
 			// 获取账户间的环路
 			pathList = findLoop(startTime, endTime, cardNos);
 		} else {
@@ -74,7 +75,7 @@ public class TransferRecordController {
 
 		/* 路线列表 1——2——3——1 */
 		List<Map<String, String>> loopResult = pathList.stream().map(stringList -> {
-			Map<String, String> map = new HashMap<>();
+			Map<String, String> map = new HashMap<>(5);
 			map.put("startNode", stringList.get(0));
 			map.put("endNode", stringList.get(stringList.size() - 1));
 			map.put("path", stringList.stream().collect(Collectors.joining("——")));
@@ -99,7 +100,7 @@ public class TransferRecordController {
 		List<TempDraw> drawList = tempDrawService.list(queryWrapper);
 
 		/* 组装有向图模型（利用Map表示有向图） */
-		Map<String, String> dataMap = new HashMap<>();
+		Map<String, String> dataMap = new HashMap<>((int) (drawList.size() / 0.75 + 1));
 		drawList.stream().forEach(tempDraw -> {
 			String name1 = tempDraw.getName1();
 			dataMap.put(name1,
@@ -122,7 +123,7 @@ public class TransferRecordController {
 		List<TempDraw> drawList = tempDrawService.findDataByList(startTime, endTime, cardNoArray);
 
 		/* 组装有向图模型（利用Map表示有向图） */
-		Map<String, String> dataMap = new HashMap<>();
+		Map<String, String> dataMap = new HashMap<>((int) (drawList.size() / 0.75 + 1));
 		drawList.stream().forEach(tempDraw -> {
 			String card1 = tempDraw.getCard1();
 			dataMap.put(card1,

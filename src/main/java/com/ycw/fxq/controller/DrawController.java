@@ -14,8 +14,6 @@ import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang3.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -49,29 +47,33 @@ import com.ycw.fxq.service.impl.TempDrawService;
 @RequestMapping("/draw")
 public class DrawController {
 
-	Logger logger = LoggerFactory.getLogger(DrawController.class);
-
 	@Autowired
 	private TempDrawService tempDrawService;
 
 	@Autowired
 	private CommonService commonService;
 
-	private List<TempDrawVO> data;
+	private List<TempDrawVO> initData;
+
+	private static final String VIEW_NAME = "topology";
+
+	private static final String LINK_LIST = "linklist";
+
+	private static final String NODE_LIST = "nodelist";
 
 	@PostConstruct
 	private void init() {
-		data = tempDrawService.findAllData();
+		initData = tempDrawService.findAllData();
 	}
 
 	@GetMapping("/topology")
 	public ModelAndView topology(HttpServletRequest request) {
 		ModelAndView mv = new ModelAndView();
-		mv.addObject("linklist", data);
-		mv.addObject("nodelist", tempDrawService.findname());
-		mv.addObject("maxmoeny", data.isEmpty() ? "" : data.get(0).getMoney());
-		mv.addObject("minmoeny", data.isEmpty() ? "" : data.get(data.size() - 1).getMoney());
-		mv.setViewName("topology");
+		mv.addObject(LINK_LIST, initData);
+		mv.addObject(NODE_LIST, tempDrawService.findname());
+		mv.addObject("maxmoeny", initData.isEmpty() ? "" : initData.get(0).getMoney());
+		mv.addObject("minmoeny", initData.isEmpty() ? "" : initData.get(initData.size() - 1).getMoney());
+		mv.setViewName(VIEW_NAME);
 		return mv;
 	}
 
@@ -83,23 +85,25 @@ public class DrawController {
 	 */
 	@GetMapping("/filter")
 	public ModelAndView filter(HttpServletRequest request) {
-		List<TempDrawVO> linkList = getLinkList(request);// 根据交易频率和交易金额查询交易数据
+		// 根据交易频率和交易金额查询交易数据
+		List<TempDrawVO> linkList = getLinkList(request);
 
 		/* 获取节点名称 */
 		Set<String> nameSet = linkList.stream().map(item -> item.getName1()).collect(Collectors.toSet());
 		nameSet.addAll(linkList.stream().map(item -> item.getName2()).collect(Collectors.toSet()));
 
-		List<Node> nodeList = commonService.getClusterNodeList(linkList, new ArrayList<>(nameSet));// 获取聚类后的节点列表
+		// 获取聚类后的节点列表
+		List<Node> nodeList = commonService.getClusterNodeList(linkList, new ArrayList<>(nameSet));
 		request.getSession().setAttribute("linkList", linkList);
 		request.getSession().setAttribute("nodeList", nodeList);
 
 		/* 渲染页面 */
 		ModelAndView mv = new ModelAndView();
-		mv.addObject("linklist", linkList);
-		mv.addObject("nodelist", nodeList);
+		mv.addObject(LINK_LIST, linkList);
+		mv.addObject(NODE_LIST, nodeList);
 		mv.addObject("maxmoeny", linkList.isEmpty() ? "" : linkList.get(0).getMoney());
 		mv.addObject("minmoeny", linkList.isEmpty() ? "" : linkList.get(linkList.size() - 1).getMoney());
-		mv.setViewName("topology");
+		mv.setViewName(VIEW_NAME);
 		return mv;
 	}
 
@@ -111,14 +115,20 @@ public class DrawController {
 	 * @throws ParseException
 	 */
 	private List<TempDrawVO> getLinkList(HttpServletRequest request) {
-		String frequency = request.getParameter("frequency");// 频率
-		String amount = request.getParameter("amount");// 金额
-		String everyDayFrequency = request.getParameter("everyDayFrequency");// 频率
-		String everyDayAmount = request.getParameter("everyDayAmount");// 金额
+		// 频率
+		String frequency = request.getParameter("frequency");
+		// 金额
+		String amount = request.getParameter("amount");
+		// 频率
+		String everyDayFrequency = request.getParameter("everyDayFrequency");
+		// 金额
+		String everyDayAmount = request.getParameter("everyDayAmount");
+		// 开始时间
 		String start = request.getParameter("starttime");
+		// 结束时间
 		String end = request.getParameter("endtime");
 
-		Map<String, String> params = new HashMap<>();
+		Map<String, String> params = new HashMap<>(9);
 		params.put("frequency", frequency);
 		params.put("amount", amount);
 		params.put("everyDayFrequency", everyDayFrequency);
@@ -146,7 +156,7 @@ public class DrawController {
 		List<TempDraw> drawList = tempDrawService.findDataByList(startTime, endTime, cardNoArray);
 
 		/* 组装有向图模型（利用Map表示有向图） */
-		Map<String, String> dataMap = new HashMap<>();
+		Map<String, String> dataMap = new HashMap<>((int) (drawList.size() / 0.75 + 1));
 		drawList.stream().forEach(tempDraw -> {
 			String card1 = tempDraw.getCard1();
 			dataMap.put(card1,
@@ -185,11 +195,11 @@ public class DrawController {
 
 		/* 渲染页面 */
 		ModelAndView mv = new ModelAndView();
-		mv.addObject("linklist", linkList);
-		mv.addObject("nodelist", nodeList);
+		mv.addObject(LINK_LIST, linkList);
+		mv.addObject(NODE_LIST, nodeList);
 		mv.addObject("maxmoeny", drawList.isEmpty() ? "" : drawList.get(0).getMoney());
 		mv.addObject("minmoeny", drawList.isEmpty() ? "" : drawList.get(drawList.size() - 1).getMoney());
-		mv.setViewName("topology");
+		mv.setViewName(VIEW_NAME);
 		return mv;
 	}
 
@@ -217,7 +227,7 @@ public class DrawController {
 		List<TempDraw> drawList = tempDrawService.list(queryWrapper);
 
 		/* 组装有向图模型（利用Map表示有向图） */
-		Map<String, String> dataMap = new HashMap<>();
+		Map<String, String> dataMap = new HashMap<>((int) (drawList.size() / 0.75 + 1));
 		drawList.stream().forEach(tempDraw -> {
 			String name1 = tempDraw.getName1();
 			dataMap.put(name1,
@@ -255,11 +265,11 @@ public class DrawController {
 
 		/* 渲染页面 */
 		ModelAndView mv = new ModelAndView();
-		mv.addObject("linklist", linkList);
-		mv.addObject("nodelist", nodeList);
+		mv.addObject(LINK_LIST, linkList);
+		mv.addObject(NODE_LIST, nodeList);
 		mv.addObject("maxmoeny", drawList.isEmpty() ? "" : drawList.get(0).getMoney());
 		mv.addObject("minmoeny", drawList.isEmpty() ? "" : drawList.get(drawList.size() - 1).getMoney());
-		mv.setViewName("topology");
+		mv.setViewName(VIEW_NAME);
 		return mv;
 	}
 
