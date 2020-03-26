@@ -66,6 +66,7 @@ public class DrawController {
 
 	/**
 	 * 流水拓扑图
+	 *
 	 * @author ycw
 	 * @date 2020/03/26 15:46:59
 	 * @param request
@@ -80,6 +81,8 @@ public class DrawController {
 	/**
 	 * 根据交易频率和交易金额过滤数据
 	 *
+	 * @author ycw
+	 * @date 2020/03/24 16:46:21
 	 * @param request
 	 * @return
 	 */
@@ -111,6 +114,8 @@ public class DrawController {
 	/**
 	 * 根据交易频率和交易金额查询交易数据
 	 *
+	 * @author ycw
+	 * @date 2020/03/24 16:46:21
 	 * @param request
 	 * @return
 	 * @throws ParseException
