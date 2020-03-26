@@ -64,6 +64,13 @@ public class DrawController {
 		initData = tempDrawService.findAllData();
 	}
 
+	/**
+	 * 流水拓扑图
+	 * @author ycw
+	 * @date 2020/03/26 15:46:59
+	 * @param request
+	 * @return
+	 */
 	@GetMapping("/topology")
 	public ModelAndView topology(HttpServletRequest request) {
 		ModelAndView mv = setModelAndView(initData, tempDrawService.findname());
