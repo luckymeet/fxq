@@ -69,17 +69,16 @@ public class TempDrawServiceImpl extends ServiceImpl<TempDrawMapper, TempDraw> i
 	 * @return
 	 */
 	@Override
-	public List<TempDraw> findDataByList(String startTime, String endTime, String[] cardNo) {
-		LambdaQueryWrapper<TempDraw> wrapper = Wrappers.lambdaQuery();
-		if(StringUtils.isNotBlank(startTime)) {
-			wrapper.gt(TempDraw::getTime,startTime);
+	public List<TempDraw> findTempDrawList(String startTime, String endTime) {
+		LambdaQueryWrapper<TempDraw> queryWrapper = Wrappers.lambdaQuery();
+		if (StringUtils.isNotBlank(startTime)) {
+			queryWrapper.ge(TempDraw::getTime, startTime);
 		}
-		if(StringUtils.isNotBlank(endTime)) {
-			wrapper.lt(TempDraw::getTime,endTime);
+		if (StringUtils.isNotBlank(endTime)) {
+			queryWrapper.le(TempDraw::getTime, endTime);
 		}
-//		if (cardNo != null && cardNo.length > 0) {
-//			wrapper.in(TempDraw::getCard1, cardNo);
-//		}
-		return tempDrawMapper.selectList(wrapper);
+		List<TempDraw> drawList = tempDrawMapper.selectList(queryWrapper);
+		return drawList;
 	}
+
 }

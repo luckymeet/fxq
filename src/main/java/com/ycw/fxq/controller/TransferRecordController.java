@@ -13,14 +13,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.ycw.fxq.bean.TempDraw;
 import com.ycw.fxq.common.response.ResponseVO;
 import com.ycw.fxq.service.impl.CommonService;
 import com.ycw.fxq.service.impl.TempDrawService;
-
-import lombok.extern.slf4j.Slf4j;
 
 /**
  * 交易流水
@@ -36,7 +32,6 @@ import lombok.extern.slf4j.Slf4j;
  * -------------------------------------------------
  * </pre>
  */
-@Slf4j
 @RestController
 public class TransferRecordController {
 
@@ -89,23 +84,11 @@ public class TransferRecordController {
 		payAcntName = new String(payAcntName.getBytes(StandardCharsets.ISO_8859_1), StandardCharsets.UTF_8);
 		recAcntName = new String(recAcntName.getBytes(StandardCharsets.ISO_8859_1), StandardCharsets.UTF_8);
 
-		/* 根据条件查询流水 */
-		LambdaQueryWrapper<TempDraw> queryWrapper = Wrappers.lambdaQuery();
-		if (StringUtils.isNotBlank(startTime)) {
-			queryWrapper.ge(TempDraw::getTime, startTime);
-		}
-		if (StringUtils.isNotBlank(endTime)) {
-			queryWrapper.le(TempDraw::getTime, endTime);
-		}
-		List<TempDraw> drawList = tempDrawService.list(queryWrapper);
+		// 根据时间范围查询流水
+		List<TempDraw> drawList = tempDrawService.findTempDrawList(startTime, endTime);
 
-		/* 组装有向图模型（利用Map表示有向图） */
-		Map<String, String> dataMap = new HashMap<>((int) (drawList.size() / 0.75 + 1));
-		drawList.stream().forEach(tempDraw -> {
-			String name1 = tempDraw.getName1();
-			dataMap.put(name1,
-					dataMap.get(name1) == null ? tempDraw.getName2() : dataMap.get(name1) + "," + tempDraw.getName2());
-		});
+		// 组装有向图模型（利用Map表示有向图）
+		Map<String, String> dataMap = commonService.createDirectedGraphByMap(drawList);
 
 		/* 调用算法求路径 */
 		List<List<String>> pathList = new ArrayList<>();
@@ -118,19 +101,14 @@ public class TransferRecordController {
 	}
 
 	private List<List<String>> findLoop(String startTime, String endTime, String cardNos) {
-		/* 根据条件查出流水 */
-		String[] cardNoArray = StringUtils.split(StringUtils.trimToEmpty(cardNos), ',');
-		List<TempDraw> drawList = tempDrawService.findDataByList(startTime, endTime, cardNoArray);
+		// 根据时间范围查询流水
+		List<TempDraw> drawList = tempDrawService.findTempDrawList(startTime, endTime);
 
-		/* 组装有向图模型（利用Map表示有向图） */
-		Map<String, String> dataMap = new HashMap<>((int) (drawList.size() / 0.75 + 1));
-		drawList.stream().forEach(tempDraw -> {
-			String card1 = tempDraw.getCard1();
-			dataMap.put(card1,
-					dataMap.get(card1) == null ? tempDraw.getCard2() : dataMap.get(card1) + "," + tempDraw.getCard2());
-		});
+		// 组装有向图模型（利用Map表示有向图）
+		Map<String, String> dataMap = commonService.createDirectedGraphByMap(drawList);
 
 		/* 调用算法求环路 */
+		String[] cardNoArray = StringUtils.split(StringUtils.trimToEmpty(cardNos), ',');
 		List<List<String>> loopList = new ArrayList<>();
 		for (int i = 0; i < cardNoArray.length; i++) {
 			String cardNo = cardNoArray[i];

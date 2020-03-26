@@ -252,4 +252,15 @@ public class CommonServiceImpl implements CommonService {
 		return count;
 	}
 
+	@Override
+	public Map<String, String> createDirectedGraphByMap(List<TempDraw> drawList) {
+		Map<String, String> dataMap = new HashMap<>((int) (drawList.size() / 0.75 + 1));
+		drawList.stream().forEach(tempDraw -> {
+			String card1 = tempDraw.getCard1();
+			dataMap.put(card1,
+					dataMap.get(card1) == null ? tempDraw.getCard2() : dataMap.get(card1) + "," + tempDraw.getCard2());
+		});
+		return dataMap;
+	}
+
 }
