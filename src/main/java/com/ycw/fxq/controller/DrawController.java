@@ -66,12 +66,7 @@ public class DrawController {
 
 	@GetMapping("/topology")
 	public ModelAndView topology(HttpServletRequest request) {
-		ModelAndView mv = new ModelAndView();
-		mv.addObject(LINK_LIST, initData);
-		mv.addObject(NODE_LIST, tempDrawService.findname());
-		mv.addObject("maxmoeny", initData.isEmpty() ? "" : initData.get(0).getMoney());
-		mv.addObject("minmoeny", initData.isEmpty() ? "" : initData.get(initData.size() - 1).getMoney());
-		mv.setViewName(VIEW_NAME);
+		ModelAndView mv = setModelAndView(initData, tempDrawService.findname());
 		return mv;
 	}
 
@@ -93,12 +88,15 @@ public class DrawController {
 		// 获取聚类后的节点列表
 		List<Node> nodeList = commonService.getClusterNodeList(linkList, new ArrayList<>(nameSet));
 
-		/* 渲染页面 */
+		// 渲染页面
+		ModelAndView mv = setModelAndView(linkList, nodeList);
+		return mv;
+	}
+
+	private ModelAndView setModelAndView(List<TempDrawVO> linkList, List<Node> nodeList) {
 		ModelAndView mv = new ModelAndView();
 		mv.addObject(LINK_LIST, linkList);
 		mv.addObject(NODE_LIST, nodeList);
-		mv.addObject("maxmoeny", linkList.isEmpty() ? "" : linkList.get(0).getMoney());
-		mv.addObject("minmoeny", linkList.isEmpty() ? "" : linkList.get(linkList.size() - 1).getMoney());
 		mv.setViewName(VIEW_NAME);
 		return mv;
 	}
@@ -149,7 +147,6 @@ public class DrawController {
 	public ModelAndView findLoop(String startTime, String endTime, String cardNos) {
 		// 根据时间范围查询流水
 		List<TempDraw> drawList = tempDrawService.findTempDrawList(startTime, endTime);
-
 		// 组装有向图模型（利用Map表示有向图）
 		Map<String, String> dataMap = commonService.createDirectedGraphByMap(drawList);
 
@@ -184,13 +181,8 @@ public class DrawController {
 			nodeList.add(node);
 		}
 
-		/* 渲染页面 */
-		ModelAndView mv = new ModelAndView();
-		mv.addObject(LINK_LIST, linkList);
-		mv.addObject(NODE_LIST, nodeList);
-		mv.addObject("maxmoeny", drawList.isEmpty() ? "" : drawList.get(0).getMoney());
-		mv.addObject("minmoeny", drawList.isEmpty() ? "" : drawList.get(drawList.size() - 1).getMoney());
-		mv.setViewName(VIEW_NAME);
+		// 渲染页面
+		ModelAndView mv = setModelAndView(linkList, nodeList);
 		return mv;
 	}
 
@@ -209,7 +201,6 @@ public class DrawController {
 	public ModelAndView findPath(String startTime, String endTime, String payAcntName, String recAcntName) {
 		// 根据时间范围查询流水
 		List<TempDraw> drawList = tempDrawService.findTempDrawList(startTime, endTime);
-
 		// 组装有向图模型（利用Map表示有向图）
 		Map<String, String> dataMap = commonService.createDirectedGraphByMap(drawList);
 
@@ -242,13 +233,8 @@ public class DrawController {
 			nodeList.add(node);
 		}
 
-		/* 渲染页面 */
-		ModelAndView mv = new ModelAndView();
-		mv.addObject(LINK_LIST, linkList);
-		mv.addObject(NODE_LIST, nodeList);
-		mv.addObject("maxmoeny", drawList.isEmpty() ? "" : drawList.get(0).getMoney());
-		mv.addObject("minmoeny", drawList.isEmpty() ? "" : drawList.get(drawList.size() - 1).getMoney());
-		mv.setViewName(VIEW_NAME);
+		// 渲染页面
+		ModelAndView mv = setModelAndView(linkList, nodeList);
 		return mv;
 	}
 

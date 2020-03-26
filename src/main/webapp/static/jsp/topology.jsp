@@ -187,8 +187,8 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 <body>
 	<span id="colink" colink=${fn:length(linklist) } style="display: none"></span>
 	<span id="conode" conode=${fn:length(nodelist) } style="display: none"></span>
-	<span id="maxmon" maxmon=${maxmoeny } style="display: none"></span>
-	<span id="minmon" minmon=${minmoeny } style="display: none"></span>
+<%-- 	<span id="maxmon" maxmon=${maxmoeny } style="display: none"></span> --%>
+<%-- 	<span id="minmon" minmon=${minmoeny } style="display: none"></span> --%>
 	<c:set var="flag" value="0" />
 	<c:forEach items="${linklist }" var="link">
 		<span id="${flag}" sourse="${link.name1}" amount="${link.money}"
@@ -802,8 +802,8 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
     var nodes = [];
     var childNodes = [];
     var links = [];
-    var Maxmoney = document.getElementById("maxmon").getAttribute("maxmon");
-    var Minmoney = document.getElementById("minmon").getAttribute("minmon");
+//     var Maxmoney = document.getElementById("maxmon").getAttribute("maxmon");
+//     var Minmoney = document.getElementById("minmon").getAttribute("minmon");
     var childLinks = [];
 
 

@@ -83,10 +83,8 @@ public class TransferRecordController {
 	private List<List<String>> findPath(String startTime, String endTime, String payAcntName, String recAcntName) {
 		payAcntName = new String(payAcntName.getBytes(StandardCharsets.ISO_8859_1), StandardCharsets.UTF_8);
 		recAcntName = new String(recAcntName.getBytes(StandardCharsets.ISO_8859_1), StandardCharsets.UTF_8);
-
 		// 根据时间范围查询流水
 		List<TempDraw> drawList = tempDrawService.findTempDrawList(startTime, endTime);
-
 		// 组装有向图模型（利用Map表示有向图）
 		Map<String, String> dataMap = commonService.createDirectedGraphByMap(drawList);
 
@@ -103,7 +101,6 @@ public class TransferRecordController {
 	private List<List<String>> findLoop(String startTime, String endTime, String cardNos) {
 		// 根据时间范围查询流水
 		List<TempDraw> drawList = tempDrawService.findTempDrawList(startTime, endTime);
-
 		// 组装有向图模型（利用Map表示有向图）
 		Map<String, String> dataMap = commonService.createDirectedGraphByMap(drawList);
 
