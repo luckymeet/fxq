@@ -59,6 +59,8 @@ public class DrawController {
 
 	private static final String NODE_LIST = "nodelist";
 
+	public static List<TempDrawVO> curLinkList = new ArrayList<>();
+
 	@PostConstruct
 	private void init() {
 		initData = tempDrawService.findAllData();
@@ -192,6 +194,8 @@ public class DrawController {
 			node.setName(name);
 			nodeList.add(node);
 		}
+
+		this.curLinkList = linkList;
 
 		// 渲染页面
 		ModelAndView mv = setModelAndView(linkList, nodeList);

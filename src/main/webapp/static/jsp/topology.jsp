@@ -11,17 +11,17 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-<link rel="stylesheet" type="text/css" href="${path}/css/bootstrap.css">
-<link href="${path}/css/component.css" rel="stylesheet">
-<link href="${path}/js/bstable/css/bootstrap.min.css" rel="stylesheet"
+<link rel="stylesheet" type="text/css" href="${path}/static/css/bootstrap.css">
+<link href="${path}/static/css/component.css" rel="stylesheet">
+<link href="${path}/static/js/bstable/css/bootstrap.min.css" rel="stylesheet"
 	type="text/css">
-<link href="${path}/js/bstable/css/bootstrap-table.css" rel="stylesheet"
+<link href="${path}/static/js/bstable/css/bootstrap-table.css" rel="stylesheet"
 	type="text/css">
-<link href="${path}/css/zTreeStyle/zTreeStyle.css" rel="stylesheet"
+<link href="${path}/static/css/zTreeStyle/zTreeStyle.css" rel="stylesheet"
 	type="text/css" />
-<link href="${path}/css/table.css" rel="stylesheet" type="text/css" />
-<script src="${path}/js/d3.v3.min.js"></script>
-<script src="${path}/js/jquery-2.2.0.min.js"></script>
+<link href="${path}/static/css/table.css" rel="stylesheet" type="text/css" />
+<script src="${path}/static/js/d3.v3.min.js"></script>
+<script src="${path}/static/js/jquery-2.2.0.min.js"></script>
 <style type="text/css">
 .link {
 	stroke: white;
@@ -98,7 +98,7 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 }
 
 #container {
-	width: 85%;
+	width: 70%;
 	border: 1px solid gray;
 	border-radius: 5px;
 	position: relative;
@@ -109,7 +109,7 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 }
 
 .leftdiv {
-	width: 15%;
+	width: 14%;
 	height: 700px;
 	float: left;
 	border:1px solid #ccc;
@@ -220,6 +220,18 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 		<div>
 			<div id='container' class=""></div>
 		</div>
+		<div class="rightdiv">
+		    <div>
+		        <h2 id="pointinfo"></h2>
+		    </div>
+		    <div>
+	        	<input id="zz" class="zzstart" type="button" value="重置数据" onclick="reset()" /><br>
+				<input id="zzsx" type="button" value="数据筛选" class="zzstart md-trigger" data-modal="modal-1" />
+				<input id="zzsx1" type="button" value="查找回路" class="zzstart md-trigger" data-modal="modal-2" />
+				<input id="zzsx2" type="button" value="查找路径" class="zzstart md-trigger" data-modal="modal-3" />
+				<input id="gd" type="button" value="固定静止" class="zzstart" onclick="gds()" />
+		    </div>
+		</div>
 		<!-- 筛选模态框 -->
 		<div class="md-modal md-effect-13" id="modal-1">
 			<div class="md-content">
@@ -271,13 +283,6 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 
 	<div class="l_left news_right" style="width: 100%;margin-bottom:20%">
 		<div class="notice_check">
-		      <p style="margin-left:15%">
-					<input id="zz" class="zzstart" type="button" style="width: 10%" value="重置数据" onclick="reset()" />
-<!-- 					<input id="gd" type="button" value="固定静止" style="width: 10%" class="zzstart md-trigger" onclick="gds()" /> -->
-					<input id="zzsx" type="button" value="数据筛选" style="width: 10%" class="zzstart md-trigger" data-modal="modal-1" />
-					<input id="zzsx1" type="button" value="查找回路" style="width: 10%" class="zzstart md-trigger" data-modal="modal-2" />
-					<input id="zzsx2" type="button" value="查找路径" style="width: 10%" class="zzstart md-trigger" data-modal="modal-3" />
-              </p>
 		</div>
 		<div class="clear"></div>
 		<div class="notice_check">
@@ -1003,7 +1008,7 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 
 
 </script>
-	<script src="${pageContext.request.contextPath}/js/classie.js"></script>
-	<script src="${pageContext.request.contextPath}/js/modalEffects.js"></script>
+	<script src="${path}/static/js/classie.js"></script>
+	<script src="${path}/static/js/modalEffects.js"></script>
 </body>
 </html>
