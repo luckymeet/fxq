@@ -225,7 +225,8 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 		        <h2 id="pointinfo"></h2>
 		    </div>
 		    <div>
-	        	<input id="zz" class="zzstart" type="button" value="重置数据" onclick="reset()" /><br>
+	        	<input id="zz" class="zzstart" type="button" value="重置数据" onclick="reset()" />
+	        	<input id="merge" class="zzstart" type="button" value="TODO转换账户名" onclick="mergeAccount()" />
 				<input id="zzsx" type="button" value="数据筛选" class="zzstart md-trigger" data-modal="modal-1" />
 				<input id="zzsx1" type="button" value="查找回路" class="zzstart md-trigger" data-modal="modal-2" />
 				<input id="zzsx2" type="button" value="查找路径" class="zzstart md-trigger" data-modal="modal-3" />
@@ -364,6 +365,11 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
     	}
     	window.location.href = "loop?startTime=" + startTime
     			+ "&endTime=" + endTime + "&cardNos=" + cardNos + "&type=1";
+    }
+
+    function mergeAccount(){
+    	// TODO
+    	window.location.href = "mergeAccount";
     }
 
     function findPath(){

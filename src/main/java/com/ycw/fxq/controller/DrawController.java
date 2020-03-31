@@ -264,4 +264,10 @@ public class DrawController {
 		return pathSet;
 	}
 
+	@GetMapping("/mergeAccount")
+	public ModelAndView mergeAccount(HttpServletRequest request) {
+		ModelAndView mv = setModelAndView(initData, tempDrawService.findname());
+		return mv;
+	}
+
 }
