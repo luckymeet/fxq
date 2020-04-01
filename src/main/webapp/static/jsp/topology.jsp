@@ -226,9 +226,9 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 		    </div>
 		    <div>
 	        	<input id="zz" class="zzstart" type="button" value="重置数据" onclick="reset()" />
-	        	<input id="merge" class="zzstart" type="button" value="TODO转换账户名" onclick="mergeAccount()" />
-				<input id="zzsx" type="button" value="数据筛选" class="zzstart md-trigger" data-modal="modal-1" />
-				<input id="zzsx1" type="button" value="查找回路" class="zzstart md-trigger" data-modal="modal-2" />
+				<input id="zzsx" type="button" value="条件筛选" class="zzstart md-trigger" data-modal="modal-1" />
+				<input id="zzsx1" type="button" value="可疑路径追踪" class="zzstart md-trigger" data-modal="modal-2" />
+	        	<input id="merge" class="zzstart" type="关联账户追踪" value="转换账户名" onclick="mergeAccount()" />
 				<input id="zzsx2" type="button" value="查找路径" class="zzstart md-trigger" data-modal="modal-3" />
 				<input id="gd" type="button" value="固定静止" class="zzstart" onclick="gds()" />
 		    </div>
