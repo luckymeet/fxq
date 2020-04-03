@@ -1,6 +1,9 @@
 package com.ycw.fxq.common.utils;
 
 import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.BeanUtils;
@@ -75,4 +78,22 @@ public class BeanHandleUtils extends BeanUtils {
 		}
 		return BeanMap.create(source);
 	}
+
+    public static <E> List<E> listCopy(List<?> source, Class<E> targetBean) {
+        try {
+            if (null == source || source.isEmpty()) {
+                return Collections.emptyList();
+            }
+            List<E> target = new ArrayList<E>(source.size());
+            for (Object o : source) {
+                E e = targetBean.newInstance();
+                BeanUtils.copyProperties(o, e);
+                target.add(e);
+            }
+            return target;
+        } catch (Exception e) {
+            return Collections.emptyList();
+        }
+
+    }
 }
