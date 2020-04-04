@@ -248,8 +248,8 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 				<h3>数据网络筛选</h3>
 				<div>
 					<p>筛选出你想画出的数据网络：</p>
-					<span>单笔交易金额：</span><input type="text" id="amount" class="form-control" /><br/>
-					<span>交易数：</span><input type="text" id="frequency" class="form-control" /><br/>
+					<span>累积交易金额：</span><input type="text" id="amount" class="form-control" /><br/>
+					<span>累积交易数：</span><input type="text" id="frequency" class="form-control" /><br/>
 					<span>日交易金额：</span><input type="text" id="everyDayAmount" class="form-control" /><br/>
 					<span>日交易数：</span><input type="text" id="everyDayFrequency" class="form-control" /><br/>
 					<span>开始时间：</span><input type="date" id="startTime1" class="form-control" /><br/>

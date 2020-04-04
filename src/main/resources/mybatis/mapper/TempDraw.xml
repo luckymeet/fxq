@@ -33,15 +33,19 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 			<if test="endTime != null and endTime != ''">
 				AND t.time &lt;= #{endTime}
 			</if>
-			<if test="amount != null and amount != ''">
-				AND t.money &gt;= #{amount}
-			</if>
+
 		</where>
 		GROUP BY
 		t.name1,t.name2
-		<if test="frequency != null and frequency != ''">
-			HAVING COUNT(t.card2) &gt;= #{frequency}
-		</if>
+		<trim prefix="having" suffixOverrides="and">
+			<if test="frequency != null and frequency != ''">
+				COUNT(t.card2) &gt;= #{frequency}
+			</if>
+			<if test="amount != null and amount != ''">
+				and sum(t.money) &gt;= #{amount}
+			</if>
+		</trim>
+
 		<if test="(everyDayFrequency != null and everyDayFrequency != '') or (everyDayAmount != null and everyDayAmount != '')">
 			UNION
 			SELECT
