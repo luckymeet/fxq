@@ -234,10 +234,10 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 		        <h2 id="pointinfo"></h2>
 		    </div>
 		    <div>
-				<input id="zzsx" type="button" value="数据筛选" class="zzstart md-trigger" data-modal="modal-2" />
-				<input id="zzsx1" type="button" value="可疑路径追踪" class="zzstart" onclick="findLoop()" />
-	        	<input id="merge" type="button" value="关联账户追踪" class="zzstart" onclick="mergeAccount()" />
-				<input id="zzsx2" type="button" value="分析结果" class="zzstart" onclick="findList()" />
+				<input id="zzsx" type="button" value="数据筛选" class="zzstart md-trigger" data-modal="modal-1" />
+				<input id="zzsx1" type="button" value="可疑团伙分析" class="zzstart" onclick="cluster()" />
+<!-- 	        	<input id="merge" type="button" value="关联账户追踪" class="zzstart" onclick="mergeAccount()" /> -->
+<!-- 				<input id="zzsx2" type="button" value="分析结果" class="zzstart" onclick="findList()" /> -->
 				<input id="gd" type="button" value="固定静止" class="zzstart" onclick="gds()" />
 	        	<input id="zz" type="button" value="重置数据" class="zzstart" onclick="reset()" />
 		    </div>
@@ -336,27 +336,23 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
     }
 
     function reset(){
-    	window.location.href = "${path}/draw/topology";
+    	window.location.href = "${path}/gang/topology";
     }
 
-    function filterAccount(){
-//     	var amount = $("#amount").val();
-//     	var frequency = $("#frequency").val();
-//     	var everyDayAmount = $("#everyDayAmount").val();
-//     	var everyDayFrequency = $("#everyDayFrequency").val();
-//     	var starttime = $("#startTime1").val();
-//     	var endtime = $("#endTime1").val();
-//     	window.location.href = "filter?frequency=" + frequency + "&amount=" + amount
-//     			+ "&everyDayAmount=" + everyDayAmount + "&everyDayFrequency=" + everyDayFrequency
-//     			+ "&starttime=" + starttime + "&endtime=" + endtime;
-    	var startTime = $("#startTime2").val();
-    	var endTime = $("#endTime2").val();
-    	var cardNos = $("#cardNos").val();
-    	if (isEmpty(cardNos)) {
-    		layer.msg("账号不能为空");
-    	}
-    	window.location.href = "${path}/draw/filter/account?startTime=" + startTime
-    			+ "&endTime=" + endTime + "&cardNos=" + cardNos + "&type=1";
+    function cluster(){
+    	window.location.href = "${path}/gang/cluster";
+    }
+
+    function filter(){
+    	var amount = $("#amount").val();
+    	var frequency = $("#frequency").val();
+    	var everyDayAmount = $("#everyDayAmount").val();
+    	var everyDayFrequency = $("#everyDayFrequency").val();
+    	var starttime = $("#startTime1").val();
+    	var endtime = $("#endTime1").val();
+    	window.location.href = "${path}/gang/filter/name?frequency=" + frequency + "&amount=" + amount
+    			+ "&everyDayAmount=" + everyDayAmount + "&everyDayFrequency=" + everyDayFrequency
+    			+ "&starttime=" + starttime + "&endtime=" + endtime;
     }
 
     function isEmpty(obj){

@@ -1,6 +1,9 @@
 package com.ycw.fxq.common.utils;
 
 import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.BeanUtils;
@@ -34,6 +37,34 @@ public class BeanHandleUtils extends BeanUtils {
 		}
 		return target;
 	}
+
+	/**
+	 * @方法名称 listCopy
+	 * @功能描述 bean转换方法
+	 * @作者     yuminjun
+	 * @创建时间 2019年8月29日 下午6:00:11
+	 * @param source
+	 * @param targetClass
+	 * @return
+	 * @throws MsgException
+	 */
+    public static <E> List<E> listCopy(List<?> source, Class<E> targetBean) {
+        try {
+            if (null == source || source.isEmpty()) {
+                return Collections.emptyList();
+            }
+            List<E> target = new ArrayList<E>(source.size());
+            for (Object o : source) {
+                E e = targetBean.newInstance();
+                BeanUtils.copyProperties(o, e);
+                target.add(e);
+            }
+            return target;
+        } catch (Exception e) {
+            return Collections.emptyList();
+        }
+
+    }
 
 	/**
 	 * @方法名称 mapToBean

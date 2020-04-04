@@ -52,10 +52,10 @@ public interface CommonService {
 	 *
 	 * @author ycw
 	 * @date 2020/03/26 14:00:19
-	 * @param drawList 流水记录列表
+	 * @param linkList 流水记录列表
 	 * @return
 	 */
-	Map<String, String> createDirectedGraphByAccNo(List<TempDraw> drawList);
+	Map<String, String> createDirectedGraphByAccNo(List<TempDrawVO> linkList);
 
 	/**
 	 * 根据流水账户名组装有向图模型（利用Map表示有向图），key:节点，value:相邻节点（多个以英文逗号隔开）

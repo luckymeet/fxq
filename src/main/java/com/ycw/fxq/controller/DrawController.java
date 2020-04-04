@@ -2,6 +2,7 @@ package com.ycw.fxq.controller;
 
 import java.text.ParseException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -51,19 +52,16 @@ public class DrawController {
 	@Autowired
 	private CommonService commonService;
 
-	private List<TempDrawVO> initData;
-
-	private static final String VIEW_NAME = "topology";
-
-	private static final String LINK_LIST = "linklist";
-
-	private static final String NODE_LIST = "nodelist";
+	public static List<TempDrawVO> initData;
 
 	public static List<TempDrawVO> curLinkList = new ArrayList<>();
+
+	public static String cardNos = "";
 
 	@PostConstruct
 	private void init() {
 		initData = tempDrawService.findAllData();
+		this.curLinkList = initData;
 	}
 
 	/**
@@ -76,8 +74,7 @@ public class DrawController {
 	 */
 	@GetMapping("/topology")
 	public ModelAndView topology(HttpServletRequest request) {
-		ModelAndView mv = setModelAndView(initData, tempDrawService.findname());
-		return mv;
+		return setModelAndView(initData, tempDrawService.findname());
 	}
 
 	/**
@@ -88,28 +85,64 @@ public class DrawController {
 	 * @param request
 	 * @return
 	 */
-	@GetMapping("/filter")
-	public ModelAndView filter(HttpServletRequest request) {
+	@GetMapping("/filter/name")
+	public ModelAndView filterName(HttpServletRequest request) {
 		// 根据交易频率和交易金额查询交易数据
 		List<TempDrawVO> linkList = getLinkList(request);
+		// 获取节点名称
+		List<Node> nodeList = this.getNodeListBylinkList(linkList);
+		// 渲染页面
+		return setModelAndView(linkList, nodeList);
+	}
 
-		/* 获取节点名称 */
-		Set<String> nameSet = linkList.stream().map(TempDrawVO :: getName1).collect(Collectors.toSet());
-		nameSet.addAll(linkList.stream().map(TempDrawVO :: getName2).collect(Collectors.toSet()));
+	/**
+	 * 根据交易频率和交易金额过滤数据
+	 *
+	 * @author ycw
+	 * @date 2020/03/24 16:46:21
+	 * @param request
+	 * @return
+	 */
+	@GetMapping("/filter/account")
+	public ModelAndView filterAccount(String startTime, String endTime, String cardNos) {
+		this.cardNos = cardNos;
+		List<String> cardList = Arrays.asList(StringUtils.split(cardNos, ','));
+		// 根据时间范围查询流水
+		List<TempDraw> drawList = tempDrawService.findTempDrawList(startTime, endTime);
+		this.curLinkList = BeanHandleUtils.listCopy(drawList, TempDrawVO.class);
 
-		// 获取聚类后的节点列表
-		List<Node> nodeList = commonService.getClusterNodeList(linkList, new ArrayList<>(nameSet));
+		/* 获取节点名称（节点为账号） */
+		Set<String> nameSet = curLinkList.stream().map(TempDraw :: getCard1).collect(Collectors.toSet());
+		nameSet.addAll(curLinkList.stream().map(TempDraw :: getCard2).collect(Collectors.toSet()));
+		List<Node> nodeList = new ArrayList<>();
+		for (String name : nameSet) {
+			Node node = new Node();
+			node.setName(name);
+			if (cardList.contains(node.getName())) {
+				node.setImgName("03.png");
+			}
+			nodeList.add(node);
+		}
 
 		// 渲染页面
-		ModelAndView mv = setModelAndView(linkList, nodeList);
+		return setModelAndView(curLinkList, nodeList, true);
+	}
+
+	private ModelAndView setModelAndView(List<TempDrawVO> linkList, List<Node> nodeList, boolean isAccount) {
+		ModelAndView mv = new ModelAndView();
+		mv.addObject("linklist", linkList);
+		mv.addObject("nodelist", nodeList);
+		mv.addObject("isAccount", isAccount);
+		mv.setViewName("topology");
 		return mv;
 	}
 
 	private ModelAndView setModelAndView(List<TempDrawVO> linkList, List<Node> nodeList) {
 		ModelAndView mv = new ModelAndView();
-		mv.addObject(LINK_LIST, linkList);
-		mv.addObject(NODE_LIST, nodeList);
-		mv.setViewName(VIEW_NAME);
+		mv.addObject("linklist", linkList);
+		mv.addObject("nodelist", nodeList);
+		mv.addObject("isAccount", false);
+		mv.setViewName("topology");
 		return mv;
 	}
 
@@ -158,14 +191,12 @@ public class DrawController {
 	 * @return
 	 */
 	@GetMapping("/loop")
-	public ModelAndView findLoop(String startTime, String endTime, String cardNos) {
-		// 根据时间范围查询流水
-		List<TempDraw> drawList = tempDrawService.findTempDrawList(startTime, endTime);
+	public ModelAndView findLoop() {
 		// 组装有向图模型（利用Map表示有向图）
-		Map<String, String> dataMap = commonService.createDirectedGraphByAccNo(drawList);
+		Map<String, String> dataMap = commonService.createDirectedGraphByAccNo(curLinkList);
 
 		/* 调用算法求环路 */
-		String[] cardNoArray = StringUtils.split(StringUtils.trimToEmpty(cardNos), ',');
+		String[] cardNoArray = StringUtils.split(this.cardNos, ',');
 		List<List<String>> loopList = new ArrayList<>();
 		for (int i = 0; i < cardNoArray.length; i++) {
 			String cardNo = cardNoArray[i].trim();
@@ -176,30 +207,28 @@ public class DrawController {
 
 		/* 设置节点间路径颜色 */
 		Set<String> transSet = getTransSet(loopList);
-		List<TempDrawVO> linkList = new ArrayList<>();
-		for (TempDraw tempDraw : drawList) {
-			TempDrawVO vo = BeanHandleUtils.beanCopy(tempDraw, TempDrawVO.class);
-			if (transSet.contains(tempDraw.getCard1() + "-" + tempDraw.getCard2())) {
-				vo.setColor("red");
+		for (TempDrawVO tempDrawVO : curLinkList) {
+			if (transSet.contains(tempDrawVO.getCard1() + "-" + tempDrawVO.getCard2())) {
+				tempDrawVO.setColor("red");
 			}
-			linkList.add(vo);
 		}
 
-		/* 获取节点名称 */
-		Set<String> nameSet = drawList.stream().map(TempDraw :: getName1).collect(Collectors.toSet());
-		nameSet.addAll(drawList.stream().map(TempDraw :: getName2).collect(Collectors.toSet()));
+		/* 获取节点名称（节点为账号） */
+		Set<String> nameSet = curLinkList.stream().map(TempDraw :: getCard1).collect(Collectors.toSet());
+		nameSet.addAll(curLinkList.stream().map(TempDraw :: getCard2).collect(Collectors.toSet()));
+		List<String> cardList = Arrays.asList(cardNoArray);
 		List<Node> nodeList = new ArrayList<>();
 		for (String name : nameSet) {
 			Node node = new Node();
 			node.setName(name);
+			if (cardList.contains(node.getName())) {
+				node.setImgName("03.png");
+			}
 			nodeList.add(node);
 		}
 
-		this.curLinkList = linkList;
-
 		// 渲染页面
-		ModelAndView mv = setModelAndView(linkList, nodeList);
-		return mv;
+		return setModelAndView(curLinkList, nodeList, true);
 	}
 
 	/**
@@ -239,19 +268,23 @@ public class DrawController {
 			linkList.add(vo);
 		}
 
-		/* 获取节点名称 */
-		Set<String> nameSet = drawList.stream().map(TempDraw :: getName1).collect(Collectors.toSet());
-		nameSet.addAll(drawList.stream().map(TempDraw :: getName2).collect(Collectors.toSet()));
+		// 获取节点名称
+		List<Node> nodeList = getNodeListBylinkList(linkList);
+
+		// 渲染页面
+		return setModelAndView(linkList, nodeList);
+	}
+
+	private List<Node> getNodeListBylinkList(List<TempDrawVO> linkList) {
+		Set<String> nameSet = linkList.stream().map(TempDraw :: getName1).collect(Collectors.toSet());
+		nameSet.addAll(linkList.stream().map(TempDraw :: getName2).collect(Collectors.toSet()));
 		List<Node> nodeList = new ArrayList<>();
 		for (String name : nameSet) {
 			Node node = new Node();
 			node.setName(name);
 			nodeList.add(node);
 		}
-
-		// 渲染页面
-		ModelAndView mv = setModelAndView(linkList, nodeList);
-		return mv;
+		return nodeList;
 	}
 
 	private Set<String> getTransSet(List<List<String>> accRes) {
@@ -264,10 +297,30 @@ public class DrawController {
 		return pathSet;
 	}
 
-	@GetMapping("/mergeAccount")
-	public ModelAndView mergeAccount(HttpServletRequest request) {
-		ModelAndView mv = setModelAndView(initData, tempDrawService.findname());
-		return mv;
+	@GetMapping("/merge-account")
+	public ModelAndView mergeAccount() {
+		List<String> cardNoList = Arrays.asList(StringUtils.split(this.cardNos, ','));
+		Map<String, Boolean> nameMap = new HashMap<>();
+		for (TempDrawVO tempDrawVO : curLinkList) {
+			String name1 = tempDrawVO.getName1();
+			String name2 = tempDrawVO.getName2();
+			if (!Boolean.TRUE.equals(nameMap.get(name1))) {
+				nameMap.put(name1, cardNoList.contains(tempDrawVO.getCard1()));
+			}
+			if (!Boolean.TRUE.equals(nameMap.get(name2))) {
+				nameMap.put(name2, cardNoList.contains(tempDrawVO.getCard2()));
+			}
+		}
+		List<Node> nodeList = new ArrayList<>();
+		for (Map.Entry<String, Boolean> entry : nameMap.entrySet()) {
+			Node node = new Node();
+			node.setName(entry.getKey());
+			if (Boolean.TRUE.equals(entry.getValue())) {
+				node.setImgName("03.png");
+			}
+			nodeList.add(node);
+		}
+		return setModelAndView(curLinkList, nodeList);
 	}
 
 }
