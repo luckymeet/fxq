@@ -71,6 +71,15 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 			</if>
 		</if>
 		) bb on (aa.name1 = bb.name1 and aa.name2 = bb.name2)
+		<where>
+			<if test="startTime != null and startTime != ''">
+				AND aa.time &gt;= #{startTime}
+			</if>
+			<if test="endTime != null and endTime != ''">
+				AND aa.time &lt;= #{endTime}
+			</if>
+
+		</where>
 	</select>
 
 	<!-- 根据频率和转账金额过滤出可疑数据 -->
