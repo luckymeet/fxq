@@ -181,7 +181,7 @@ public class DrawController {
 	}
 
 	/**
-	 * 查找有向图间的环路
+	 * 查找有向图间的路径
 	 *
 	 * @author ycw
 	 * @date 2020/03/24 16:46:21
@@ -199,10 +199,15 @@ public class DrawController {
 		String[] cardNoArray = StringUtils.split(this.cardNos, ',');
 		List<List<String>> loopList = new ArrayList<>();
 		for (int i = 0; i < cardNoArray.length; i++) {
-			String cardNo = cardNoArray[i].trim();
-			Stack<String> previous = new Stack<>();
-			previous.push(cardNo);
-			commonService.findLoops(dataMap, loopList, previous, cardNo, cardNo);
+			for (int j = 0; j < cardNoArray.length; j++) {
+				if (i == j) {
+					continue;
+				}
+				String cardNo = cardNoArray[i].trim();
+				Stack<String> previous = new Stack<>();
+				previous.push(cardNo);
+				commonService.findLoops(dataMap, loopList, previous, cardNo, cardNoArray[j].trim());
+			}
 		}
 
 		/* 设置节点间路径颜色 */

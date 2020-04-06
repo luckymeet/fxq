@@ -65,10 +65,15 @@ public class TransferRecordController {
 		String[] cardNoArray = StringUtils.split(StringUtils.trimToEmpty(DrawController.cardNos), ',');
 		List<List<String>> pathList = new ArrayList<>();
 		for (int i = 0; i < cardNoArray.length; i++) {
-			String cardNo = cardNoArray[i];
-			Stack<String> previous = new Stack<>();
-			previous.push(cardNo);
-			commonService.findLoops(dataMap, pathList, previous, cardNo, cardNo);
+			for (int j = 0; j < cardNoArray.length; j++) {
+				if (i == j) {
+					continue;
+				}
+				String cardNo = cardNoArray[i].trim();
+				Stack<String> previous = new Stack<>();
+				previous.push(cardNo);
+				commonService.findLoops(dataMap, pathList, previous, cardNo, cardNoArray[j].trim());
+			}
 		}
 
 		/* 路线列表 1——2——3——1 */
