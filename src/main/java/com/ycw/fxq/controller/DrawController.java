@@ -200,9 +200,6 @@ public class DrawController {
 		List<List<String>> loopList = new ArrayList<>();
 		for (int i = 0; i < cardNoArray.length; i++) {
 			for (int j = 0; j < cardNoArray.length; j++) {
-				if (i == j) {
-					continue;
-				}
 				String cardNo = cardNoArray[i].trim();
 				Stack<String> previous = new Stack<>();
 				previous.push(cardNo);
