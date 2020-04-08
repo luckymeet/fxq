@@ -15,18 +15,13 @@
     <div class="l_left news_right" style="width:100%">
         <h6>案件管理</h6>
         <div class="notice_check">
-
               <p>
-
                   <label>案件名称：</label><input type="text" class="find_input">
-                  <label>负责人：</label><select class="find_input"></select>
-                  <button class="check_btn">查询</button>
+                  <label>负责人：</label><input type="text" class="find_input">
+                  <button class="check_btn" style="margin-left: 50px">查询</button>
               </p>
-
-
         </div>
         <div class="clear"></div>
-
         <div class="notice_check">
             <div class="notice_nav r_right paddingBotme">
                 <P>
@@ -109,36 +104,6 @@
                     width: 120,
                     valign: 'middle'
                 },
-                /* {
-                    title: '启用状态',
-                    field: 'status',
-                    width: 70,
-                    align: 'center',
-                    formatter: function (cellval, row) {
-                        if (cellval =='未启用'){
-                            return '<div  style="color:red">'+cellval+'</div>';
-                        } else  if (cellval =='启用'){
-                            return '<div  style="color:green">'+cellval+'</div>';
-                        }else {
-                            return cellval;
-                        }}
-                },
-
-                {
-                    title: '开灯时间',
-                    field: 'time',
-                    align: 'center',
-                    width: 120,
-                    valign: 'middle'
-                },
-                {
-                    title: '开灯周期',
-                    field: 'low',
-                    align: 'center',
-                    width: 120,
-                    valign: 'middle'
-                }, */
-
                 {
                     title: '操作',
                     field: 'person',
@@ -163,16 +128,15 @@
     function add(){
         layer.open({
             type: 2,
-            title: '添加详情',
+            title: '添加案件信息',
             shadeClose: true,
             shade: 0.5,
             skin: 'layui-layer-rim',
             closeBtn:1,
-            area: ['1000px', '600px'],
+            area: ['1000px', '500px'],
             content: 'caseTail.html'
         });
     }
-
 </script>
 </body>
 </html>
