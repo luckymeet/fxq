@@ -400,7 +400,6 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
     }
 
     function findList() {
-    	debugger;
         $('#table').bootstrapTable({
             method: "get",
             striped: true,

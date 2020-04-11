@@ -14,6 +14,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.ycw.fxq.bean.TempDraw;
+import com.ycw.fxq.common.page.PageInfo;
+import com.ycw.fxq.common.page.PageParams;
 import com.ycw.fxq.common.response.ResponseVO;
 import com.ycw.fxq.service.CommonService;
 import com.ycw.fxq.service.TempDrawService;
@@ -57,7 +59,10 @@ public class TransferRecordController {
 	 * @return
 	 */
 	@GetMapping("/draw/path/list")
-	public ResponseVO<List<Map<String, String>>> findPath() {
+	public ResponseVO<List<Map<String, String>>> findPath(Integer query) {
+		if (query == 0) {
+			return ResponseVO.success(null);
+		}
 		// 组装有向图模型（利用Map表示有向图）
 		Map<String, String> dataMap = commonService.createDirectedGraphByAccNo(DrawController.curLinkList);
 

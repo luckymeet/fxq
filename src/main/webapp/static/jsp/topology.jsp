@@ -11,17 +11,17 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-<link rel="stylesheet" type="text/css" href="${path}/css/bootstrap.css">
-<link href="${path}/css/component.css" rel="stylesheet">
-<link href="${path}/js/bstable/css/bootstrap.min.css" rel="stylesheet"
+<link rel="stylesheet" type="text/css" href="${path}/static/css/bootstrap.css">
+<link href="${path}/static/css/component.css" rel="stylesheet">
+<link href="${path}/static/js/bstable/css/bootstrap.min.css" rel="stylesheet"
 	type="text/css">
-<link href="${path}/js/bstable/css/bootstrap-table.css" rel="stylesheet"
+<link href="${path}/static/js/bstable/css/bootstrap-table.css" rel="stylesheet"
 	type="text/css">
-<link href="${path}/css/zTreeStyle/zTreeStyle.css" rel="stylesheet"
+<link href="${path}/static/css/zTreeStyle/zTreeStyle.css" rel="stylesheet"
 	type="text/css" />
-<link href="${path}/css/table.css" rel="stylesheet" type="text/css" />
-<script src="${path}/js/d3.v3.min.js"></script>
-<script src="${path}/js/jquery-2.2.0.min.js"></script>
+<link href="${path}/static/css/table.css" rel="stylesheet" type="text/css" />
+<script src="${path}/static/js/d3.v3.min.js"></script>
+<script src="${path}/static/js/jquery-2.2.0.min.js"></script>
 <style type="text/css">
 .link {
 	stroke: white;
@@ -98,7 +98,7 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 }
 
 #container {
-	width: 85%;
+	width: 70%;
 	border: 1px solid gray;
 	border-radius: 5px;
 	position: relative;
@@ -109,7 +109,7 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 }
 
 .leftdiv {
-	width: 15%;
+	width: 14%;
 	height: 700px;
 	float: left;
 	border:1px solid #ccc;
@@ -190,23 +190,32 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 <%-- 	<span id="maxmon" maxmon=${maxmoeny } style="display: none"></span> --%>
 <%-- 	<span id="minmon" minmon=${minmoeny } style="display: none"></span> --%>
 	<c:set var="flag" value="0" />
-	<c:forEach items="${linklist }" var="link">
-		<span id="${flag}" sourse="${link.name1}" amount="${link.money}"
-			target="${link.name2}" style="display: none" color="${link.color}"></span>
-		<c:set var="flag" value="${flag+1}" />
-	</c:forEach>
+		<c:forEach items="${linklist}" var="link">
+			<c:if test="${isAccount}">
+				<span id="${flag}" sourse="${link.card1}" amount="${link.money}"
+					target="${link.card2}" style="display: none" color="${link.color}"></span>
+				<c:set var="flag" value="${flag+1}" />
+			</c:if>
+			<c:if test="${!isAccount}">
+				<span id="${flag}" sourse="${link.name1}" amount="${link.money}"
+					target="${link.name2}" style="display: none" color="${link.color}"></span>
+				<c:set var="flag" value="${flag+1}" />
+			</c:if>
+		</c:forEach>
 	<c:set var="flag" value="0" />
-	<c:forEach items="${nodelist }" var="node">
+	<c:forEach items="${nodelist}" var="node">
 		<span id="%${flag}" sh="${flag}" name="${node.name}"
 			img="${node.imgName}" style="display: none"></span>
 		<c:set var="flag" value="${flag+1}" />
 	</c:forEach>
 	<div>
 		<div class="leftdiv">
-			<h3 style="margin-top: 17%; margin-left: 28%;">人物信息</h3>
-			<div class="nodeinfo">
-				<span id="infoid-n" class="info"></span>
-			</div>
+			<c:if test="${!isAccount}">
+				<h3 style="margin-top: 17%; margin-left: 28%;">人物信息</h3>
+				<div class="nodeinfo">
+					<span id="infoid-n" class="info"></span>
+				</div>
+			</c:if>
 			<h3 style="margin-left: 28%;">流水信息</h3>
 			<div class="linkinfo">
 				<span id="infon-l" class="info"></span><br />
@@ -219,6 +228,19 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 		</div>
 		<div>
 			<div id='container' class=""></div>
+		</div>
+		<div class="rightdiv">
+		    <div>
+		        <h2 id="pointinfo"></h2>
+		    </div>
+		    <div>
+				<input id="zzsx" type="button" value="数据筛选" class="zzstart md-trigger" data-modal="modal-2" />
+				<input id="zzsx1" type="button" value="可疑路径追踪" class="zzstart" onclick="findLoop()" />
+	        	<input id="merge" type="button" value="关联账户追踪" class="zzstart" onclick="mergeAccount()" />
+				<input id="zzsx2" type="button" value="分析结果" class="zzstart" onclick="loadTable()" />
+				<input id="gd" type="button" value="固定静止" class="zzstart" onclick="gds()" />
+	        	<input id="zz" type="button" value="重置数据" class="zzstart" onclick="reset()" />
+		    </div>
 		</div>
 		<!-- 筛选模态框 -->
 		<div class="md-modal md-effect-13" id="modal-1">
@@ -246,7 +268,7 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 					<span>结束时间：</span><input type="date" id="endTime2" class="form-control" /><br/>
 				    <span>账号：</span><textarea type="text" id="cardNos" placeholder="可输入多个账号，以英文逗号隔开" class="form-control"></textarea><br/>
 					<button class="md-close btn-sm btn-primary">取消</button>
-					<button class="md-close btn-sm btn-danger" onclick="findLoop()">开始查找</button>
+					<button class="md-close btn-sm btn-danger" onclick="filterAccount()">开始查找</button>
 				</div>
 			</div>
 		</div>
@@ -271,13 +293,6 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 
 	<div class="l_left news_right" style="width: 100%;margin-bottom:20%">
 		<div class="notice_check">
-		      <p style="margin-left:15%">
-					<input id="zz" class="zzstart" type="button" style="width: 10%" value="重置数据" onclick="reset()" />
-<!-- 					<input id="gd" type="button" value="固定静止" style="width: 10%" class="zzstart md-trigger" onclick="gds()" /> -->
-					<input id="zzsx" type="button" value="数据筛选" style="width: 10%" class="zzstart md-trigger" data-modal="modal-1" />
-					<input id="zzsx1" type="button" value="查找回路" style="width: 10%" class="zzstart md-trigger" data-modal="modal-2" />
-					<input id="zzsx2" type="button" value="查找路径" style="width: 10%" class="zzstart md-trigger" data-modal="modal-3" />
-              </p>
 		</div>
 		<div class="clear"></div>
 		<div class="notice_check">
@@ -321,19 +336,27 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
     }
 
     function reset(){
-    	window.location.href = "topology";
+    	window.location.href = "${path}/draw/topology";
     }
 
-    function filter(){
-    	var amount = $("#amount").val();
-    	var frequency = $("#frequency").val();
-    	var everyDayAmount = $("#everyDayAmount").val();
-    	var everyDayFrequency = $("#everyDayFrequency").val();
-    	var starttime = $("#startTime1").val();
-    	var endtime = $("#endTime1").val();
-    	window.location.href = "filter?frequency=" + frequency + "&amount=" + amount
-    			+ "&everyDayAmount=" + everyDayAmount + "&everyDayFrequency=" + everyDayFrequency
-    			+ "&starttime=" + starttime + "&endtime=" + endtime;
+    function filterAccount(){
+//     	var amount = $("#amount").val();
+//     	var frequency = $("#frequency").val();
+//     	var everyDayAmount = $("#everyDayAmount").val();
+//     	var everyDayFrequency = $("#everyDayFrequency").val();
+//     	var starttime = $("#startTime1").val();
+//     	var endtime = $("#endTime1").val();
+//     	window.location.href = "filter?frequency=" + frequency + "&amount=" + amount
+//     			+ "&everyDayAmount=" + everyDayAmount + "&everyDayFrequency=" + everyDayFrequency
+//     			+ "&starttime=" + starttime + "&endtime=" + endtime;
+    	var startTime = $("#startTime2").val();
+    	var endTime = $("#endTime2").val();
+    	var cardNos = $("#cardNos").val();
+    	if (isEmpty(cardNos)) {
+    		layer.msg("账号不能为空");
+    	}
+    	window.location.href = "${path}/draw/filter/account?startTime=" + startTime
+    			+ "&endTime=" + endTime + "&cardNos=" + cardNos + "&type=1";
     }
 
     function isEmpty(obj){
@@ -351,14 +374,18 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
     }
 
     function findLoop(){
-        var startTime = $("#startTime2").val();
-        var endTime = $("#endTime2").val();
-        var cardNos = $("#cardNos").val();
-        if (isEmpty(cardNos)) {
-            layer.msg("账号不能为空");
-        }
-        window.location.href = "loop?startTime=" + startTime
-            + "&endTime=" + endTime + "&cardNos=" + cardNos + "&type=1";
+//     	var startTime = $("#startTime2").val();
+//     	var endTime = $("#endTime2").val();
+//     	var cardNos = $("#cardNos").val();
+// 		var cardNos = getUrlParam("cardNos");
+//     	if (isEmpty(cardNos)) {
+//     		layer.msg("账号不能为空");
+//     	}
+    	window.location.href = "${path}/draw/loop";
+    }
+
+    function mergeAccount(){
+    	window.location.href = "${path}/draw/merge-account";
     }
 
     function findPath(){
@@ -376,30 +403,6 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
     			+ "&endTime=" + endTime + "&payAcntName=" + payAcntName + "&recAcntName=" + recAcntName + "&type=2";
     }
 
-    $(function () {
-    	var type = getUrlParam("type");
-    	if (isEmpty(type)) {
-    		return;
-    	}
-    	var cardNos = getUrlParam("cardNos");
-    	if (type == '1' && isEmpty(type)) {
-    		return;
-    	}
-    	var payAcntName = getUrlParam("payAcntName");
-    	var recAcntName = getUrlParam("recAcntName");
-    	if (type == '2' && (isEmpty(payAcntName) || isEmpty(recAcntName))) {
-    		return;
-    	}
-    	var startTime = getUrlParam("startTime");
-    	var endTime = getUrlParam("endTime");
-        var queryParams = {
-        		startTime: startTime,
-        		endTime: endTime,
-        		cardNos: cardNos,
-        		payAcntName: payAcntName,
-        		recAcntName: recAcntName,
-        		type: type
-            };
         $('#table').bootstrapTable({
             method: "get",
             striped: true,
@@ -411,7 +414,16 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
             pageNumber: 1,
             search: false, //显示搜索框
             contentType: "application/x-www-form-urlencoded",
-            queryParams: queryParams,
+            queryParams: function (params) {
+                //这里的键的名字和控制器的变量名必须一直，这边改动，控制器也需要改成一样的
+                var temp = {
+                	query: 0
+                };
+                return temp;
+            },
+            responseHandler: function (res) {
+                return res;
+            },
             columns: [
                 {
                     title: "开始节点",
@@ -436,19 +448,11 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
                 }
             ]
         });
-    });
-//     function openFilter(){
-//         layer.open({
-//             type: 2,
-//             title: '可疑数据查询',
-//             shadeClose: true,
-//             shade: 0.5,
-//             skin: 'layui-layer-rim',
-//             closeBtn:1,
-//             area: ['1000px', '600px'],
-//             content: '${path}/static/suspiciousDataQuery.html'
-//         });
-//     }
+
+        function loadTable(){
+        	$('#table').bootstrapTable('refresh', { query: {query:1}});
+        }
+
     function LinkColorSet(Money) {
 //         if (Maxmoney - Minmoney == 0) {
             return 'link';
@@ -673,6 +677,9 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
         this.clickFn = callback;
     }
 
+
+
+
     //更新拓扑图状态信息
     Topology.prototype.update = function () {
         //画箭头
@@ -709,7 +716,7 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
                 return d['source']['status'] ? LinkColorSet(d.amount) : 'link link_error';
             })
             .style("stroke",function(d){
-		         return d.color ? d.color : "white";
+		         return d.color ? d.color : "blue";
 		     })
 
         link.enter().insert("svg:line", "g.node")
@@ -718,7 +725,7 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
                 return d['source']['status'] ? LinkColorSet(d.amount) : 'link link_error';
             })
             .style("stroke",function(d){
-		         return d.color ? d.color : "white";
+		         return d.color ? d.color : "blue";
 		     })
            .on('mouseover', function (d) {
                 document.getElementById("infon-l").innerHTML ="流水方向: "+ d['source']['id'] + " --> " + d['target']['id'];
@@ -991,18 +998,16 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
     	                });
     	}
 
-
-
-
-
     function real(){
          window.location.href = "real";
     }
     function fz(){
     	 window.location.href = "index";
     }
+
+
 </script>
-	<script src="${pageContext.request.contextPath}/js/classie.js"></script>
-	<script src="${pageContext.request.contextPath}/js/modalEffects.js"></script>
+	<script src="${path}/static/js/classie.js"></script>
+	<script src="${path}/static/js/modalEffects.js"></script>
 </body>
 </html>
