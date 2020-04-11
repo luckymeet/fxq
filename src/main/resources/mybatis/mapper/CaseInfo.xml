@@ -16,15 +16,21 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 				WHEN 0 THEN '金融诈骗案件'
 				WHEN 1 THEN '金融洗钱案件'
 				WHEN 2 THEN '贪污贿赂案件'
+				WHEN 3 THEN '贪污贿赂案件'
+				WHEN 4 THEN '贪污贿赂案件'
+				WHEN 5 THEN '贪污贿赂案件'
 				END
 			) caseTypeName
 			FROM case_info t
 		<where>
 			<if test="caseName != null and caseName != ''">
-				t.case_name = #{caseName}
+				INSTR(t.case_name,#{caseName}) > 0
 			</if>
 			<if test="caseCharger != null and caseCharger != ''">
 				t.case_charger = #{caseCharger}
+			</if>
+			<if test="createUser != null and createUser != ''">
+				t.create_user = #{createUser}
 			</if>
 		</where>
 	</select>

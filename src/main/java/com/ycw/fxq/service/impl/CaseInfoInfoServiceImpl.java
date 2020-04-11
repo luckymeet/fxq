@@ -5,6 +5,7 @@ import com.ycw.fxq.bean.CaseInfo;
 import com.ycw.fxq.bean.CaseInfoVO;
 import com.ycw.fxq.bean.request.CaseInfoRequest;
 import com.ycw.fxq.common.page.PageParams;
+import com.ycw.fxq.common.utils.UserInfoUtils;
 import com.ycw.fxq.mapper.CaseInfoMapper;
 import com.ycw.fxq.service.CaseInfoService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,6 +30,7 @@ public class CaseInfoInfoServiceImpl extends ServiceImpl<CaseInfoMapper, CaseInf
 		Map<String,String> searchMap = new HashMap<>();
 		searchMap.put("caseName",request.getCaseName());
 		searchMap.put("caseCharger",request.getCaseCharger());
+		searchMap.put("createUser", UserInfoUtils.getUserInfo().getId().toString());
 		return caseInfoMapper.findAll(searchMap);
 	}
 
