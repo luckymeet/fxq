@@ -20,8 +20,11 @@ import java.util.List;
 public class CaseInfoController {
     @Autowired
     private CaseInfoService caseService;
+
     /**
-     *  请求列表 find?caseName=XXX&caseCharger=XXX
+     * 列表 请求参数+分页参数
+     * @param request
+     * @param pageParams
      * @return
      */
     @GetMapping("/find")
