@@ -4,14 +4,20 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.ycw.fxq.mapper.CaseInfoMapper">
 
-	<select id="findAll" resultType="com.ycw.fxq.bean.CaseInfoVo" parameterType="Map">
+	<select id="findAll" resultType="com.ycw.fxq.bean.CaseInfoVO" parameterType="Map">
 		SELECT
-			t.id, t.case_name, t.case_type, t.case_charger, t.detail,
-			case t.case_type_name
-			when 0 then '金融诈骗案件'
-			when 1 then '金融洗钱案件'
-			when 2 then '贪污贿赂案件'
-			end
+			t.id,
+			t.case_name,
+			t.case_type,
+			t.case_charger,
+			t.detail,
+			(
+			CASE t.case_type
+				WHEN 0 THEN '金融诈骗案件'
+				WHEN 1 THEN '金融洗钱案件'
+				WHEN 2 THEN '贪污贿赂案件'
+				END
+			) caseTypeName
 			FROM case_info t
 		<where>
 			<if test="caseName != null and caseName != ''">
