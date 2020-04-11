@@ -265,7 +265,10 @@
         },
         queryParamsType: 'limit', // undefined
         responseHandler: function (res) {
-            return res;
+            return{                            //return bootstrap-table能处理的数据格式
+                "total":res.data.total,
+                "rows":res.data.list
+            }
         },
         pagination: false,
         onlyInfoPagination: false,

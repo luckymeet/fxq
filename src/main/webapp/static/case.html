@@ -16,9 +16,9 @@
         <h6>案件管理</h6>
         <div class="notice_check">
               <p>
-                  <label>案件名称：</label><input type="text" class="find_input">
-                  <label>负责人：</label><input type="text" class="find_input">
-                  <button class="check_btn" style="margin-left: 50px">查询</button>
+                  <label>案件名称：</label><input id="caseName" type="text" class="find_input">
+                  <label>负责人：</label><input id="caseCharger" type="text" class="find_input">
+                  <button class="check_btn" style="margin-left: 50px" onclick="loadTable()">查询</button>
               </p>
         </div>
         <div class="clear"></div>
@@ -59,14 +59,24 @@
             method: "get",
             striped: true,
             singleSelect: false,
-            url: "json/case.json",
+            url: "case/find",
             dataType: "json",
+            sidePagination: "server",
             pagination: true, //分页
             pageSize: 10,
             pageNumber: 1,
             search: false, //显示搜索框
             contentType: "application/x-www-form-urlencoded",
-            queryParams:null,
+            queryParams:function (params) {
+                //这里的键的名字和控制器的变量名必须一直，这边改动，控制器也需要改成一样的
+                var temp = {
+                	pageSize: params.limit,                         //页面大小
+                	pageNum: (params.offset / params.limit) + 1,   //页码
+                	caseName: $('#caseName').val(),
+                	caseCharger: $('#caseCharger').val()
+                };
+                return temp;
+            },
             columns: [
                 {
                     checkbox: "true",
@@ -78,28 +88,28 @@
                 ,
                 {
                     title: "案件编号",
-                    field: 'id',
+                    field: 'num',
                     align: 'center',
                     width: 160,
                     valign: 'middle'
                 },
                 {
                     title: "案件名称",
-                    field: 'name',
+                    field: 'caseName',
                     align: 'center',
                     width: 160,
                     valign: 'middle'
                 },
                 {
                     title: "负责人",
-                    field: 'num',
+                    field: 'caseCharger',
                     align: 'center',
                     width: 80,
                     valign: 'middle'
                 },
                 {
                     title: '案件类型',
-                    field: 'url',
+                    field: 'caseTypeName',
                     align: 'center',
                     width: 120,
                     valign: 'middle'
@@ -120,6 +130,9 @@
             ]
         });
     });
+    function loadTable(){
+    	$('#table').bootstrapTable('refresh');
+    }
     function change(){
         $(".dropdown-menu>li").click(function(){
             $(".change").html($(this).html())

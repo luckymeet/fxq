@@ -1,15 +1,18 @@
 package com.ycw.fxq.controller;
 
-import com.github.pagehelper.PageInfo;
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
 import com.ycw.fxq.bean.CaseInfoVo;
 import com.ycw.fxq.bean.request.CaseInfoRequest;
+import com.ycw.fxq.common.page.PageInfo;
 import com.ycw.fxq.common.page.PageParams;
 import com.ycw.fxq.common.response.ResponseVO;
 import com.ycw.fxq.service.CaseInfoService;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 /**
  * 案件Controller
@@ -25,7 +28,8 @@ public class CaseInfoController {
      * @return
      */
     @GetMapping("/find")
-    public ResponseVO<List<CaseInfoVo>> find(CaseInfoRequest request, PageParams pageParams) {
-        return ResponseVO.success(caseService.queryAll(request,pageParams));
+    public ResponseVO<PageInfo<CaseInfoVo>> find(CaseInfoRequest request, PageParams pageParams) {
+        List<CaseInfoVo> list = caseService.queryAll(request,pageParams);
+		return ResponseVO.success(new PageInfo<>(list));
     }
 }
