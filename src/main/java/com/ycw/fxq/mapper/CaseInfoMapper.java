@@ -1,7 +1,7 @@
 package com.ycw.fxq.mapper;
 
 import com.ycw.fxq.bean.CaseInfo;
-import com.ycw.fxq.bean.CaseInfoVo;
+import com.ycw.fxq.bean.CaseInfoVO;
 import com.ycw.fxq.common.base.BaseCrudMapper;
 import org.apache.ibatis.annotations.Mapper;
 
@@ -15,5 +15,5 @@ public interface CaseInfoMapper extends BaseCrudMapper<CaseInfo> {
      * @param searchMap
      * @return
      */
-    List<CaseInfoVo> findAll(Map<String,String> searchMap);
+    List<CaseInfoVO> findAll(Map<String,String> searchMap);
 }

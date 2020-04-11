@@ -6,10 +6,11 @@ import lombok.Data;
  *
  */
 @Data
-public class CaseInfoVo {
+public class CaseInfoVO {
     private Integer id;
     private String num;
     private String caseName;
+    private Integer caseType;
     private String caseTypeName;
     private String caseCharger;
     private String detail;

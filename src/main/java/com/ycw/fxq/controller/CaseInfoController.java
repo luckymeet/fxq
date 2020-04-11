@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.ycw.fxq.bean.CaseInfoVo;
+import com.ycw.fxq.bean.CaseInfoVO;
 import com.ycw.fxq.bean.request.CaseInfoRequest;
 import com.ycw.fxq.common.page.PageInfo;
 import com.ycw.fxq.common.page.PageParams;
@@ -23,13 +23,25 @@ import com.ycw.fxq.service.CaseInfoService;
 public class CaseInfoController {
     @Autowired
     private CaseInfoService caseService;
+
     /**
-     *  请求列表 find?caseName=XXX&caseCharger=XXX
+     * 列表 请求参数+分页参数
+     * @param request
+     * @param pageParams
      * @return
      */
     @GetMapping("/find")
-    public ResponseVO<PageInfo<CaseInfoVo>> find(CaseInfoRequest request, PageParams pageParams) {
-        List<CaseInfoVo> list = caseService.queryAll(request,pageParams);
+    public ResponseVO<PageInfo<CaseInfoVO>> find(CaseInfoRequest request, PageParams pageParams) {
+        List<CaseInfoVO> list = caseService.queryAll(request,pageParams);
 		return ResponseVO.success(new PageInfo<>(list));
     }
+
+    /**
+     * 以下为新增/修改操作
+     * 新增/修改 传入CaseInfoVo
+     * 删除传入 id
+     */
+    /**
+     * 前端传参参考login2.html中$('#btn_login').click(function(){代码
+     */
 }

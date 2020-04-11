@@ -6,7 +6,13 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 
 	<select id="findAll" resultType="com.ycw.fxq.bean.CaseInfoVo" parameterType="Map">
 		SELECT
-			t.id, t.case_name, t.case_type, t.case_charger, t.detail FROM case_info t
+			t.id, t.case_name, t.case_type, t.case_charger, t.detail,
+			case t.case_type_name
+			when 0 then '金融诈骗案件'
+			when 1 then '金融洗钱案件'
+			when 2 then '贪污贿赂案件'
+			end
+			FROM case_info t
 		<where>
 			<if test="caseName != null and caseName != ''">
 				t.case_name = #{caseName}
