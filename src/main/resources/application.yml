@@ -12,7 +12,7 @@ spring:
     # 数据库驱动类名
     driver-class-name: com.mysql.cj.jdbc.Driver
     # 数据库连接
-    url: jdbc:mysql://39.105.58.23/dbdata?characterEncoding=utf-8&useSSL=true&allowMultiQueries=true&zeroDateTimeBehavior=convertToNull&serverTimezone=GMT%2b8
+    url: jdbc:mysql://39.105.58.23/fxq?characterEncoding=utf-8&useSSL=true&allowMultiQueries=true&zeroDateTimeBehavior=convertToNull&serverTimezone=GMT%2b8
     # 数据库用户名
     username: root
     # 数据库访问密码
@@ -105,6 +105,7 @@ mybatis-plus:
       
 logging:
   level:
+    druid.sql.Statement: debug
     com.ycw.aml.user: debug
 
 

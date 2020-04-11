@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ycw.fxq.mapper.CaseInfoMapper">
+
+	<select id="findAll" resultType="com.ycw.fxq.bean.CaseInfoVo" parameterType="Map">
+		SELECT
+			t.id, t.case_name, t.case_type, t.case_charger, t.detail FROM case_info t
+		<where>
+			<if test="caseName != null and caseName != ''">
+				t.case_name = #{caseName}
+			</if>
+			<if test="caseCharger != null and caseCharger != ''">
+				t.case_charger = #{caseCharger}
+			</if>
+		</where>
+	</select>
+</mapper>
