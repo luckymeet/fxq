@@ -31,4 +31,13 @@ public class CaseInfoController {
     public ResponseVO<List<CaseInfoVo>> find(CaseInfoRequest request, PageParams pageParams) {
         return ResponseVO.success(caseService.queryAll(request,pageParams));
     }
+
+    /**
+     * 以下为新增/修改操作
+     * 新增/修改 传入CaseInfoVo
+     * 删除传入 id
+     */
+    /**
+     * 前端传参参考login2.html中$('#btn_login').click(function(){代码
+     */
 }
