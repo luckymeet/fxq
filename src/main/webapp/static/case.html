@@ -15,18 +15,13 @@
     <div class="l_left news_right" style="width:100%">
         <h6>案件管理</h6>
         <div class="notice_check">
-
               <p>
-
-                  <label>案件名称：</label><input type="text" class="find_input">
-                  <label>负责人：</label><select class="find_input"></select>
-                  <button class="check_btn">查询</button>
+                  <label>案件名称：</label><input id="caseName" type="text" class="find_input">
+                  <label>负责人：</label><input id="caseCharger" type="text" class="find_input">
+                  <button class="check_btn" style="margin-left: 50px" onclick="loadTable()">查询</button>
               </p>
-
-
         </div>
         <div class="clear"></div>
-
         <div class="notice_check">
             <div class="notice_nav r_right paddingBotme">
                 <P>
@@ -64,14 +59,24 @@
             method: "get",
             striped: true,
             singleSelect: false,
-            url: "json/case.json",
+            url: "case/find",
             dataType: "json",
+            sidePagination: "server",
             pagination: true, //分页
             pageSize: 10,
             pageNumber: 1,
             search: false, //显示搜索框
             contentType: "application/x-www-form-urlencoded",
-            queryParams:null,
+            queryParams:function (params) {
+                //这里的键的名字和控制器的变量名必须一直，这边改动，控制器也需要改成一样的
+                var temp = {
+                	pageSize: params.limit,                         //页面大小
+                	pageNum: (params.offset / params.limit) + 1,   //页码
+                	caseName: $('#caseName').val(),
+                	caseCharger: $('#caseCharger').val()
+                };
+                return temp;
+            },
             columns: [
                 {
                     checkbox: "true",
@@ -83,62 +88,32 @@
                 ,
                 {
                     title: "案件编号",
-                    field: 'id',
+                    field: 'num',
                     align: 'center',
                     width: 160,
                     valign: 'middle'
                 },
                 {
                     title: "案件名称",
-                    field: 'name',
+                    field: 'caseName',
                     align: 'center',
                     width: 160,
                     valign: 'middle'
                 },
                 {
                     title: "负责人",
-                    field: 'num',
+                    field: 'caseCharger',
                     align: 'center',
                     width: 80,
                     valign: 'middle'
                 },
                 {
                     title: '案件类型',
-                    field: 'url',
+                    field: 'caseTypeName',
                     align: 'center',
                     width: 120,
                     valign: 'middle'
                 },
-                /* {
-                    title: '启用状态',
-                    field: 'status',
-                    width: 70,
-                    align: 'center',
-                    formatter: function (cellval, row) {
-                        if (cellval =='未启用'){
-                            return '<div  style="color:red">'+cellval+'</div>';
-                        } else  if (cellval =='启用'){
-                            return '<div  style="color:green">'+cellval+'</div>';
-                        }else {
-                            return cellval;
-                        }}
-                },
-
-                {
-                    title: '开灯时间',
-                    field: 'time',
-                    align: 'center',
-                    width: 120,
-                    valign: 'middle'
-                },
-                {
-                    title: '开灯周期',
-                    field: 'low',
-                    align: 'center',
-                    width: 120,
-                    valign: 'middle'
-                }, */
-
                 {
                     title: '操作',
                     field: 'person',
@@ -155,6 +130,9 @@
             ]
         });
     });
+    function loadTable(){
+    	$('#table').bootstrapTable('refresh');
+    }
     function change(){
         $(".dropdown-menu>li").click(function(){
             $(".change").html($(this).html())
@@ -163,16 +141,15 @@
     function add(){
         layer.open({
             type: 2,
-            title: '添加详情',
+            title: '添加案件信息',
             shadeClose: true,
             shade: 0.5,
             skin: 'layui-layer-rim',
             closeBtn:1,
-            area: ['1000px', '600px'],
+            area: ['1000px', '500px'],
             content: 'caseTail.html'
         });
     }
-
 </script>
 </body>
 </html>

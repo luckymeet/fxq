@@ -41,8 +41,8 @@
 <body onload="init()">
 <div class="warrant_nav">
     <ul>
-        <li class="warrant_active"><span class="step">1</span>基本信息<span class="chevron"></span></li>
-        <li><span class="step">2</span>导入映射<span class="chevron"></span></li>
+        <li class="warrant_active"><span class="step">1</span>数据导入<span class="chevron"></span></li>
+        <li><span class="step">2</span>自识别导入<span class="chevron"></span></li>
         <li><span class="step">3</span>数据纠错<span class="chevron"></span></li>
     </ul>
 
@@ -97,9 +97,34 @@
 			                                <button class="btn btn-default" style="height:28px;line-height: 14px">添加</button>
 			                                <button class="btn btn-default" style="height:28px;line-height: 14px">删除</button>
 		                                </td>
-	                                </tr>
+                                    </tr>
+                                    <tr>
+                                        <td>卡号：<span>*</span></td>
+                                      <td>
+                                          <input type="text" class="" required>
+                                          <button class="btn btn-default" style="height:28px;line-height: 14px;background-color: ">添加</button>
+                                          <button class="btn btn-default" style="height:28px;line-height: 14px">删除</button>
+                                      </td>
+                                  </tr>
+                                  <tr>
+                                    <td>交易金额：<span>*</span></td>
+                                    <td>
+                                      <input type="text" class="" required>
+                                      <button class="btn btn-default" style="height:28px;line-height: 14px;background-color: #e7f0f6">添加</button>
+                                      <button class="btn btn-default" style="height:28px;line-height: 14px">删除</button>
+                                    </td>
+                                   </tr>
 		  							<tr>
-			  							<td>账户名称：<span>*</span></td>
+			  							<td>交易日期：<span>*</span></td>
+		                                <td>
+			                                <input type="text" class="" required>
+			                                <button class="btn btn-default" style="height:28px;line-height: 14px">添加</button>
+			                                <button class="btn btn-default" style="height:28px;line-height: 14px">删除</button>
+		                                </td>
+	                                </tr>
+		  					
+		  							<tr>
+			  							<td>对方账户：<span>*</span></td>
 		                                <td>
 			                                <input type="text" class="" required>
 			                                <button class="btn btn-default" style="height:28px;line-height: 14px">添加</button>
@@ -107,7 +132,7 @@
 		                                </td>
 	                                </tr>
 		  							<tr>
-			  							<td>对方账号：<span>*</span></td>
+			  							<td>对方卡号：</td>
 		                                <td>
 			                                <input type="text" class="" required>
 			                                <button class="btn btn-default" style="height:28px;line-height: 14px">添加</button>
@@ -115,7 +140,7 @@
 		                                </td>
 	                                </tr>
 		  							<tr>
-			  							<td>对方账户名称：<span>*</span></td>
+			  							<td>账户余额：<span>*</span></td>
 		                                <td>
 			                                <input type="text" class="" required>
 			                                <button class="btn btn-default" style="height:28px;line-height: 14px">添加</button>
@@ -123,29 +148,29 @@
 		                                </td>
 	                                </tr>
 		  							<tr>
-			  							<td>交易金额：<span>*</span></td>
+			  							<td>借贷标志：</td>
 		                                <td>
 			                                <input type="text" class="" required>
 			                                <button class="btn btn-default" style="height:28px;line-height: 14px">添加</button>
 			                                <button class="btn btn-default" style="height:28px;line-height: 14px">删除</button>
 		                                </td>
-	                                </tr>
-		  							<tr>
-			  							<td>交易时间：<span>*</span></td>
-		                                <td>
-			                                <input type="text" class="" required>
-			                                <button class="btn btn-default" style="height:28px;line-height: 14px">添加</button>
-			                                <button class="btn btn-default" style="height:28px;line-height: 14px">删除</button>
-		                                </td>
-	                                </tr>
-		  							<tr>
-			  							<td>借贷标识：<span>*</span></td>
-		                                <td>
-			                                <input type="text" class="" required>
-			                                <button class="btn btn-default" style="height:28px;line-height: 14px">添加</button>
-			                                <button class="btn btn-default" style="height:28px;line-height: 14px">删除</button>
-		                                </td>
-	                                </tr>
+                                    </tr>
+                                    <tr>
+                                        <td>户名行号：</td>
+                                      <td>
+                                          <input type="text" class="" required>
+                                          <button class="btn btn-default" style="height:28px;line-height: 14px">添加</button>
+                                          <button class="btn btn-default" style="height:28px;line-height: 14px">删除</button>
+                                      </td>
+                                  </tr>
+                                  <tr>
+                                    <td>对方行号：</td>
+                                  <td>
+                                      <input type="text" class="" required>
+                                      <button class="btn btn-default" style="height:28px;line-height: 14px">添加</button>
+                                      <button class="btn btn-default" style="height:28px;line-height: 14px">删除</button>
+                                  </td>
+                                 </tr>
 	                            </tbody>
 	                        </table>
 	                    </div>
@@ -155,12 +180,30 @@
 		</div>
 		<div style="width:25%;float:left; margin-top:30px;">
 			<span style="font-weight:700">未识别的属性名</span>
-			<div style="width:90%;height:400px;border:1px solid #ccc;border-radius: 4px;">
+			<div class="clear"></div>
+			<div style="width:90%;height:400px;border:1px solid #e7f0f6;border-radius: 4px;">
+				<span style="display: block">账号名称 </span>
+				<span style="display: block">交易时间 </span>
+				<span style="display: block">借贷方标志 </span>
+				<span style="display: block">金额 </span>
+				<span style="display: block">账户余额 </span>
+				<span style="display: block">开户行名称 </span>
+				<span style="display: block">交易机构名称 </span>
+				<span style="display: block">对方户名 </span>
+				<span style="display: block">柜员号 </span>
+				<span style="display: block">交易流水号 </span>
+				<span style="display: block">交易渠道</span>
 			</div>
+
         </div>
         <div style="width:25%;float:left; margin-top:30px;">
 			<span style="font-weight:700">需要添加的属性列</span>
-			<div style="width:90%;height:400px;border:1px solid #ccc;border-radius: 4px;">
+			<div class="clear"></div>
+			<div style="width:90%;height:400px;border:1px solid #e7f0f6;border-radius: 4px;">
+				<span style="display: block">账户</span>
+				<span style="display: block">交易金额</span>
+				<span style="display: block">借贷方标志 </span>
+				<span style="display: block">对方账号 </span>
 			</div>
         </div>
     </div>
@@ -199,7 +242,7 @@
 	            </div>
 	        </form>
 		</div>
-		<div style="width: 80%; float: left; margin-top:30px;">
+		<div style="width: 90%; float: left; margin-top:30px;">
 		<div class="l_left news_right" style="margin-left:5%;width:90%">
 <!-- 	        <div class="notice_check"> -->
 <!-- 	              <p> -->
@@ -242,7 +285,7 @@
 </div>
 <div class="notice_bot">
     <div class="l_left"><input type="checkbox" checked="checked"/>保存并关闭窗口</div>
-    <div class="r_right but_p"><button class="but_save"  onclick="importMapping()">导入</button><button class="but_close" onclick="Cancel()">关闭</button></div>
+    <div class="r_right but_p"><button class="but_save" style="background-color: #3370B7;"  onclick="importMapping()">导入</button><button class="but_close" style="background-color: #3370B7;"  onclick="Cancel()">关闭</button></div>
 </div>
 <script src="js/jquery-2.2.0.min.js"></script>
 <script type="text/javascript" src="http://api.map.baidu.com/api?v=2.0&ak=5ieMMexWmzB9jivTq6oCRX9j"></script>

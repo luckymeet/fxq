@@ -4,12 +4,9 @@
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-<title>银行数据分析网络-V3版</title>
+<title>银行数据分析网络</title>
 </head>
 <body>
-
-
-
 
 <script src="${pageContext.request.contextPath}/js/d3.v3.min.js"></script>
 <script>
@@ -55,11 +52,11 @@ var graph ={
 var width = 960,
     height = 500;
 
-var force = d3.layout.force()
-    .size([width, height])
-    .charge(-400)
-    .linkDistance(40)
-    .on("tick", tick);
+var force = d3.layout.force() //初始力导向布局
+    .size([width, height])   //指定作用域范围
+    .charge(-400)            //指定相互之间的作用力
+    .linkDistance(40)        //指定连线数组
+    .on("tick", tick);       //tick事件，用于更新force布局
 
 var drag = force.drag()
     .on("dragstart", dragstart);

@@ -22,27 +22,29 @@
     <div class="notice_check">
         <label class="">案件名称：</label>
         <select class="find_input">
-            <option>成都XX集团洗钱案件</option>
+            <option>陈X汶涉嫌洗钱案件</option>
+            <option>郭X利涉嫌洗钱案件</option>
+            <option>李X等人涉嫌诈骗案件</option>
+            <option>吕梁市XX混凝土企业洗钱案件</option>
+            <option>XXX煤焦化集团有限企业偷税案件</option>
+            <option>山西房地产XXXX开发有限公司诈骗案件</option>
         </select>
         <label class="">账户名称：</label>
         <input type="text" class="find_input">
-        <label class="">&emsp;&emsp;账号：</label>
+        <label class="" style="margin-left: 50px">账号：</label>
         <input type="text" class="find_input">
-        <button class="check_btn">查询</button><br>
+        <button class="check_btn" style="margin-left: 50px">查询</button><br>
 
         <label class="">对方账号：</label>
         <input type="text" class="find_input">
         <label>交易金额：</label>
-        <input type="date" class="find_input" style="width:142px;margin-right:2px" /><span>-</span><input type="date" class="find_input" style="width:142px"/>
-        <label>交易时间：</label>
+        <input type="text" class="find_input" style="width:142px;margin-right:2px" /><span>-</span><input type="text" class="find_input" style="width:142px"/>
+        <label style="margin-left: 20px">交易时间：</label>
         <input type="date" class="find_input" style="width:142px;margin-right:2px" /><span>-</span><input type="date" class="find_input" style="width:143px"/>
 
-
-
-
-
     <div class="notice_nav r_right">
-        <a class="btn btn-default" onclick="importTrans()"><span class="glyphicon glyphicon-import"></span>导入</a>
+        <a class="btn btn-default" onclick="importTrans()"><span class="glyphicon glyphicon-import"></span>自动识别</a>
+        <a class="btn btn-default" onclick="importTransPeople()"><span class="glyphicon glyphicon-import"></span>人工导入</a>
     </div>
 </div>
     <table id="table" class="table_style" style="margin: 0 auto" > </table>
@@ -57,13 +59,25 @@
     function importTrans(){
         layer.open({
             type: 2,
-            title: '流水导入',
+            title: '自动识别',
             shadeClose: true,
             shade: 0.5,
             skin: 'layui-layer-rim',
             closeBtn:1,
             area: ['1000px', '600px'],
             content: 'transactionImport.html'
+        });
+    }
+    function importTransPeople(){
+        layer.open({
+            type: 2,
+            title: '人工导入',
+            shadeClose: true,
+            shade: 0.5,
+            skin: 'layui-layer-rim',
+            closeBtn:1,
+            area: ['1000px', '600px'],
+            content: 'transactionImportPeople.html'
         });
     }
 </script>

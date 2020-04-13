@@ -5131,8 +5131,8 @@
     };
     force.links = function(x) {
       if (!arguments.length) return links;
-      links = x;
-      return force;
+        links = x;
+        return force;
     };
     force.size = function(x) {
       if (!arguments.length) return size;

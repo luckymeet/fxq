@@ -14,6 +14,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.ycw.fxq.bean.TempDraw;
+import com.ycw.fxq.common.page.PageInfo;
+import com.ycw.fxq.common.page.PageParams;
 import com.ycw.fxq.common.response.ResponseVO;
 import com.ycw.fxq.service.CommonService;
 import com.ycw.fxq.service.TempDrawService;
@@ -57,15 +59,23 @@ public class TransferRecordController {
 	 * @return
 	 */
 	@GetMapping("/draw/path/list")
-	public ResponseVO<List<Map<String, String>>> findPath(String startTime, String endTime, String cardNos,
-			String payAcntName, String recAcntName, String type) {
-		List<List<String>> pathList = null;
-		if (LOOP_QUERY.equals(type)) {
-			// 获取账户间的环路
-			pathList = findLoop(startTime, endTime, cardNos);
-		} else {
-			// 获取两个账户间的所有路径
-			pathList = findPath(startTime, endTime, payAcntName, recAcntName);
+	public ResponseVO<List<Map<String, String>>> findPath(Integer query) {
+		if (query == 0) {
+			return ResponseVO.success(null);
+		}
+		// 组装有向图模型（利用Map表示有向图）
+		Map<String, String> dataMap = commonService.createDirectedGraphByAccNo(DrawController.curLinkList);
+
+		/* 调用算法求环路 */
+		String[] cardNoArray = StringUtils.split(StringUtils.trimToEmpty(DrawController.cardNos), ',');
+		List<List<String>> pathList = new ArrayList<>();
+		for (int i = 0; i < cardNoArray.length; i++) {
+			for (int j = 0; j < cardNoArray.length; j++) {
+				String cardNo = cardNoArray[i].trim();
+				Stack<String> previous = new Stack<>();
+				previous.push(cardNo);
+				commonService.findLoops(dataMap, pathList, previous, cardNo, cardNoArray[j].trim());
+			}
 		}
 
 		/* 路线列表 1——2——3——1 */
@@ -98,11 +108,9 @@ public class TransferRecordController {
 		return pathList;
 	}
 
-	private List<List<String>> findLoop(String startTime, String endTime, String cardNos) {
-		// 根据时间范围查询流水
-		List<TempDraw> drawList = tempDrawService.findTempDrawList(startTime, endTime);
+	private List<List<String>> findLoop(String cardNos) {
 		// 组装有向图模型（利用Map表示有向图）
-		Map<String, String> dataMap = commonService.createDirectedGraphByAccNo(drawList);
+		Map<String, String> dataMap = commonService.createDirectedGraphByAccNo(DrawController.curLinkList);
 
 		/* 调用算法求环路 */
 		String[] cardNoArray = StringUtils.split(StringUtils.trimToEmpty(cardNos), ',');
