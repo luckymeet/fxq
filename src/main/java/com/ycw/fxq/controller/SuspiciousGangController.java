@@ -10,6 +10,7 @@ import java.util.stream.Collectors;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -111,6 +112,9 @@ public class SuspiciousGangController {
 	 */
 	@GetMapping("/cluster")
 	public ModelAndView cluster() {
+		if (CollectionUtils.isEmpty(curLinkList)) {
+			return setModelAndView(curLinkList, new ArrayList<Node>());
+		}
 		Set<String> nameSet = curLinkList.stream().map(TempDraw :: getName1).collect(Collectors.toSet());
 		nameSet.addAll(curLinkList.stream().map(TempDraw :: getName2).collect(Collectors.toSet()));
 		List<Node> nodeList = commonService.getClusterNodeList(curLinkList, new ArrayList<>(nameSet));
