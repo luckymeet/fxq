@@ -48,10 +48,8 @@
                         <table class="table">
                             <tbody  id="fuhao">
                             <tr>
-                                <td>案件编号<span>*</span></td>
-                                <td><input type="text" class="long_text" required></td>
                                 <td>案件名称<span>*</span></td>
-                                <td><input type="text" class="long_text" required></td>
+                                <td><input type="text" class="long_text" required id="cardName"></td>
                             </tr>
                             <tr>
                                 <td>负责人<span></span></td>
@@ -60,13 +58,13 @@
                                 <td>
                                     <!--<input type="select" class="long_text" required>-->
                                     <select name="anjianliebiao" class="long_text">
-                                        <option value="volvo">金融诈骗案件</option>
-                                        <option value="saab">金融洗钱案件</option>
-                                        <option value="fiat">贪污贿赂案件</option>
-                                        <option value="audi">走私案件</option>
-                                        <option value="fiat">黑社会性质组织案件</option>
-                                        <option value="audi">恐怖活动案件</option>
-                                        <option value="audi"> 其他犯罪案件</option>
+                                        <option value="0">金融诈骗案件</option>
+                                        <option value="1">金融洗钱案件</option>
+                                        <option value="2">贪污贿赂案件</option>
+                                        <option value="3">走私案件</option>
+                                        <option value="4">黑社会性质组织案件</option>
+                                        <option value="5">恐怖活动案件</option>
+                                        <option value="6">其他犯罪案件</option>
                                     </select>
                                 </td>
                             </tr>
@@ -279,6 +277,14 @@
         var index = parent.layer.getFrameIndex(window.name);
         parent.layer.close(index);
     }
+
+    function updateElement(id){
+        debugger
+        // 查询渲染
+
+    }
+
+
     function save(){
         layer.msg('数据提交中', {
             icon: 16,

@@ -8,4 +8,7 @@ import java.util.List;
 
 public interface CaseInfoService {
     List<CaseInfoVO> queryAll(CaseInfoRequest request, PageParams pageParams);
+    void delete(Integer id);
+    void update(CaseInfoVO caseInfoVO);
+    CaseInfoVO query(Integer id);
 }

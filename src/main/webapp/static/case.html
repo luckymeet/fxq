@@ -26,8 +26,6 @@
             <div class="notice_nav r_right paddingBotme">
                 <P>
                 <a class="btn btn-default" onclick="add()"><span class="glyphicon glyphicon-plus"></span>新增</a>
-                <a class="btn btn-default" onclick="add()"><span class="glyphicon glyphicon-pencil"></span>修改</a>
-                <a class="btn btn-default"><span class="glyphicon glyphicon-remove"></span>删除</a>
                 </P>
             </div>
         </div>
@@ -59,7 +57,7 @@
             method: "get",
             striped: true,
             singleSelect: false,
-            url: "case/find",
+            url: "legalCase",
             dataType: "json",
             sidePagination: "server",
             pagination: true, //分页
@@ -120,7 +118,7 @@
                     width: 120,
                     align: 'center',
                     formatter: function (cellval, row) {
-                        var  e = '<button  id="add" data-id="98" class="btn btn-xs btn-success" onclick="add(\'' + row.id + '\')">编辑</button> ';
+                        var  e = '<button  id="add" data-id="98" class="btn btn-xs btn-success" onclick="update(\'' + row.id + '\')">编辑</button> ';
 
                         var  d = '<button  id="add" data-id="98" class="btn btn-xs btn-danger" onclick="del(\'' + row.id + '\')">删除</button> ';
                         return  e + d;
@@ -139,6 +137,7 @@
         })
     }
     function add(){
+        debugger
         layer.open({
             type: 2,
             title: '添加案件信息',
@@ -148,6 +147,42 @@
             closeBtn:1,
             area: ['1000px', '500px'],
             content: 'caseTail.html'
+        });
+    }
+    function update(id) {
+        debugger
+        layer.open({
+            type: 2,
+            title: '添加案件信息',
+            shadeClose: true,
+            shade: 0.5,
+            skin: 'layui-layer-rim',
+            closeBtn:1,
+            area: ['1000px', '500px'],
+            content: 'caseTail.html',
+            success: function(layero, index){
+                var iframe = window['layui-layer-iframe'+index];
+                iframe.updateElement(id);
+            }
+        });
+
+    }
+    function del(id) {
+        $.ajax({
+            type: "delete",
+            dataType: "json",
+            data:{
+            },
+            url: "/legalCase/" + id,
+            success: function (result) {
+                layer.msg('删除成功', {
+                    icon: 16,
+                    shade: 0.01
+                });
+                loadTable();
+            },
+            error : function() {
+            }
         });
     }
 </script>
