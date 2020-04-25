@@ -10,10 +10,10 @@ import lombok.Data;
 @Data
 public class CaseInfoVO {
 
-    private Integer id;
+    private Long id;
     private String num;
     private String caseName;
-    private Integer caseType;
+    private String caseType;
     private String caseTypeName;
     private String caseCharger;
     private String detail;

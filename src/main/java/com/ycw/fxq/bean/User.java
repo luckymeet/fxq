@@ -6,5 +6,6 @@ import lombok.EqualsAndHashCode;
 @Data
 @EqualsAndHashCode(callSuper=false)
 public class User {
-    private Integer id;
+    // TODO
+    private Long id;
 }

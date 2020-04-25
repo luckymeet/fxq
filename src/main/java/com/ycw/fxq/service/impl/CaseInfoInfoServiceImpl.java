@@ -51,6 +51,7 @@ public class CaseInfoInfoServiceImpl extends ServiceImpl<CaseInfoMapper, CaseInf
 		// caseInfoVo翻入caseInfo,调用各个set方法
 		CaseInfo caseInfo = new CaseInfo();
 		BeanUtils.copyProperties(caseInfoVO, caseInfo);
+		caseInfo.setUpdateUser(UserInfoUtils.getUserInfo().getId());
 
 		if (caseInfoVO.getId() != null) {
 			// 不为空
@@ -58,6 +59,7 @@ public class CaseInfoInfoServiceImpl extends ServiceImpl<CaseInfoMapper, CaseInf
 			return;
 		}
 		// if ID为空
+		caseInfo.setCreateUser(UserInfoUtils.getUserInfo().getId());
 		caseInfoMapper.insert(caseInfo);
 	}
 
