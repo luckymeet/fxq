@@ -9,9 +9,9 @@ import javax.servlet.http.HttpSession;
 
 public class UserInfoUtils {
     public static User getUserInfo() {
-        // getSession().getAttribute("user")
+        // getSession().getAttribute("user") TODO
         User user = new User();
-        user.setId(1);
+        user.setId(1L);
 
         return user;
     }

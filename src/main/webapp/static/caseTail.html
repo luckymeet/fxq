@@ -48,31 +48,30 @@
                         <table class="table">
                             <tbody  id="fuhao">
                             <tr>
-                                <td>案件编号<span>*</span></td>
-                                <td><input type="text" class="long_text" required></td>
                                 <td>案件名称<span>*</span></td>
-                                <td><input type="text" class="long_text" required></td>
+                                <input id="id" type="hidden" />
+                                <td><input type="text" class="long_text" required id="caseName"></td>
                             </tr>
                             <tr>
                                 <td>负责人<span></span></td>
-                                <td><input type="text" class="long_text" required></td>
+                                <td><input type="text" class="long_text" required id="caseCharger"></td>
                                 <td>案件类型<span></span></td>
                                 <td>
                                     <!--<input type="select" class="long_text" required>-->
-                                    <select name="anjianliebiao" class="long_text">
-                                        <option value="volvo">金融诈骗案件</option>
-                                        <option value="saab">金融洗钱案件</option>
-                                        <option value="fiat">贪污贿赂案件</option>
-                                        <option value="audi">走私案件</option>
-                                        <option value="fiat">黑社会性质组织案件</option>
-                                        <option value="audi">恐怖活动案件</option>
-                                        <option value="audi"> 其他犯罪案件</option>
+                                    <select name="anjianliebiao" class="long_text" id="caseType">
+                                        <option value="0">金融诈骗案件</option>
+                                        <option value="1">金融洗钱案件</option>
+                                        <option value="2">贪污贿赂案件</option>
+                                        <option value="3">走私案件</option>
+                                        <option value="4">黑社会性质组织案件</option>
+                                        <option value="5">恐怖活动案件</option>
+                                        <option value="6">其他犯罪案件</option>
                                     </select>
                                 </td>
                             </tr>
                             <tr>
                                 <td>案件详情<span></span></td>
-                                <td><textarea required style="width:100%"></textarea></td>
+                                <td><textarea required style="width:100%" id="detail"></textarea></td>
                            	</tr>
                             </tbody>
                         </table>
@@ -117,7 +116,7 @@
 </div>
 <div class="notice_bot">
     <div class="l_left"><input type="checkbox" checked="checked"/>保存并关闭窗口</div>
-    <div class="r_right but_p"><button class="but_save"  style="background-color: #337ab7;"   onclick="Cancel()">保存</button><button class="but_close"   style="background-color: #337ab7;"  onclick="Cancel()">关闭</button></div>
+    <div class="r_right but_p"><button class="but_save"  style="background-color: #337ab7;"   onclick="add()">保存</button><button class="but_close"   style="background-color: #337ab7;"  onclick="Cancel()">关闭</button></div>
 </div>
 <script src="js/jquery-2.2.0.min.js"></script>
 <script type="text/javascript" src="http://api.map.baidu.com/api?v=2.0&ak=5ieMMexWmzB9jivTq6oCRX9j"></script>
@@ -279,6 +278,59 @@
         var index = parent.layer.getFrameIndex(window.name);
         parent.layer.close(index);
     }
+
+    function add() {
+        $.ajax({
+            type: "post",
+            dataType: "json",
+            data:{
+                id:$("#id").val(),
+                caseName:$("#caseName").val(),
+                caseType:$('#caseType').val(),
+                caseCharger:$('#caseCharger').val(),
+                detail:$('#detail').val()
+            },
+            contentType: "application/x-www-form-urlencoded",
+            url: "/legalCase",
+            success: function (result) {
+                parent.layer.msg('保存成功', {
+                    icon: 16,
+                    shade: 0.01
+                });
+                parent.loadTable();
+                var index = parent.layer.getFrameIndex(window.name);
+                parent.layer.close(index);
+
+            },
+            error : function() {
+            }
+        });
+    }
+
+    function updateElement(id){
+        debugger
+        // 查询渲染
+        $.ajax({
+            type: "get",
+            dataType: "json",
+            data:{
+            },
+            contentType: "application/x-www-form-urlencoded",
+            url: "/legalCase/" + id,
+            success: function (result) {
+                debugger
+                $("#id").val(result.data.id);
+                $("#caseName").val(result.data.caseName);
+                $("#caseType").val(result.data.caseType);
+                $("#caseCharger").val(result.data.caseCharger);
+                $("#detail").val(result.data.detail);
+            },
+            error : function() {
+            }
+        });
+    }
+
+
     function save(){
         layer.msg('数据提交中', {
             icon: 16,
