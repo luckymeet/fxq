@@ -15,14 +15,19 @@
     <div class="news_check">
         <div class="check_left l_left">
             <label>案件名称：<label>
-            <select class="find_input">
-                <option>XX涉嫌洗钱案件</option>
+            <select id="case" class="find_input">
             </select>
             <label>账号：<label>
-            <input type="text" class="find_input">
+            <input id="acntNo" type="text" class="find_input">
             <label>交易时间：<label>
-            <input type="date" class="find_input" style="width:135px"/>-<input type="date" class="find_input" style="width:135px"/>
-            <button>查询</button>
+			<select id="months" class="find_input">
+				<option value='3'>最近3月</option>
+				<option value='6'>最近6月</option>
+				<option value='9'>最近9月</option>
+				<option value='12'>最近12月</option>
+            </select>
+            <input id="startTime" type="date" class="find_input" style="width:135px"/>-<input id="endTime" type="date" class="find_input" style="width:135px"/>
+            <button onclick="select()">查询</button>
         </div>
         <div class="clear"></div>
     </div>
@@ -52,8 +57,28 @@
 <script src="js/echarts-all.js"></script>
 
 <script>
-    $(function(){
+//     $(function(){
 
+//     	$("#case").remove();//清空select列表数据
+   	　　$.ajax({
+   	　　　　type : "GET",
+   	　　　　url : "case/find",
+   	　　　　dataType : "JSON",
+   	　　　　data : {},
+	   	　　success : function(data)
+	   	　　{
+	   		    var rows = data.data.list;
+	   	　　　　$("#case").prepend("<option value=''>请选择</option>");
+	   	　　　　for (var i = 0; i < rows.length; i++) {
+	   	　　　　		$("#case").append("<option value='" + rows[i].id + "'>" + rows[i].caseName + "</option>");
+	   	　　		}
+	   	　　},
+	   	  	error:function(){
+	   	　　		alertLayer("获取数据失败","error");
+	   	　　}
+   		});
+
+		// 柱形统计图
         var myChart = echarts.init($("#container7")[0]);
         option = {
             title: {
@@ -77,7 +102,7 @@
                 {
                     type : 'category',
                     boundaryGap : false,
-                    data : ['2017年3月1','2017年3月2','2017年3月3','2017年3月4','2017年3月5','2017年3月6','2017年3月7','2017年3月8','2017年3月9','2017年3月10','2017年3月11','2017年3月12']
+                    data : []
                 }
             ],
             yAxis : [
@@ -90,26 +115,24 @@
                 {
                     name:'交易金额',
                     type:'line',
-                    data:[680.00, 48700.00, 323.00, 49162.00, 14398.00, 5000.00,5000.00, 88794.56, 300.00, 5000, 4300, 5000,],
+                    data:[],
                 },
-                { 
+                {
                     type:'bar',
-                    data:[680.00, 48700.00, 323.00, 49162.00, 14398.00, 5000.00,5000.00, 88794.56, 300.00, 5000, 4300, 5000,],
+                    data:[],
                     itemStyle:{
                         barBorderRadius:[3,3,0,0],
                         color:"#c23531"
                     }
                 }
 
-
-
             ]
         };
         myChart.setOption(option);
 
-        //-------扇形统计图
+      	//-------扇形统计图
         var pieChart = echarts.init($("#container8")[0]);
-        pieOption = { 
+        pieOption = {
                 title: {
                 text: "交易金额占比数据分析",
                 left: 10,
@@ -123,10 +146,10 @@
                 formatter: "{a} <br/>{b} : {c} ({d}%)"
             },
             legend: {
-                orient : 'horizontal', 
+                orient : 'horizontal',
                 x : 'left',
-                y:"bottom", 
-                data:['10k-20k','20k-30k','30k-40k','40k-50k','50k以上']
+                y:"bottom",
+                data:['0k-10k','10k-20k','20k-30k','30k-40k','40k-50k','50k以上']
             },
             toolbox: {
                 show : true,
@@ -157,7 +180,7 @@
                     // radius : '55%',
                     radius: ['30%', '50%'],
                     center: ['50%', '60%'],
-                    data:[ 
+                    data:[
                         {value:680.00, name:'1k-2k'},
                         {value:48700.00, name:'40k-50k'},
                         {value:323.00, name:'0k-1k'},
@@ -175,6 +198,119 @@
             ]
         };
         pieChart.setOption(pieOption);
-    });
+
+        function select() {
+        	var caseId = $('#case').val();
+        	var acntNo = $('#acntNo').val();
+        	var months = $('#months').val();
+        	var startTime = $('#startTime').val();
+        	var endTime = $('#endTime').val();
+        	$.ajax({
+                type : "post",
+                async : true,            //异步请求（同步请求将会锁住浏览器，用户其他操作必须等待请求完成才可以执行）
+                url : "/statistic-analysis/amt/change",
+                data : {'caseId':caseId, 'acntNo':acntNo, 'months':months},
+                dataType : "json",        //返回数据形式为json
+                success : function(result) {
+                    //请求成功时执行该函数内容，result即为服务器返回的json对象
+                    if (result && result.code == 200) {
+                    	var data = result.data;
+//                     	debugger
+//                         for (var i = 0; i < result.length; i++) {
+//                             names.push(result[i].name);    //挨个取出类别并填入类别数组
+//                         }
+//                         for (var i = 0; i < result.length; i++) {
+//                             amts.push(result[i].num);    //挨个取出销量并填入销量数组
+//                         }
+                        myChart.hideLoading();    //隐藏加载动画
+                        myChart.setOption({        //加载数据图表
+                            xAxis: [
+                                {
+                                    type : 'category',
+                                    boundaryGap : false,
+                                    data : data.names
+                                }
+                            ],
+                            series: [
+	                            {
+	                                name:'交易金额',
+	                                type:'line',
+	                                data:data.amts,
+	                            },
+	                            {
+	                                type:'bar',
+	                                data:data.amts,
+	                                itemStyle:{
+	                                    barBorderRadius:[3,3,0,0],
+	                                    color:"#c23531"
+	                                }
+	                            }
+                            ]
+                        });
+
+                    }
+
+                },
+                error : function(errorMsg) {
+                    //请求失败时执行该函数
+                    alert("图表请求数据失败!");
+                    myChart.hideLoading();
+                }
+       	   });
+
+        	$.ajax({
+                type : "post",
+                async : true,            //异步请求（同步请求将会锁住浏览器，用户其他操作必须等待请求完成才可以执行）
+                url : "/statistic-analysis/amt/change",
+                data : {'caseId':caseId, 'acntNo':acntNo, 'startTime':startTime, 'endTime':endTime},
+                dataType : "json",        //返回数据形式为json
+                success : function(result) {
+                    //请求成功时执行该函数内容，result即为服务器返回的json对象
+                    if (result && result.code == 200) {
+                    	var data = result.data;
+//                     	debugger
+//                         for (var i = 0; i < result.length; i++) {
+//                             names.push(result[i].name);    //挨个取出类别并填入类别数组
+//                         }
+//                         for (var i = 0; i < result.length; i++) {
+//                             amts.push(result[i].num);    //挨个取出销量并填入销量数组
+//                         }
+                        myChart.hideLoading();    //隐藏加载动画
+                        myChart.setOption({        //加载数据图表
+                            xAxis: [
+                                {
+                                    type : 'category',
+                                    boundaryGap : false,
+                                    data : data.names
+                                }
+                            ],
+                            series: [
+	                            {
+	                                name:'交易金额',
+	                                type:'line',
+	                                data:data.amts,
+	                            },
+	                            {
+	                                type:'bar',
+	                                data:data.amts,
+	                                itemStyle:{
+	                                    barBorderRadius:[3,3,0,0],
+	                                    color:"#c23531"
+	                                }
+	                            }
+                            ]
+                        });
+
+                    }
+
+                },
+                error : function(errorMsg) {
+                    //请求失败时执行该函数
+                    alert("图表请求数据失败!");
+                    myChart.hideLoading();
+                }
+       	   })
+        }
+//     });
 </script>
 </html>

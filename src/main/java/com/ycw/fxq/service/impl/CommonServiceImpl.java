@@ -7,6 +7,7 @@ import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -102,14 +103,14 @@ public class CommonServiceImpl implements CommonService {
 		for (TempDraw temp_draw : linkList) {
 			int index1 = nameIndexMap.get(temp_draw.getName1());
 			int index2 = nameIndexMap.get(temp_draw.getName2());
-			allMonkey[index1] = allMonkey[index1] + Double.parseDouble(temp_draw.getMoney());
-			allMonkey[index2] = allMonkey[index2] + Double.parseDouble(temp_draw.getMoney());
+			allMonkey[index1] = allMonkey[index1] + temp_draw.getMoney().doubleValue();
+			allMonkey[index2] = allMonkey[index2] + temp_draw.getMoney().doubleValue();
 			allTime[index1] = allTime[index1] + 1;
 			allTime[index2] = allTime[index2] + 1;
 			timeMatrix[index1][index2] = timeMatrix[index1][index2] + 1;
 			timeMatrix[index2][index1] = timeMatrix[index2][index1] + 1;
-			moneyMatrix[index1][index2] = moneyMatrix[index1][index2] + Double.parseDouble(temp_draw.getMoney());
-			moneyMatrix[index2][index1] = moneyMatrix[index2][index1] + Double.parseDouble(temp_draw.getMoney());
+			moneyMatrix[index1][index2] = moneyMatrix[index1][index2] + temp_draw.getMoney().doubleValue();
+			moneyMatrix[index2][index1] = moneyMatrix[index2][index1] + temp_draw.getMoney().doubleValue();
 		}
 		double[][] result = new double[nameList.size()][nameList.size()];
 		for (int i = 0; i < nameList.size(); i++) {
@@ -125,7 +126,7 @@ public class CommonServiceImpl implements CommonService {
 					TempDraw tempDraw = new TempDraw();
 					tempDraw.setName1(indexNameMap.get(i));
 					tempDraw.setName2(indexNameMap.get(j));
-					tempDraw.setMoney(String.valueOf(result[i][j]));
+					tempDraw.setMoney(BigDecimal.valueOf((result[i][j])));
 					res.add(tempDraw);
 				}
 			}

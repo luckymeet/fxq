@@ -1,5 +1,6 @@
 package com.ycw.fxq.service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 
@@ -62,5 +63,17 @@ public interface TempDrawService extends IService<TempDraw> {
 	 * @return
 	 */
 	List<TempDraw> findTempDrawList(String startTime, String endTime);
+
+	/**
+	 * 查询流水数据
+	 * @author yuminjun
+	 * @date 2020/04/25 16:17:44
+	 * @param caseId 案件id
+	 * @param acntNo 账号
+	 * @param startTime 开始时间
+	 * @param endTime 结束时间
+	 * @return
+	 */
+	List<TempDraw> findDataByParams(String caseId, String acntNo, LocalDateTime startTime, LocalDateTime endTime);
 
 }

@@ -1,5 +1,6 @@
 package com.ycw.fxq.service.impl;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ForkJoinPool;
@@ -93,6 +94,27 @@ public class TempDrawServiceImpl extends ServiceImpl<TempDrawMapper, TempDraw> i
 			queryWrapper.le(TempDraw::getTime, endTime);
 		}
 		List<TempDraw> drawList = tempDrawMapper.selectList(queryWrapper);
+		return drawList;
+	}
+
+	/**
+	 * 查询流水数据
+	 * @author yuminjun
+	 * @date 2020/04/25 16:17:44
+	 * @param caseId 案件id
+	 * @param acntNo 账号
+	 * @param startTime 开始时间
+	 * @param endTime 结束时间
+	 * @return
+	 */
+	@Override
+	public List<TempDraw> findDataByParams(String caseId, String acntNo, LocalDateTime startTime, LocalDateTime endTime) {
+		LambdaQueryWrapper<TempDraw> queryWrapper = Wrappers.lambdaQuery();
+		queryWrapper.eq(TempDraw::getCaseId, caseId);
+		queryWrapper.eq(TempDraw::getCard1, acntNo);
+		queryWrapper.ge(TempDraw::getTime, startTime);
+		queryWrapper.le(TempDraw::getTime, endTime);
+		List<TempDraw> drawList = this.tempDrawMapper.selectList(queryWrapper);
 		return drawList;
 	}
 
