@@ -65,6 +65,6 @@ public interface CommonService {
 	 * @param drawList 流水记录列表
 	 * @return
 	 */
-	Map<String, String> createDirectedGraphByAccName(List<TempDraw> drawList);
+	Map<String, String> createDirectedGraphByAccName(List<TempDrawVO> drawList);
 
 }

@@ -100,16 +100,20 @@ public class DrawController {
 	 *
 	 * @author ycw
 	 * @date 2020/03/24 16:46:21
-	 * @param request
+	 * @param startTime 开始时间
+	 * @param endTime 结束时间
+	 * @param cardNos 账户名字符串，多个账户名以英文逗号隔开
 	 * @return
 	 */
 	@GetMapping("/filter/account")
 	public ModelAndView filterAccount(String startTime, String endTime, String cardNos) {
 		this.cardNos = cardNos;
-		List<String> cardList = Arrays.asList(StringUtils.split(cardNos, ','));
+		List<String> acntNameList = Arrays.asList(StringUtils.split(cardNos, ','));
+		Set<String> cardList = tempDrawService.findAcntNoListByAcntNameList(acntNameList);
+
 		// 根据时间范围查询流水
-		List<TempDraw> drawList = tempDrawService.findTempDrawList(startTime, endTime);
-		this.curLinkList = BeanHandleUtils.listCopy(drawList, TempDrawVO.class);
+		List<TempDrawVO> drawList = tempDrawService.findTempDrawList(startTime, endTime);
+		this.curLinkList = drawList;
 
 		/* 获取节点名称（节点为账号） */
 		Set<String> nameSet = curLinkList.stream().map(TempDraw :: getCard1).collect(Collectors.toSet());
@@ -247,7 +251,7 @@ public class DrawController {
 	@GetMapping("/path")
 	public ModelAndView findPath(String startTime, String endTime, String payAcntName, String recAcntName) {
 		// 根据时间范围查询流水
-		List<TempDraw> drawList = tempDrawService.findTempDrawList(startTime, endTime);
+		List<TempDrawVO> drawList = tempDrawService.findTempDrawList(startTime, endTime);
 		// 组装有向图模型（利用Map表示有向图）
 		Map<String, String> dataMap = commonService.createDirectedGraphByAccName(drawList);
 
@@ -262,12 +266,11 @@ public class DrawController {
 		/* 设置节点间路径颜色 */
 		Set<String> transSet = getTransSet(pathList);
 		List<TempDrawVO> linkList = new ArrayList<>();
-		for (TempDraw tempDraw : drawList) {
-			TempDrawVO vo = BeanHandleUtils.beanCopy(tempDraw, TempDrawVO.class);
+		for (TempDrawVO tempDraw : drawList) {
 			if (transSet.contains(tempDraw.getName1() + "-" + tempDraw.getName2())) {
-				vo.setColor("red");
+				tempDraw.setColor("red");
 			}
-			linkList.add(vo);
+			linkList.add(tempDraw);
 		}
 
 		// 获取节点名称

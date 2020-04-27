@@ -266,7 +266,7 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 					<p>筛选出你想画出的数据网络：</p>
 					<span>开始时间：</span><input type="date" id="startTime2" class="form-control" /><br/>
 					<span>结束时间：</span><input type="date" id="endTime2" class="form-control" /><br/>
-				    <span>账号：</span><textarea type="text" id="cardNos" placeholder="可输入多个账号，以英文逗号隔开" class="form-control"></textarea><br/>
+				    <span>账号：</span><textarea type="text" id="cardNos" placeholder="可输入多个账户，以英文逗号隔开" class="form-control"></textarea><br/>
 					<button class="md-close btn-sm btn-primary">取消</button>
 					<button class="md-close btn-sm btn-danger" onclick="filterAccount()">开始查找</button>
 				</div>
@@ -373,6 +373,8 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
         if (r != null) return unescape(r[2]); return null; //返回参数值
     }
 
+    var queryType = 1;
+
     function findLoop(){
 //     	var startTime = $("#startTime2").val();
 //     	var endTime = $("#endTime2").val();
@@ -381,10 +383,13 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 //     	if (isEmpty(cardNos)) {
 //     		layer.msg("账号不能为空");
 //     	}
+		queryType = 1;
     	window.location.href = "${path}/draw/loop";
     }
 
+
     function mergeAccount(){
+    	queryType = 2;
     	window.location.href = "${path}/draw/merge-account";
     }
 
@@ -417,7 +422,7 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
             queryParams: function (params) {
                 //这里的键的名字和控制器的变量名必须一直，这边改动，控制器也需要改成一样的
                 var temp = {
-                	query: 0
+                	query: queryType
                 };
                 return temp;
             },
@@ -450,7 +455,7 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
         });
 
         function loadTable(){
-        	$('#table').bootstrapTable('refresh', { query: {query:1}});
+        	$('#table').bootstrapTable('refresh', { query: {query:queryType}});
         }
 
     function LinkColorSet(Money) {

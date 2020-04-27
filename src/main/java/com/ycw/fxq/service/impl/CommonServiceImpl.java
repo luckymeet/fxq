@@ -323,7 +323,7 @@ public class CommonServiceImpl implements CommonService {
 	 * @return
 	 */
 	@Override
-	public Map<String, String> createDirectedGraphByAccName(List<TempDraw> drawList) {
+	public Map<String, String> createDirectedGraphByAccName(List<TempDrawVO> drawList) {
 		Map<String, String> dataMap = new HashMap<>((int) (drawList.size() / 0.75 + 1));
 		drawList.stream().forEach(tempDraw -> {
 			String name1 = tempDraw.getName1();

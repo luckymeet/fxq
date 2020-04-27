@@ -2,6 +2,7 @@ package com.ycw.fxq.controller;
 
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -13,9 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.ycw.fxq.bean.TempDraw;
-import com.ycw.fxq.common.page.PageInfo;
-import com.ycw.fxq.common.page.PageParams;
+import com.ycw.fxq.bean.TempDrawVO;
 import com.ycw.fxq.common.response.ResponseVO;
 import com.ycw.fxq.service.CommonService;
 import com.ycw.fxq.service.TempDrawService;
@@ -43,8 +42,6 @@ public class TransferRecordController {
 	@Autowired
 	private CommonService commonService;
 
-	private static final String LOOP_QUERY = "1";
-
 	/**
 	 * 查找有向图间的路径
 	 *
@@ -55,26 +52,39 @@ public class TransferRecordController {
 	 * @param cardNos     账号（多个账号以逗号隔开）
 	 * @param payAcntName 付款账号
 	 * @param recAcntName 收款账号
-	 * @param type        类型：1-查询环路，2-查询路径
+	 * @param type        类型：1-查询账号，2-查询账户
 	 * @return
 	 */
+	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@GetMapping("/draw/path/list")
 	public ResponseVO<List<Map<String, String>>> findPath(Integer query) {
-		if (query == 0) {
-			return ResponseVO.success(null);
-		}
-		// 组装有向图模型（利用Map表示有向图）
-		Map<String, String> dataMap = commonService.createDirectedGraphByAccNo(DrawController.curLinkList);
-
-		/* 调用算法求环路 */
-		String[] cardNoArray = StringUtils.split(StringUtils.trimToEmpty(DrawController.cardNos), ',');
 		List<List<String>> pathList = new ArrayList<>();
-		for (int i = 0; i < cardNoArray.length; i++) {
-			for (int j = 0; j < cardNoArray.length; j++) {
-				String cardNo = cardNoArray[i].trim();
-				Stack<String> previous = new Stack<>();
-				previous.push(cardNo);
-				commonService.findLoops(dataMap, pathList, previous, cardNo, cardNoArray[j].trim());
+		String[] cardNoArray = StringUtils.split(StringUtils.trimToEmpty(DrawController.cardNos), ',');
+		if (query == 1) {
+			// 组装有向图模型（利用Map表示有向图）
+			Map<String, String> dataMap = commonService.createDirectedGraphByAccNo(DrawController.curLinkList);
+			/* 调用算法求环路 */
+			List<String> acntNameList = Arrays.asList(cardNoArray);
+			List<String> cardNoList = new ArrayList(tempDrawService.findAcntNoListByAcntNameList(acntNameList));
+			for (int i = 0; i < cardNoList.size(); i++) {
+				for (int j = 0; j < cardNoList.size(); j++) {
+					String cardNo = cardNoList.get(i).trim();
+					Stack<String> previous = new Stack<>();
+					previous.push(cardNo);
+					commonService.findLoops(dataMap, pathList, previous, cardNo, cardNoList.get(j).trim());
+				}
+			}
+		} else {
+			// 组装有向图模型（利用Map表示有向图）
+			Map<String, String> dataMap = commonService.createDirectedGraphByAccName(DrawController.curLinkList);
+			/* 调用算法求环路 */
+			for (int i = 0; i < cardNoArray.length; i++) {
+				for (int j = 0; j < cardNoArray.length; j++) {
+					String cardName = cardNoArray[i].trim();
+					Stack<String> previous = new Stack<>();
+					previous.push(cardName);
+					commonService.findLoops(dataMap, pathList, previous, cardName, cardNoArray[j].trim());
+				}
 			}
 		}
 
@@ -94,7 +104,7 @@ public class TransferRecordController {
 		payAcntName = new String(payAcntName.getBytes(StandardCharsets.ISO_8859_1), StandardCharsets.UTF_8);
 		recAcntName = new String(recAcntName.getBytes(StandardCharsets.ISO_8859_1), StandardCharsets.UTF_8);
 		// 根据时间范围查询流水
-		List<TempDraw> drawList = tempDrawService.findTempDrawList(startTime, endTime);
+		List<TempDrawVO> drawList = tempDrawService.findTempDrawList(startTime, endTime);
 		// 组装有向图模型（利用Map表示有向图）
 		Map<String, String> dataMap = commonService.createDirectedGraphByAccName(drawList);
 

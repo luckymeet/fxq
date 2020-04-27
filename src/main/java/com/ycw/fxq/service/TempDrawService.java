@@ -3,6 +3,7 @@ package com.ycw.fxq.service;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.ycw.fxq.bean.Node;
@@ -62,7 +63,7 @@ public interface TempDrawService extends IService<TempDraw> {
 	 * @param endTime   结束时间
 	 * @return
 	 */
-	List<TempDraw> findTempDrawList(String startTime, String endTime);
+	List<TempDrawVO> findTempDrawList(String startTime, String endTime);
 
 	/**
 	 * 查询流水数据
@@ -75,5 +76,14 @@ public interface TempDrawService extends IService<TempDraw> {
 	 * @return
 	 */
 	List<TempDraw> findDataByParams(String caseId, String acntNo, LocalDateTime startTime, LocalDateTime endTime);
+
+	/**
+	 * 根据账户名查询所有账号
+	 * @author yuminjun
+	 * @date 2020/04/27 14:51:37
+	 * @param acntNameList
+	 * @return
+	 */
+	Set<String> findAcntNoListByAcntNameList(List<String> acntNameList);
 
 }

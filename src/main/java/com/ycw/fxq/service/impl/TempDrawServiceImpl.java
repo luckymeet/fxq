@@ -3,7 +3,9 @@ package com.ycw.fxq.service.impl;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.ForkJoinPool;
+import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,6 +17,7 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.ycw.fxq.bean.Node;
 import com.ycw.fxq.bean.TempDraw;
 import com.ycw.fxq.bean.TempDrawVO;
+import com.ycw.fxq.common.utils.BeanHandleUtils;
 import com.ycw.fxq.mapper.TempDrawMapper;
 import com.ycw.fxq.service.TempDrawService;
 import com.ycw.fxq.task.FindDataTask;
@@ -85,7 +88,7 @@ public class TempDrawServiceImpl extends ServiceImpl<TempDrawMapper, TempDraw> i
 	 * @return
 	 */
 	@Override
-	public List<TempDraw> findTempDrawList(String startTime, String endTime) {
+	public List<TempDrawVO> findTempDrawList(String startTime, String endTime) {
 		LambdaQueryWrapper<TempDraw> queryWrapper = Wrappers.lambdaQuery();
 		if (StringUtils.isNotBlank(startTime)) {
 			queryWrapper.ge(TempDraw::getTime, startTime);
@@ -94,6 +97,28 @@ public class TempDrawServiceImpl extends ServiceImpl<TempDrawMapper, TempDraw> i
 			queryWrapper.le(TempDraw::getTime, endTime);
 		}
 		List<TempDraw> drawList = tempDrawMapper.selectList(queryWrapper);
+		return BeanHandleUtils.listCopy(drawList, TempDrawVO.class);
+	}
+
+	/**
+	 * 根据账户名查询所有账号
+	 * @author yuminjun
+	 * @date 2020/04/27 14:51:37
+	 * @param acntNameList
+	 * @return
+	 */
+	@Override
+ 	public Set<String> findAcntNoListByAcntNameList(List<String> acntNameList) {
+		LambdaQueryWrapper<TempDraw> queryWrapper = Wrappers.lambdaQuery();
+		queryWrapper.in(TempDraw::getName1, acntNameList);
+		List<TempDraw> drawList1 = tempDrawMapper.selectList(queryWrapper);
+
+		queryWrapper = Wrappers.lambdaQuery();
+		queryWrapper.in(TempDraw::getName2, acntNameList);
+		List<TempDraw> drawList2 = tempDrawMapper.selectList(queryWrapper);
+
+		Set<String> drawList = drawList1.stream().map(TempDraw::getCard1).collect(Collectors.toSet());
+		drawList.addAll(drawList2.stream().map(TempDraw::getCard2).collect(Collectors.toSet()));
 		return drawList;
 	}
 
