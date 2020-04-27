@@ -200,14 +200,16 @@ public class DrawController {
 		Map<String, String> dataMap = commonService.createDirectedGraphByAccNo(curLinkList);
 
 		/* 调用算法求环路 */
-		String[] cardNoArray = StringUtils.split(this.cardNos, ',');
+//		String[] cardNoArray = StringUtils.split(this.cardNos, ',');
+		List<String> acntNameList = Arrays.asList(StringUtils.split(cardNos, ','));
+		List<String> cardNoList = new ArrayList(tempDrawService.findAcntNoListByAcntNameList(acntNameList));
 		List<List<String>> loopList = new ArrayList<>();
-		for (int i = 0; i < cardNoArray.length; i++) {
-			for (int j = 0; j < cardNoArray.length; j++) {
-				String cardNo = cardNoArray[i].trim();
+		for (int i = 0; i < cardNoList.size(); i++) {
+			for (int j = 0; j < cardNoList.size(); j++) {
+				String cardNo = cardNoList.get(i).trim();
 				Stack<String> previous = new Stack<>();
 				previous.push(cardNo);
-				commonService.findLoops(dataMap, loopList, previous, cardNo, cardNoArray[j].trim());
+				commonService.findLoops(dataMap, loopList, previous, cardNo, cardNoList.get(j).trim());
 			}
 		}
 
@@ -222,12 +224,11 @@ public class DrawController {
 		/* 获取节点名称（节点为账号） */
 		Set<String> nameSet = curLinkList.stream().map(TempDraw :: getCard1).collect(Collectors.toSet());
 		nameSet.addAll(curLinkList.stream().map(TempDraw :: getCard2).collect(Collectors.toSet()));
-		List<String> cardList = Arrays.asList(cardNoArray);
 		List<Node> nodeList = new ArrayList<>();
 		for (String name : nameSet) {
 			Node node = new Node();
 			node.setName(name);
-			if (cardList.contains(node.getName())) {
+			if (cardNoList.contains(node.getName())) {
 				node.setImgName("03.png");
 			}
 			nodeList.add(node);
