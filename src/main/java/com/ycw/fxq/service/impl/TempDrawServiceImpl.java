@@ -88,14 +88,10 @@ public class TempDrawServiceImpl extends ServiceImpl<TempDrawMapper, TempDraw> i
 	 * @return
 	 */
 	@Override
-	public List<TempDrawVO> findTempDrawList(String startTime, String endTime) {
+	public List<TempDrawVO> findTempDrawList(LocalDateTime startTime, LocalDateTime endTime) {
 		LambdaQueryWrapper<TempDraw> queryWrapper = Wrappers.lambdaQuery();
-		if (StringUtils.isNotBlank(startTime)) {
-			queryWrapper.ge(TempDraw::getTime, startTime);
-		}
-		if (StringUtils.isNotBlank(endTime)) {
-			queryWrapper.le(TempDraw::getTime, endTime);
-		}
+		queryWrapper.ge(TempDraw::getTime, startTime);
+		queryWrapper.le(TempDraw::getTime, endTime);
 		List<TempDraw> drawList = tempDrawMapper.selectList(queryWrapper);
 		return BeanHandleUtils.listCopy(drawList, TempDrawVO.class);
 	}
@@ -108,17 +104,8 @@ public class TempDrawServiceImpl extends ServiceImpl<TempDrawMapper, TempDraw> i
 	 * @return
 	 */
 	@Override
- 	public Set<String> findAcntNoListByAcntNameList(List<String> acntNameList) {
-		LambdaQueryWrapper<TempDraw> queryWrapper = Wrappers.lambdaQuery();
-		queryWrapper.in(TempDraw::getName1, acntNameList);
-		List<TempDraw> drawList1 = tempDrawMapper.selectList(queryWrapper);
-
-		queryWrapper = Wrappers.lambdaQuery();
-		queryWrapper.in(TempDraw::getName2, acntNameList);
-		List<TempDraw> drawList2 = tempDrawMapper.selectList(queryWrapper);
-
-		Set<String> drawList = drawList1.stream().map(TempDraw::getCard1).collect(Collectors.toSet());
-		drawList.addAll(drawList2.stream().map(TempDraw::getCard2).collect(Collectors.toSet()));
+ 	public List<String> findAcntNoListByAcntNameList(List<String> acntNameList) {
+		List<String> drawList = tempDrawMapper.findAcntNoListByAcntNameList(acntNameList);
 		return drawList;
 	}
 

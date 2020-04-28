@@ -63,7 +63,7 @@ public interface TempDrawService extends IService<TempDraw> {
 	 * @param endTime   结束时间
 	 * @return
 	 */
-	List<TempDrawVO> findTempDrawList(String startTime, String endTime);
+	List<TempDrawVO> findTempDrawList(LocalDateTime startTime, LocalDateTime endTime);
 
 	/**
 	 * 查询流水数据
@@ -84,6 +84,6 @@ public interface TempDrawService extends IService<TempDraw> {
 	 * @param acntNameList
 	 * @return
 	 */
-	Set<String> findAcntNoListByAcntNameList(List<String> acntNameList);
+	List<String> findAcntNoListByAcntNameList(List<String> acntNameList);
 
 }

@@ -1,16 +1,25 @@
 package com.ycw.fxq.controller;
 
 import java.nio.charset.StandardCharsets;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Stack;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.stream.Collectors;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -18,6 +27,8 @@ import com.ycw.fxq.bean.TempDrawVO;
 import com.ycw.fxq.common.response.ResponseVO;
 import com.ycw.fxq.service.CommonService;
 import com.ycw.fxq.service.TempDrawService;
+
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * 交易流水
@@ -33,6 +44,7 @@ import com.ycw.fxq.service.TempDrawService;
  * -------------------------------------------------
  * </pre>
  */
+@Slf4j
 @RestController
 public class TransferRecordController {
 
@@ -55,37 +67,18 @@ public class TransferRecordController {
 	 * @param type        类型：1-查询账号，2-查询账户
 	 * @return
 	 */
-	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@GetMapping("/draw/path/list")
 	public ResponseVO<List<Map<String, String>>> findPath(Integer query) {
-		List<List<String>> pathList = new ArrayList<>();
+		List<List<String>> pathList = Collections.synchronizedList(new ArrayList<List<String>>());
+		ExecutorService threadPool = DrawController.threadPool;
 		String[] cardNoArray = StringUtils.split(StringUtils.trimToEmpty(DrawController.cardNos), ',');
 		if (query == 1) {
 			// 组装有向图模型（利用Map表示有向图）
-			Map<String, String> dataMap = commonService.createDirectedGraphByAccNo(DrawController.curLinkList);
-			/* 调用算法求环路 */
-			List<String> acntNameList = Arrays.asList(cardNoArray);
-			List<String> cardNoList = new ArrayList(tempDrawService.findAcntNoListByAcntNameList(acntNameList));
-			for (int i = 0; i < cardNoList.size(); i++) {
-				for (int j = 0; j < cardNoList.size(); j++) {
-					String cardNo = cardNoList.get(i).trim();
-					Stack<String> previous = new Stack<>();
-					previous.push(cardNo);
-					commonService.findLoops(dataMap, pathList, previous, cardNo, cardNoList.get(j).trim());
-				}
-			}
+			findCardNoPathList(pathList, threadPool, cardNoArray);
+		} else if (query == 2) {
+			findCardNamePathList(pathList, threadPool, cardNoArray);
 		} else {
-			// 组装有向图模型（利用Map表示有向图）
-			Map<String, String> dataMap = commonService.createDirectedGraphByAccName(DrawController.curLinkList);
-			/* 调用算法求环路 */
-			for (int i = 0; i < cardNoArray.length; i++) {
-				for (int j = 0; j < cardNoArray.length; j++) {
-					String cardName = cardNoArray[i].trim();
-					Stack<String> previous = new Stack<>();
-					previous.push(cardName);
-					commonService.findLoops(dataMap, pathList, previous, cardName, cardNoArray[j].trim());
-				}
-			}
+			ResponseVO.success(CollectionUtils.EMPTY_COLLECTION);
 		}
 
 		/* 路线列表 1——2——3——1 */
@@ -100,11 +93,65 @@ public class TransferRecordController {
 		return ResponseVO.success(loopResult);
 	}
 
-	private List<List<String>> findPath(String startTime, String endTime, String payAcntName, String recAcntName) {
+	private void findCardNamePathList(List<List<String>> pathList, ExecutorService threadPool, String[] cardNoArray) {
+		// 组装有向图模型（利用Map表示有向图）
+		Map<String, String> dataMap = commonService.createDirectedGraphByAccName(DrawController.curLinkList);
+		/* 调用算法求环路 */
+		int length = cardNoArray.length;
+		CountDownLatch latch = new CountDownLatch(length * length);
+		for (int i = 0; i < length; i++) {
+			for (int j = 0; j < length; j++) {
+				String curCardName = cardNoArray[i].trim();
+				Stack<String> previous = new Stack<>();
+				previous.push(curCardName);
+				String desCardName = cardNoArray[j].trim();
+				threadPool.execute(() -> {
+					commonService.findLoops(dataMap, pathList, previous, curCardName, desCardName);
+					latch.countDown();
+			});
+			}
+		}
+		try {
+			latch.await();
+		} catch (InterruptedException e) {
+			 log.error("求环路异常", e);
+			 Thread.currentThread().interrupt();
+		}
+	}
+
+	private void findCardNoPathList(List<List<String>> pathList, ExecutorService threadPool, String[] cardNoArray) {
+		// 组装有向图模型（利用Map表示有向图）
+		Map<String, String> dataMap = commonService.createDirectedGraphByAccNo(DrawController.curLinkList);
+		/* 调用算法求环路 */
+		List<String> acntNameList = Arrays.asList(cardNoArray);
+		List<String> cardNoList = tempDrawService.findAcntNoListByAcntNameList(acntNameList);
+		int size = cardNoList.size();
+		CountDownLatch latch = new CountDownLatch(size * size);
+		for (int i = 0; i < size; i++) {
+			for (int j = 0; j < size; j++) {
+				String curCardNo = cardNoList.get(i).trim();
+				Stack<String> previous = new Stack<>();
+				previous.push(curCardNo);
+				String desCardNo = cardNoList.get(j).trim();
+				threadPool.execute(() -> {
+					commonService.findLoops(dataMap, pathList, previous, curCardNo, desCardNo);
+					latch.countDown();
+				});
+			}
+		}
+		try {
+			latch.await();
+		} catch (InterruptedException e) {
+			 log.error("求环路异常", e);
+			 Thread.currentThread().interrupt();
+		}
+	}
+
+	private List<List<String>> findPath(@DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate startTime, @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate endTime, String payAcntName, String recAcntName) {
 		payAcntName = new String(payAcntName.getBytes(StandardCharsets.ISO_8859_1), StandardCharsets.UTF_8);
 		recAcntName = new String(recAcntName.getBytes(StandardCharsets.ISO_8859_1), StandardCharsets.UTF_8);
 		// 根据时间范围查询流水
-		List<TempDrawVO> drawList = tempDrawService.findTempDrawList(startTime, endTime);
+		List<TempDrawVO> drawList = tempDrawService.findTempDrawList(LocalDateTime.of(startTime, LocalTime.MIN), LocalDateTime.of(endTime, LocalTime.MAX));
 		// 组装有向图模型（利用Map表示有向图）
 		Map<String, String> dataMap = commonService.createDirectedGraphByAccName(drawList);
 

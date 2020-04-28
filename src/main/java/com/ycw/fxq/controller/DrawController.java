@@ -1,14 +1,21 @@
 package com.ycw.fxq.controller;
 
 import java.text.ParseException;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.Stack;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.stream.Collectors;
 
 import javax.annotation.PostConstruct;
@@ -16,6 +23,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -24,9 +32,10 @@ import org.springframework.web.servlet.ModelAndView;
 import com.ycw.fxq.bean.Node;
 import com.ycw.fxq.bean.TempDraw;
 import com.ycw.fxq.bean.TempDrawVO;
-import com.ycw.fxq.common.utils.BeanHandleUtils;
 import com.ycw.fxq.service.CommonService;
 import com.ycw.fxq.service.TempDrawService;
+
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * 拓扑图
@@ -42,6 +51,7 @@ import com.ycw.fxq.service.TempDrawService;
  * -------------------------------------------------
  * </pre>
  */
+@Slf4j
 @Controller
 @RequestMapping("/draw")
 public class DrawController {
@@ -57,6 +67,8 @@ public class DrawController {
 	public static List<TempDrawVO> curLinkList = new ArrayList<>();
 
 	public static String cardNos = "";
+
+	public static final ExecutorService threadPool = Executors.newFixedThreadPool(32);
 
 	@PostConstruct
 	private void init() {
@@ -106,13 +118,13 @@ public class DrawController {
 	 * @return
 	 */
 	@GetMapping("/filter/account")
-	public ModelAndView filterAccount(String startTime, String endTime, String cardNos) {
+	public ModelAndView filterAccount(@DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate startTime, @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate endTime, String cardNos) {
 		this.cardNos = cardNos;
 		List<String> acntNameList = Arrays.asList(StringUtils.split(cardNos, ','));
-		Set<String> cardList = tempDrawService.findAcntNoListByAcntNameList(acntNameList);
+		List<String> cardList = tempDrawService.findAcntNoListByAcntNameList(acntNameList);
 
 		// 根据时间范围查询流水
-		List<TempDrawVO> drawList = tempDrawService.findTempDrawList(startTime, endTime);
+		List<TempDrawVO> drawList = tempDrawService.findTempDrawList(LocalDateTime.of(startTime, LocalTime.MIN), LocalDateTime.of(endTime, LocalTime.MAX));
 		this.curLinkList = drawList;
 
 		/* 获取节点名称（节点为账号） */
@@ -198,20 +210,34 @@ public class DrawController {
 	public ModelAndView findLoop() {
 		// 组装有向图模型（利用Map表示有向图）
 		Map<String, String> dataMap = commonService.createDirectedGraphByAccNo(curLinkList);
-
-		/* 调用算法求环路 */
 //		String[] cardNoArray = StringUtils.split(this.cardNos, ',');
 		List<String> acntNameList = Arrays.asList(StringUtils.split(cardNos, ','));
-		List<String> cardNoList = new ArrayList(tempDrawService.findAcntNoListByAcntNameList(acntNameList));
-		List<List<String>> loopList = new ArrayList<>();
-		for (int i = 0; i < cardNoList.size(); i++) {
-			for (int j = 0; j < cardNoList.size(); j++) {
-				String cardNo = cardNoList.get(i).trim();
+		List<String> cardNoList = tempDrawService.findAcntNoListByAcntNameList(acntNameList);
+
+		/* 调用算法求环路 */
+		int size = cardNoList.size();
+		CountDownLatch latch = new CountDownLatch(size * size);
+		long date1 = System.currentTimeMillis();
+		List<List<String>> loopList = Collections.synchronizedList(new ArrayList<List<String>>());
+		for (int i = 0; i < size; i++) {
+			for (int j = 0; j < size; j++) {
+				String curCardNo = cardNoList.get(i).trim();
 				Stack<String> previous = new Stack<>();
-				previous.push(cardNo);
-				commonService.findLoops(dataMap, loopList, previous, cardNo, cardNoList.get(j).trim());
+				previous.push(curCardNo);
+				String desCardNo = cardNoList.get(j).trim();
+				threadPool.execute(() -> {
+					commonService.findLoops(dataMap, loopList, previous, curCardNo, desCardNo);
+					latch.countDown();
+				});
 			}
 		}
+		try {
+			latch.await();
+		} catch (InterruptedException e) {
+			 log.error("求环路异常", e);
+			 Thread.currentThread().interrupt();
+		}
+		System.out.println("===================" + (System.currentTimeMillis() - date1));
 
 		/* 设置节点间路径颜色 */
 		Set<String> transSet = getTransSet(loopList);
@@ -250,9 +276,9 @@ public class DrawController {
 	 * @return
 	 */
 	@GetMapping("/path")
-	public ModelAndView findPath(String startTime, String endTime, String payAcntName, String recAcntName) {
+	public ModelAndView findPath(@DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate startTime, @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate endTime, String payAcntName, String recAcntName) {
 		// 根据时间范围查询流水
-		List<TempDrawVO> drawList = tempDrawService.findTempDrawList(startTime, endTime);
+		List<TempDrawVO> drawList = tempDrawService.findTempDrawList(LocalDateTime.of(startTime, LocalTime.MIN), LocalDateTime.of(endTime, LocalTime.MAX));
 		// 组装有向图模型（利用Map表示有向图）
 		Map<String, String> dataMap = commonService.createDirectedGraphByAccName(drawList);
 

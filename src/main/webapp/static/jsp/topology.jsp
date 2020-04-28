@@ -237,7 +237,8 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 				<input id="zzsx" type="button" value="数据筛选" class="zzstart md-trigger" data-modal="modal-2" />
 				<input id="zzsx1" type="button" value="可疑路径追踪" class="zzstart" onclick="findLoop()" />
 	        	<input id="merge" type="button" value="关联账户追踪" class="zzstart" onclick="mergeAccount()" />
-				<input id="zzsx2" type="button" value="分析结果" class="zzstart" onclick="loadTable()" />
+				<input id="zzsx2" type="button" value="分析账号结果" class="zzstart" onclick="loadTable1()" />
+				<input id="zzsx2" type="button" value="分析账户结果" class="zzstart" onclick="loadTable2()" />
 				<input id="gd" type="button" value="固定静止" class="zzstart" onclick="gds()" />
 	        	<input id="zz" type="button" value="重置数据" class="zzstart" onclick="reset()" />
 		    </div>
@@ -331,15 +332,15 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 	var total = document.documentElement.clientHeight;
     document.getElementById("container").style.height = total * 0.8 + "px";
 
-    function submitsx(){
+    function submitsx() {
 
     }
 
-    function reset(){
+    function reset() {
     	window.location.href = "${path}/draw/topology";
     }
 
-    function filterAccount(){
+    function filterAccount() {
 //     	var amount = $("#amount").val();
 //     	var frequency = $("#frequency").val();
 //     	var everyDayAmount = $("#everyDayAmount").val();
@@ -359,7 +360,7 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
     			+ "&endTime=" + endTime + "&cardNos=" + cardNos + "&type=1";
     }
 
-    function isEmpty(obj){
+    function isEmpty(obj) {
         if(typeof obj == "undefined" || obj == null || obj == ""){
             return true;
         }else{
@@ -373,9 +374,7 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
         if (r != null) return unescape(r[2]); return null; //返回参数值
     }
 
-    var queryType = 1;
-
-    function findLoop(){
+    function findLoop() {
 //     	var startTime = $("#startTime2").val();
 //     	var endTime = $("#endTime2").val();
 //     	var cardNos = $("#cardNos").val();
@@ -383,17 +382,15 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 //     	if (isEmpty(cardNos)) {
 //     		layer.msg("账号不能为空");
 //     	}
-		queryType = 1;
     	window.location.href = "${path}/draw/loop";
     }
 
 
-    function mergeAccount(){
-    	queryType = 2;
+    function mergeAccount() {
     	window.location.href = "${path}/draw/merge-account";
     }
 
-    function findPath(){
+    function findPath() {
     	var payAcntName = $("#payAcntName").val();
     	var recAcntName = $("#recAcntName").val();
     	if (isEmpty(payAcntName)) {
@@ -422,7 +419,7 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
             queryParams: function (params) {
                 //这里的键的名字和控制器的变量名必须一直，这边改动，控制器也需要改成一样的
                 var temp = {
-                	query: queryType
+                	query: '0'
                 };
                 return temp;
             },
@@ -454,8 +451,12 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
             ]
         });
 
-        function loadTable(){
-        	$('#table').bootstrapTable('refresh', { query: {query:queryType}});
+        function loadTable1() {
+        	$('#table').bootstrapTable('refresh', { query: {query:'1'}});
+        }
+
+        function loadTable2() {
+        	$('#table').bootstrapTable('refresh', { query: {query:'2'}});
         }
 
     function LinkColorSet(Money) {

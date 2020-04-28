@@ -20,4 +20,6 @@ public interface TempDrawMapper extends BaseCrudMapper<TempDraw> {
 	List<TempDrawVO> filterData(Map<String, String> params);
 
 	Integer getTotalCount();
+
+	List<String> findAcntNoListByAcntNameList(List<String> acntNameList);
 }

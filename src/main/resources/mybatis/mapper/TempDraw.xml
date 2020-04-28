@@ -113,4 +113,32 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 		SELECT COUNT(t.money) FROM temp_draw t
 	</select>
 
+	<select id="findAcntNoListByAcntNameList" resultType="java.lang.String" parameterType="list">
+		SELECT
+			t.Card1 acntNo
+		FROM
+			temp_draw t
+		<if test="list != null and list.size() > 0">
+		WHERE
+			t.name1 IN
+		<foreach item="item" collection="list" separator="," open="(" close=")" index="">
+			#{item}
+		</foreach>
+		</if>
+
+		UNION
+
+		SELECT
+			t.Card2 acntNo
+		FROM
+			temp_draw t
+		<if test="list != null and list.size() > 0">
+		WHERE
+			t.name2 IN
+		<foreach item="item" collection="list" separator="," open="(" close=")" index="">
+			#{item}
+		</foreach>
+		</if>
+	</select>
+
 </mapper>
