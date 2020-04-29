@@ -1,9 +1,17 @@
-
-{"data":
-[
-  {"check":"","id":"mwj","name":"马卫江","role":"普通用户","status":"启用","time":"2020-03-30:12:13:00","count":"101"},
-  {"check":"","id":"wxy","name":"王心钰","role":"普通用户","status":"未启动","time":"2019-09-05:9:08:00","count":"23"},
-  {"check":"","id":"bfm","name":"白凤梅","role":"普通用户","status":"未启用","time":"2020-01-09:10:56:00","count":"94"},
-  {"check":"","id":"admin","name":"孙天艮","role":"管理员","status":"启用","time":"2020-03-15:17:24:00","count":"15"},
-  {"check":"","id":"admin","name":"朱晓钢","role":"管理员","status":"未启用","time":"2020-02-07:23:04:00","count":"205"}
-]}
+{
+  "code": 200,
+  "message": null,
+  "data": {
+    "total": 5,
+    "list": [
+      {"check":"","id":"mwj","name":"马卫江","role":"普通用户","status":"启用","time":"2020-03-30:12:13:00","count":"101"},
+      {"check":"","id":"wxy","name":"王心钰","role":"普通用户","status":"未启动","time":"2019-09-05:9:08:00","count":"23"},
+      {"check":"","id":"bfm","name":"白凤梅","role":"普通用户","status":"未启用","time":"2020-01-09:10:56:00","count":"94"},
+      {"check":"","id":"admin","name":"孙天艮","role":"管理员","status":"启用","time":"2020-03-15:17:24:00","count":"15"},
+      {"check":"","id":"admin","name":"朱晓钢","role":"管理员","status":"未启用","time":"2020-02-07:23:04:00","count":"205"}
+    ]
+  },
+  "timestamp":1,
+  "traceId": "",
+  "success": true
+}
