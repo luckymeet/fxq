@@ -16,7 +16,7 @@ package com.ycw.fxq.common.exception;
  *     ----------------------------------------------
  *       </pre>
  */
-public class MsgException extends Exception {
+public class MsgException extends RuntimeException {
 
 	private static final long serialVersionUID = 1L;
 

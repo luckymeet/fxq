@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ycw.fxq.mapper.FileInfoMapper">
+
+	<select id="findFileInfoList" resultType="com.ycw.fxq.bean.FileInfoListVO" parameterType="Map">
+		SELECT
+			t.file_name fileName,
+			t.file_path filePath,
+			t.create_time uploadTime
+		FROM file_info t
+		<where>
+			t.del_ind = "0"
+			<if test="fileName != null and fileName != ''">
+				AND INSTR(t.file_name, #{fileName}) > 0
+			</if>
+		</where>
+		ORDER BY id DESC
+	</select>
+</mapper>
