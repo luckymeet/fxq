@@ -30,10 +30,9 @@ public interface IFileInfoService extends IService<FileInfo> {
 	 * @author yuminjun
 	 * @date 2020/05/20 20:53:06
 	 * @param file 文件
-	 * @param fileName 文件名称
 	 * @return
 	 */
-	Long upload(MultipartFile file, String fileName);
+	Long upload(MultipartFile file);
 
 	/**
 	 * 文件下载

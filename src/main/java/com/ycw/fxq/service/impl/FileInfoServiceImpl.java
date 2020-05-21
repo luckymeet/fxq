@@ -20,6 +20,8 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
@@ -62,14 +64,13 @@ public class FileInfoServiceImpl extends ServiceImpl<FileInfoMapper, FileInfo> i
 	 * @author yuminjun
 	 * @date 2020/05/20 20:53:06
 	 * @param file 文件
-	 * @param fileName 文件名称
 	 * @return
 	 */
 	@Override
-	public Long upload(MultipartFile file, String fileName) {
+	public Long upload(MultipartFile file) {
 		String filePath = createFile(file);
 		FileInfo fileInfo = new FileInfo();
-		fileInfo.setFileName(fileName);
+		fileInfo.setFileName(file.getOriginalFilename());
 		fileInfo.setFilePath(filePath);
 		fileInfo.setFileType(FileTypeEnum.LEGAL_LITERATURE.getCode());
 		fileInfo.setCreateTime(LocalDateTime.now());
@@ -146,9 +147,9 @@ public class FileInfoServiceImpl extends ServiceImpl<FileInfoMapper, FileInfo> i
 	@Override
 	public void deleteFile(Integer fileId) throws IOException {
 		FileInfo fileInfo = this.fileInfoMapper.selectById(fileId);
-		fileInfo.setDelInd(CommonConstants.INT_NO);
+		fileInfo.setDelInd(CommonConstants.INT_YES);
 		fileInfo.setUpdateTime(LocalDateTime.now());
-		this.fileInfoMapper.updateById(fileInfo);
+		this.fileInfoMapper.deleteById(fileInfo);
 		Files.delete(Paths.get(fileInfo.getFilePath()));
 	}
 

@@ -13,10 +13,12 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.ycw.fxq.bean.FileInfoListVO;
+import com.ycw.fxq.common.page.PageInfo;
 import com.ycw.fxq.common.page.PageParams;
 import com.ycw.fxq.common.response.ResponseVO;
 import com.ycw.fxq.service.IFileInfoService;
@@ -51,9 +53,9 @@ public class FileInfoController {
 	 * @return
 	 */
 	@GetMapping("/list")
-	public ResponseVO<List<FileInfoListVO>> findFileInfoList(Map<String, String> searchMap, PageParams pageParams) {
+	public ResponseVO<PageInfo<FileInfoListVO>> findFileInfoList(@RequestParam Map<String, String> searchMap, PageParams pageParams) {
 		List<FileInfoListVO> fileInfoList = this.fileInfoService.findFileInfoList(searchMap, pageParams);
-		return ResponseVO.success(fileInfoList);
+		return ResponseVO.success(new PageInfo<>(fileInfoList));
 	}
 
 	/**
@@ -61,12 +63,11 @@ public class FileInfoController {
 	 * @author yuminjun
 	 * @date 2020/05/20 20:53:06
 	 * @param file 文件
-	 * @param fileName 文件名称
 	 * @return
 	 */
 	@PostMapping("/upload")
-	public ResponseVO<Long> upload(MultipartFile file, @NotBlank(message = "文件名称不能为空") String fileName) {
-		Long fileId = this.fileInfoService.upload(file, fileName);
+	public ResponseVO<Long> upload(MultipartFile file) {
+		Long fileId = this.fileInfoService.upload(file);
 		return ResponseVO.success(fileId);
 	}
 
@@ -92,7 +93,7 @@ public class FileInfoController {
 	 * @throws IOException
 	 */
 	@DeleteMapping
-	public ResponseVO<String> deleteFile(@Null(message = "文件ID不能为空") Integer fileId) throws IOException {
+	public ResponseVO<String> deleteFile(@NotBlank(message = "文件ID不能为空") Integer fileId) throws IOException {
 		this.fileInfoService.deleteFile(fileId);
 		return ResponseVO.success(null, "删除成功");
 	}

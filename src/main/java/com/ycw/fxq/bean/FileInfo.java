@@ -8,7 +8,7 @@ import lombok.EqualsAndHashCode;
 
 @Data
 @EqualsAndHashCode(callSuper = true)
-@TableName("case_info")
+@TableName("file_info")
 public class FileInfo extends BaseEntity {
 
 	private static final long serialVersionUID = 1L;

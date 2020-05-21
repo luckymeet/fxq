@@ -8,6 +8,11 @@ import lombok.Data;
 public class FileInfoListVO {
 
 	/**
+	 * 文件id
+	 */
+	private Integer id;
+
+	/**
 	 * 文件名称
 	 */
 	private String fileName;

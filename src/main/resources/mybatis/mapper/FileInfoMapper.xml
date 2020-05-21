@@ -6,6 +6,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 
 	<select id="findFileInfoList" resultType="com.ycw.fxq.bean.FileInfoListVO" parameterType="Map">
 		SELECT
+			t.id id,
 			t.file_name fileName,
 			t.file_path filePath,
 			t.create_time uploadTime
