@@ -13,6 +13,11 @@ public class FileInfoListVO {
 	private String fileName;
 
 	/**
+	 * 文件路径
+	 */
+	private String filePath;
+
+	/**
 	 * 上传时间
 	 */
 	@JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")

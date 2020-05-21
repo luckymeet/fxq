@@ -1,7 +1,10 @@
  package com.ycw.fxq.service;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.Map;
+
+import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.web.multipart.MultipartFile;
 
@@ -31,5 +34,25 @@ public interface IFileInfoService extends IService<FileInfo> {
 	 * @return
 	 */
 	Long upload(MultipartFile file, String fileName);
+
+	/**
+	 * 文件下载
+	 * @author yuminjun
+	 * @date 2020/05/21 20:00:47
+	 * @param path
+	 * @param response
+	 * @return
+	 * @throws IOException
+	 */
+	HttpServletResponse download(String path, HttpServletResponse response) throws IOException;
+
+	/**
+	 * 文件删除
+	 * @author yuminjun
+	 * @date 2020/05/21 20:15:14
+	 * @param fileId
+	 * @throws IOException
+	 */
+	void deleteFile(Integer fileId) throws IOException;
 
 }

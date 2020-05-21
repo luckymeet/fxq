@@ -12,6 +12,9 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 		FROM file_info t
 		<where>
 			t.del_ind = "0"
+			<if test="fileType != null and fileType != ''">
+				AND t.file_type = #{fileType}
+			</if>
 			<if test="fileName != null and fileName != ''">
 				AND INSTR(t.file_name, #{fileName}) > 0
 			</if>
