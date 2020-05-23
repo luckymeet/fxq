@@ -2,13 +2,15 @@ package com.ycw.fxq.bean;
 
 import org.apache.commons.lang3.StringUtils;
 
+import com.ycw.fxq.common.base.BaseEntity;
+
 import lombok.Data;
 
 /**
  *
  */
 @Data
-public class CaseInfoVO {
+public class CaseInfoVO extends BaseEntity {
 
     private Long id;
     private String num;

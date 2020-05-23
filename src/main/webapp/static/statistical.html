@@ -62,7 +62,7 @@
 //     	$("#case").remove();//清空select列表数据
    	　　$.ajax({
    	　　　　type : "GET",
-   	　　　　url : "case/find",
+   	　　　　url : "legalCase",
    	　　　　dataType : "JSON",
    	　　　　data : {},
 	   	　　success : function(data)
@@ -115,7 +115,7 @@
                 {
                     name:'交易金额',
                     type:'line',
-                    data:[],
+                    data:[]
                 },
                 {
                     type:'bar',
@@ -140,7 +140,7 @@
                      fontSize:18,
                      fontStyle:"normal"
                  }
-             },
+            },
             tooltip : {
                 trigger: 'item',
                 formatter: "{a} <br/>{b} : {c} ({d}%)"
@@ -180,20 +180,7 @@
                     // radius : '55%',
                     radius: ['30%', '50%'],
                     center: ['50%', '60%'],
-                    data:[
-                        {value:680.00, name:'1k-2k'},
-                        {value:48700.00, name:'40k-50k'},
-                        {value:323.00, name:'0k-1k'},
-                        {value:49162.00, name:'40k-50k'},
-                        {value:14398.00, name:'10k-20k'},
-                        {value:5000.00, name:'5k-6k'},
-                        {value:5000.00, name:'5k-6k'},
-                        {value:88794.56, name:'50k以上'},
-                        {value:300.00, name:'0k-1k'},
-                        {value:5000, name:'5k-6k'},
-                        {value:4300, name:'4k-5k'},
-                        {value:5000, name:'5k-6k'},
-                    ]
+                    data:[]
                 }
             ]
         };
@@ -215,13 +202,9 @@
                     //请求成功时执行该函数内容，result即为服务器返回的json对象
                     if (result && result.code == 200) {
                     	var data = result.data;
-//                     	debugger
-//                         for (var i = 0; i < result.length; i++) {
-//                             names.push(result[i].name);    //挨个取出类别并填入类别数组
-//                         }
-//                         for (var i = 0; i < result.length; i++) {
-//                             amts.push(result[i].num);    //挨个取出销量并填入销量数组
-//                         }
+                    	if (null == data) {
+							return;
+                    	}
                         myChart.hideLoading();    //隐藏加载动画
                         myChart.setOption({        //加载数据图表
                             xAxis: [
@@ -256,48 +239,47 @@
                     alert("图表请求数据失败!");
                     myChart.hideLoading();
                 }
-       	   });
+       	   })
 
         	$.ajax({
                 type : "post",
                 async : true,            //异步请求（同步请求将会锁住浏览器，用户其他操作必须等待请求完成才可以执行）
-                url : "/statistic-analysis/amt/change",
+                url : "/statistic-analysis/amt/ratio",
                 data : {'caseId':caseId, 'acntNo':acntNo, 'startTime':startTime, 'endTime':endTime},
                 dataType : "json",        //返回数据形式为json
                 success : function(result) {
                     //请求成功时执行该函数内容，result即为服务器返回的json对象
                     if (result && result.code == 200) {
                     	var data = result.data;
-//                     	debugger
-//                         for (var i = 0; i < result.length; i++) {
-//                             names.push(result[i].name);    //挨个取出类别并填入类别数组
-//                         }
-//                         for (var i = 0; i < result.length; i++) {
-//                             amts.push(result[i].num);    //挨个取出销量并填入销量数组
-//                         }
-                        myChart.hideLoading();    //隐藏加载动画
-                        myChart.setOption({        //加载数据图表
-                            xAxis: [
+                    	if (null == data) {
+							return;
+                    	}
+                    	var nameList = new Array();
+                    	var dataList = new Array();
+              　　　　　　　　 for (let index in data) {
+            	   			var key = index;
+            	   			var value = data[index];
+      　　　　　　　　　　　　	nameList.push(key);
+      						var temp = {'value':value, 'name':key};
+      						dataList.push(temp);
+      　　　　　　　　　　	}
+                        pieChart.hideLoading();    //隐藏加载动画
+                        pieChart.setOption({       //加载数据图表
+                            legend: {
+                                orient : 'horizontal',
+                                x : 'left',
+                                y:"bottom",
+                                data:nameList
+                            },
+                            series : [
                                 {
-                                    type : 'category',
-                                    boundaryGap : false,
-                                    data : data.names
+                                    name:'转账记录数',
+                                    type:'pie',
+                                    // radius : '55%',
+                                    radius: ['30%', '50%'],
+                                    center: ['50%', '60%'],
+                                    data:dataList
                                 }
-                            ],
-                            series: [
-	                            {
-	                                name:'交易金额',
-	                                type:'line',
-	                                data:data.amts,
-	                            },
-	                            {
-	                                type:'bar',
-	                                data:data.amts,
-	                                itemStyle:{
-	                                    barBorderRadius:[3,3,0,0],
-	                                    color:"#c23531"
-	                                }
-	                            }
                             ]
                         });
 

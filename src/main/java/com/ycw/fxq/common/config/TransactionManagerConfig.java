@@ -82,6 +82,7 @@ public class TransactionManagerConfig {
         methodMap.put("remove*", requiredTx);
         methodMap.put("repair*", requiredTx);
         methodMap.put("binding*", requiredTx);
+        methodMap.put("upload*", requiredTx);
 
         /* 独立事务 */
         methodMap.put("*NewTrans", requiredNewTx);
