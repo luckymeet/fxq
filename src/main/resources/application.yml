@@ -108,4 +108,3 @@ logging:
     druid.sql.Statement: debug
     com.ycw.aml.user: debug
 
-
