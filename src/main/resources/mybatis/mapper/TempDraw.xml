@@ -7,6 +7,10 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 	<select id="findall" resultType="com.ycw.fxq.bean.TempDrawVO" parameterType="Map">
 		SELECT
 			t.name1, t.name2, t.money FROM Temp_Draw t
+		WHERE
+		<if test="caseId != null and caseId != ''">
+			case_id = #{caseId}
+		</if>
 		<if test="index != null">
 			LIMIT #{index}
 		</if>

@@ -3,7 +3,6 @@ package com.ycw.fxq.service;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.ycw.fxq.bean.Node;
@@ -19,7 +18,7 @@ public interface TempDrawService extends IService<TempDraw> {
 	 * @param params 条件参数
 	 * @return
 	 */
-	List<TempDrawVO> findDataByParams(Map<String, Integer> params);
+	List<TempDrawVO> findDataByParams(Map<String, Object> params);
 
 	/**
 	 * 查询所有流水的付款账户名和收款账户名（已去重）

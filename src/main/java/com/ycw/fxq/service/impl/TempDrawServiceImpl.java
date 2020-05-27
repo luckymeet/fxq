@@ -43,7 +43,7 @@ public class TempDrawServiceImpl extends ServiceImpl<TempDrawMapper, TempDraw> i
 	TempDrawMapper tempDrawMapper;
 
 	@Override
-	public List<TempDrawVO> findDataByParams(Map<String, Integer> params) {
+	public List<TempDrawVO> findDataByParams(Map<String, Object> params) {
 		return tempDrawMapper.findall(params);
 	}
 

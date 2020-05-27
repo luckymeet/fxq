@@ -2,6 +2,8 @@ package com.ycw.fxq.controller;
 
 import java.text.ParseException;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -61,6 +63,21 @@ public class SuspiciousGangController {
 	}
 
 	/**
+	 * 根据案件编号查找流水记录
+	 * @author ycw
+	 * @date 2020/03/26 15:46:59
+	 * @param request
+	 * @return
+	 */
+	@GetMapping("/transactions")
+	public ModelAndView findTransactions(String caseId) {
+		Map<String, Object> params = new HashMap<>(4);
+		params.put("caseId", caseId);
+		curLinkList = tempDrawService.findDataByParams(params);
+		return setModelAndView(curLinkList, tempDrawService.findname());
+	}
+
+	/**
 	 * 流水拓扑图
 	 *
 	 * @author ycw
@@ -70,8 +87,8 @@ public class SuspiciousGangController {
 	 */
 	@GetMapping("/topology")
 	public ModelAndView topology() {
-		curLinkList = DrawController.initData;
-		return setModelAndView(curLinkList, tempDrawService.findname());
+//		curLinkList = DrawController.initData;
+		return setModelAndView(curLinkList, Collections.emptyList());
 	}
 
 	/**

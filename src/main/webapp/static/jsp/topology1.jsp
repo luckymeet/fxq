@@ -185,6 +185,14 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 </style>
 </head>
 <body>
+    <div class="news_check">
+        <div class="check_left l_left">
+            <label>案件名称：<label>
+            <select id="case" class="find_input" style="width: 240px"></select>
+            <button onclick="select()">查询</button>
+        </div>
+        <div class="clear"></div>
+    </div>
 	<span id="colink" colink=${fn:length(linklist) } style="display: none"></span>
 	<span id="conode" conode=${fn:length(nodelist) } style="display: none"></span>
 <%-- 	<span id="maxmon" maxmon=${maxmoeny } style="display: none"></span> --%>
@@ -330,6 +338,28 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 
 	var total = document.documentElement.clientHeight;
     document.getElementById("container").style.height = total * 0.8 + "px";
+
+    $.ajax({
+   	　　type : "GET",
+   	　　url : "${path}/legalCase",
+   	　　dataType : "JSON",
+   	　　data : {},
+     	　　success : function(data)
+     	　　{
+     		    var rows = data.data.list;
+     	　　　　$("#case").prepend("<option value=''>请选择</option>");
+     	　　　　for (var i = 0; i < rows.length; i++) {
+     	　　　　		$("#case").append("<option value='" + rows[i].id + "'>" + rows[i].caseName + "</option>");
+     	　　		}
+     	　　},
+     	  	error:function(){
+     	　　}
+     	});
+
+  	function select() {
+  		var caseId = $('#case').val();
+  		window.location.href = "${path}/gang/transactions?caseId=" + caseId;
+  	}
 
     function submitsx(){
 

@@ -13,7 +13,7 @@ import com.ycw.fxq.common.base.BaseCrudMapper;
 @Mapper
 public interface TempDrawMapper extends BaseCrudMapper<TempDraw> {
 
-	List<TempDrawVO> findall(Map<String, Integer> params);
+	List<TempDrawVO> findall(Map<String, Object> params);
 
 	List<Node> findname();
 

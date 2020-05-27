@@ -38,7 +38,7 @@ public class FindDataTask extends RecursiveTask<List<TempDrawVO>> {
 	@Override
 	protected List<TempDrawVO> compute() {
 		if (end - start <= THRESHOLD) {
-			Map<String, Integer> params = new HashMap<>();
+			Map<String, Object> params = new HashMap<>();
 			params.put("index", start);
 			params.put("offset", end - start);
 			return tempDrawService.findDataByParams(params);

@@ -72,8 +72,24 @@ public class DrawController {
 
 	@PostConstruct
 	private void init() {
-		initData = tempDrawService.findAllData();
-		this.curLinkList = initData;
+//		initData = tempDrawService.findAllData();
+//		this.curLinkList = initData;
+	}
+
+
+	/**
+	 * 根据案件编号查找流水记录
+	 * @author ycw
+	 * @date 2020/03/26 15:46:59
+	 * @param request
+	 * @return
+	 */
+	@GetMapping("/transactions")
+	public ModelAndView findTransactions(String caseId) {
+		Map<String, Object> params = new HashMap<>(4);
+		params.put("caseId", caseId);
+		curLinkList = tempDrawService.findDataByParams(params);
+		return setModelAndView(curLinkList, tempDrawService.findname());
 	}
 
 	/**
@@ -86,7 +102,7 @@ public class DrawController {
 	 */
 	@GetMapping("/topology")
 	public ModelAndView topology(HttpServletRequest request) {
-		return setModelAndView(initData, tempDrawService.findname());
+		return setModelAndView(curLinkList, Collections.emptyList());
 	}
 
 	/**
